@@ -55,7 +55,7 @@ class _RootPageState extends State<RootPage> {
 
   Widget getBottomBar(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 15),
+      margin: const EdgeInsets.only(bottom: 20),
       height: 60,
       child: ClipRRect(
           borderRadius: BorderRadius.circular(30),
