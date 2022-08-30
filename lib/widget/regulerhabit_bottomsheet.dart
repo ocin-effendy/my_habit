@@ -6,12 +6,15 @@ import 'package:my_habit/provider/data_habits_provider.dart';
 import 'package:my_habit/root.dart';
 import 'package:provider/provider.dart';
 
-class GetBottomSheet extends StatefulWidget {
+class RegulerHabitBottomSheet extends StatefulWidget {
+  const RegulerHabitBottomSheet({Key? key}) : super(key: key);
+
   @override
-  State<GetBottomSheet> createState() => _GetBottomSheetState();
+  State<RegulerHabitBottomSheet> createState() =>
+      _RegulerHabitBottomSheetState();
 }
 
-class _GetBottomSheetState extends State<GetBottomSheet> {
+class _RegulerHabitBottomSheetState extends State<RegulerHabitBottomSheet> {
   final bankIcons = DataHabits.bankIcon;
   final _nameHabitController = TextEditingController(); //title
   final _goalsHabitController = TextEditingController(); // goals
@@ -44,21 +47,20 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
       "descGoals": "minutes",
       "statusRepeat": "daily",
       "day": {
-				"Monday": true,
-				"Sunday": false,
-				"Tuesday": false,
-				"Wednesday": false,
-				"Thursday": false,
-				"Friday": false,
-				"Saturday": false,
-			},
+        "Monday": true,
+        "Sunday": false,
+        "Tuesday": false,
+        "Wednesday": false,
+        "Thursday": false,
+        "Friday": false,
+        "Saturday": false,
+      },
       "week": "",
       "month": "",
       "statusHabits": "active",
       "timeReminders": "Do anytime"
     }
   ];
-
 
   final iconsGradientColors = List<Color>.from(
       [Colors.yellowAccent, Colors.greenAccent, Colors.lightBlueAccent]);
@@ -72,7 +74,7 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-			    return Consumer<DataHabitsProvider>(
+    return Consumer<DataHabitsProvider>(
       builder: (cotext, data, _) => GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Container(
@@ -91,24 +93,20 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                             Text(
                               "Regular Habit",
                               style: TextStyle(
-                                  fontSize: 36,
-                                  fontWeight: FontWeight.w600),
+                                  fontSize: 36, fontWeight: FontWeight.w600),
                             ),
                             Text(
                               "Creating a new habit",
                               style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16),
+                                  fontWeight: FontWeight.w500, fontSize: 16),
                             )
                           ],
                         ),
                         IconButton(
                             onPressed: () {
                               if (_nameHabitController.text.isNotEmpty) {
-
-
                                 if (data.listDataHabits.length < 3) {
-																	print("masukkkkkkkkkkkkkkkkkkkkkkkkkkk");
+                                  print("masukkkkkkkkkkkkkkkkkkkkkkkkkkk");
                                   carouselController.nextPage(
                                       duration: const Duration(seconds: 2),
                                       curve: Curves.ease);
@@ -124,7 +122,8 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                                         .nextInt(DataHabits.bankIcon.length)]);
                                 Navigator.pop(context);
                                 statusSwitchGoalhabits = false;
-																print("===========================================");
+                                print(
+                                    "===========================================");
                               } else {
                                 setState(() {
                                   statusInput = false;
@@ -132,8 +131,8 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                               }
                             },
                             icon: ShaderMask(
-                                shaderCallback: (rect) => primaryGradient
-                                    .createShader(rect),
+                                shaderCallback: (rect) =>
+                                    primaryGradient.createShader(rect),
                                 child: const Icon(
                                   Icons.done_all_rounded,
                                   color: Colors.white,
@@ -149,7 +148,7 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                           controller: _nameHabitController,
                           cursorColor: Colors.lightBlueAccent,
                           style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                              color: Colors.white, fontWeight: FontWeight.bold),
                           decoration: InputDecoration(
                             hintText: "Name your habit",
                             hintStyle: TextStyle(
@@ -172,9 +171,8 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                           child: Container(
                             height: 1.5,
                             width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                              gradient: primaryGradient
-														),
+                            decoration:
+                                BoxDecoration(gradient: primaryGradient),
                           ),
                         ),
                       ],
@@ -182,72 +180,70 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                     const SizedBox(
                       height: 15,
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      backgroundColor:
-                                          Color.fromRGBO(21, 21, 70, 1),
-                                      title: Text("Choose Icon"),
-                                      titleTextStyle: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold),
-                                      content: SingleChildScrollView(
-                                        child: Wrap(
-                                          alignment: WrapAlignment.center,
-                                          children: [
-                                            for (int i = 0;
-                                                i < bankIcons.length;
-                                                i++)
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(5.0),
-                                                child: ShaderMask(
-                                                    shaderCallback: (rect) => primaryGradient
-                                                            .createShader(rect),
-                                                    child: IconButton(
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          _iconHabit =
-                                                              bankIcons[i];
-                                                          Navigator.pop(
-                                                              context);
-                                                        });
-                                                      },
-                                                      icon: Icon(
-                                                        bankIcons[i],
-                                                        size: 36,
-                                                      ),
-                                                      color: Colors.white,
-                                                    )),
-                                              ),
-                                          ],
+                    InkWell(
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                backgroundColor: Color.fromRGBO(21, 21, 70, 1),
+                                title: Text("Choose Icon"),
+                                titleTextStyle: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold),
+                                content: SingleChildScrollView(
+                                  child: Wrap(
+                                    alignment: WrapAlignment.center,
+                                    children: [
+                                      for (int i = 0; i < bankIcons.length; i++)
+                                        Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: ShaderMask(
+                                              shaderCallback: (rect) =>
+                                                  primaryGradient
+                                                      .createShader(rect),
+                                              child: IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _iconHabit = bankIcons[i];
+                                                    Navigator.pop(context);
+                                                  });
+                                                },
+                                                icon: Icon(
+                                                  bankIcons[i],
+                                                  size: 36,
+                                                ),
+                                                color: Colors.white,
+                                              )),
                                         ),
-                                      ),
-                                    );
-                                  });
-                            },
-                            icon: ShaderMask(
-                                shaderCallback: (rect) => primaryGradient
-                                    .createShader(rect),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            ShaderMask(
+                                shaderCallback: (rect) =>
+                                    primaryGradient.createShader(rect),
                                 child: Icon(
                                   _iconHabit,
                                   color: Colors.white,
                                   size: 34,
-                                ))),
-                        const SizedBox(
-                          width: 20,
+                                )),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Text(
+                              "Change Icon",
+                              style: Theme.of(context).textTheme.headline1,
+                            )
+                          ],
                         ),
-                        Text(
-                          "Change Icon",
-													style: Theme.of(context).textTheme.headline1,
-                        )
-                      ],
+                      ),
                     ),
                     const SizedBox(
                       height: 10,
@@ -258,7 +254,7 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                         children: [
                           Text(
                             'Goal for Habit',
-														style: Theme.of(context).textTheme.headline1,
+                            style: Theme.of(context).textTheme.headline1,
                           ),
                           Switch(
                               value: statusSwitchGoalhabits,
@@ -298,7 +294,9 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                                       },
                                       child: Text(
                                         "of times",
-																				style: Theme.of(context).textTheme.headline1,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1,
                                       )),
                                   ElevatedButton(
                                       style: ElevatedButton.styleFrom(
@@ -319,7 +317,9 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                                       },
                                       child: Text(
                                         "time",
-																				style: Theme.of(context).textTheme.headline1,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1,
                                       )),
                                 ],
                               ),
@@ -352,8 +352,7 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                                       height: 1.5,
                                       width: MediaQuery.of(context).size.width,
                                       decoration: const BoxDecoration(
-                                        gradient: primaryGradient
-																			),
+                                          gradient: primaryGradient),
                                     ),
                                   ),
                                 ],
@@ -391,21 +390,21 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                           labelPadding:
                               const EdgeInsets.only(left: 0.0, right: 0.0),
                           indicator: const ShapeDecoration(
-                              shape: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.transparent,
-                                      width: 0.0,
-                                      style: BorderStyle.solid)),
-                              gradient: primaryGradient,
-													),
-															tabs: [
+                            shape: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.transparent,
+                                    width: 0.0,
+                                    style: BorderStyle.solid)),
+                            gradient: primaryGradient,
+                          ),
+                          tabs: [
                             Container(
                               height: 40,
                               alignment: Alignment.center,
                               color: const Color.fromRGBO(21, 21, 70, 1),
                               child: Text(
                                 "Daily",
-																style: Theme.of(context).textTheme.headline1,
+                                style: Theme.of(context).textTheme.headline1,
                               ),
                             ),
                             Container(
@@ -414,7 +413,7 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                               color: const Color.fromRGBO(21, 21, 70, 1),
                               child: Text(
                                 "Weekly",
-																style: Theme.of(context).textTheme.headline1,
+                                style: Theme.of(context).textTheme.headline1,
                               ),
                             ),
                             Container(
@@ -423,7 +422,7 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                               color: const Color.fromRGBO(21, 21, 70, 1),
                               child: Text(
                                 "Monthly",
-																style: Theme.of(context).textTheme.headline1,
+                                style: Theme.of(context).textTheme.headline1,
                               ),
                             ),
                           ],
@@ -451,15 +450,18 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                                       height: 15,
                                     ),
                                     Row(
-                                        mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                                        children: listDays.map((key, value) => MapEntry(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: listDays
+                                            .map((key, value) => MapEntry(
                                                   key,
                                                   Container(
                                                       width: 43,
                                                       height: 43,
                                                       decoration: const BoxDecoration(
-                                                          gradient: primaryGradient,
-																													borderRadius:
+                                                          gradient:
+                                                              primaryGradient,
+                                                          borderRadius:
                                                               BorderRadius
                                                                   .all(Radius
                                                                       .circular(
@@ -467,13 +469,18 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                                                       child: ElevatedButton(
                                                           onPressed: () {
                                                             setState(() {
-                                                              listDays[key] =!value;
+                                                              listDays[key] =
+                                                                  !value;
 
-																															if (listDays.containsValue(false)) {
-                                                                statusSwitchRepeatEveryday = false;
-                                                              }else{
-																																statusSwitchRepeatEveryday = true;
-																															}
+                                                              if (listDays
+                                                                  .containsValue(
+                                                                      false)) {
+                                                                statusSwitchRepeatEveryday =
+                                                                    false;
+                                                              } else {
+                                                                statusSwitchRepeatEveryday =
+                                                                    true;
+                                                              }
                                                               week = month = 1;
                                                             });
                                                           },
@@ -488,7 +495,11 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                                                                   padding:
                                                                       EdgeInsets
                                                                           .zero,
-                                                                  primary: value ? Colors.transparent: Colors.grey,
+                                                                  primary: value
+                                                                      ? Colors
+                                                                          .transparent
+                                                                      : Colors
+                                                                          .grey,
                                                                   shadowColor:
                                                                       Colors
                                                                           .transparent),
@@ -506,7 +517,9 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                                         children: [
                                           Text(
                                             "Every Days",
-																						style: Theme.of(context).textTheme.headline1,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline1,
                                           ),
                                           Switch(
                                               value: statusSwitchRepeatEveryday,
@@ -566,12 +579,15 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                                               Container(
                                                   width: 43,
                                                   height: 43,
-                                                  decoration: const BoxDecoration(
-                                                      gradient: primaryGradient,
-																											borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  14))),
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                          gradient:
+                                                              primaryGradient,
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          14))),
                                                   child: ElevatedButton(
                                                       onPressed: () {
                                                         setState(() {
@@ -640,7 +656,7 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                                             height: 43,
                                             decoration: const BoxDecoration(
                                                 gradient: primaryGradient,
-																								borderRadius: BorderRadius.all(
+                                                borderRadius: BorderRadius.all(
                                                     Radius.circular(14))),
                                             child: ElevatedButton(
                                                 onPressed: () {
@@ -648,7 +664,13 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                                                     month = i;
                                                     week = 1;
                                                     listDays['Su'] = true;
-                                                    listDays['Mo'] = listDays['Tu'] = listDays['We'] =listDays['Th'] =listDays['Fr'] =listDays['Sa'] =false;
+                                                    listDays['Mo'] = listDays[
+                                                        'Tu'] = listDays[
+                                                            'We'] =
+                                                        listDays['Th'] =
+                                                            listDays['Fr'] =
+                                                                listDays['Sa'] =
+                                                                    false;
                                                   });
                                                 },
                                                 style: ElevatedButton.styleFrom(
@@ -686,7 +708,7 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
                       children: [
                         Text(
                           'Get Reminders',
-													style: Theme.of(context).textTheme.headline1,
+                          style: Theme.of(context).textTheme.headline1,
                         ),
                         Switch(
                             value: statusSwitchReminders,

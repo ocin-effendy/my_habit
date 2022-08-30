@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:my_habit/home_page.dart';
+import 'package:my_habit/models/color.dart';
+import 'package:my_habit/pages/achievements_page.dart';
 import 'package:my_habit/pages/habits_page.dart';
 import 'package:my_habit/pages/profile_page.dart';
-import 'package:my_habit/widget/bottomsheet.dart';
+import 'package:my_habit/widget/onetask_bottomsheet.dart';
 import 'dart:math' as math;
+
+import 'package:my_habit/widget/regulerhabit_bottomsheet.dart';
 
 final math.Random random = math.Random();
 
@@ -17,7 +21,7 @@ class RootPage extends StatefulWidget {
 class _RootPageState extends State<RootPage> with TickerProviderStateMixin{
 	late AnimationController _animationControllerBottomSheet;
   int currentTab = 0;
-  List<Widget> screen = [const HomePage(), Habits(), Profile()];
+  List<Widget> screen = [const HomePage(), Achievements(), Habits(), Profile()];
 
   final PageStorageBucket bucket = PageStorageBucket();
   Widget currentScreen = const HomePage();
@@ -35,7 +39,7 @@ class _RootPageState extends State<RootPage> with TickerProviderStateMixin{
 			_animationControllerBottomSheet =
 					        BottomSheet.createAnimationController(this);
 			    _animationControllerBottomSheet.duration = const Duration(milliseconds: 600);
-	  }
+  }
 
 	@override
 	  void dispose() {
@@ -47,7 +51,6 @@ class _RootPageState extends State<RootPage> with TickerProviderStateMixin{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color.fromRGBO(21, 21, 71, 1),
         extendBody: true,
         body: PageStorage(
           bucket: bucket,
@@ -62,11 +65,7 @@ class _RootPageState extends State<RootPage> with TickerProviderStateMixin{
 					activeIcon: Icons.close,
 					animationDuration: const Duration(milliseconds: 300),
             animationAngle: math.pi /2,
-					gradient: const LinearGradient(begin: Alignment.topLeft, colors: [
-                Colors.yellowAccent,
-                Colors.greenAccent,
-                Colors.lightBlueAccent
-              ]),
+					gradient: primaryGradient,
 					gradientBoxShape: BoxShape.circle,
 					overlayColor: Colors.black,
 					buttonSize: const Size(50, 50),
@@ -75,23 +74,42 @@ class _RootPageState extends State<RootPage> with TickerProviderStateMixin{
 					spaceBetweenChildren: 5,
             children: [
               SpeedDialChild(
+								backgroundColor: Color.fromRGBO(52, 232, 158, 1),
 								onTap: (){
 									showModalBottomSheet(
 										context: context,
-                    backgroundColor: const Color.fromRGBO(21, 21, 70, 1),
+                    backgroundColor: darkBlueOne,
 										isScrollControlled: true,
 										transitionAnimationController: _animationControllerBottomSheet,
 										shape: const RoundedRectangleBorder(
 												borderRadius: BorderRadius.vertical(top: Radius.circular(35))
 												),
 										builder: (context) {
-											return GetBottomSheet();
+											return RegulerHabitBottomSheet();
 										} 
 									);
 								},
-								child: const Icon(Icons.format_list_bulleted_rounded)),
-              SpeedDialChild(child: const Icon(Icons.flag_rounded)),
-              SpeedDialChild(child: const Icon(Icons.calendar_month_rounded)),
+								child: const Icon(Icons.format_list_bulleted_rounded, color: darkBlueOne,)),
+              SpeedDialChild(
+								backgroundColor: Color.fromRGBO(52, 232, 158, 1),
+								onTap: (){
+									showModalBottomSheet(
+										context: context,
+										backgroundColor: darkBlueOne,
+										isScrollControlled: true,
+										transitionAnimationController: _animationControllerBottomSheet,
+										shape: const RoundedRectangleBorder(
+											borderRadius: BorderRadius.vertical(top: Radius.circular(35))
+										),
+										builder: (context){
+											return OneTaskBottomSheet();
+										}
+									);
+								},
+								child: const Icon(Icons.flag_rounded, color: darkBlueOne,)),
+              SpeedDialChild(
+								backgroundColor: Color.fromRGBO(52, 232, 158, 1),
+								child: const Icon(Icons.calendar_month_rounded, color: darkBlueOne,)),
             ],
       ),
     );
@@ -146,9 +164,7 @@ class _RootPageState extends State<RootPage> with TickerProviderStateMixin{
                             },
                             icon: currentTab == 0
                                 ? ShaderMask(
-                                    shaderCallback: (rect) => LinearGradient(
-                                            colors: iconsGradientColors,
-                                            begin: Alignment.topLeft)
+                                    shaderCallback: (rect) => primaryGradient 
                                         .createShader(rect),
                                     child: const Icon(
                                       Icons.format_list_bulleted_rounded,
@@ -159,15 +175,13 @@ class _RootPageState extends State<RootPage> with TickerProviderStateMixin{
                         IconButton(
                             onPressed: () {
                               setState(() {
-                                currentScreen = Habits();
+                                currentScreen = Achievements();
                                 currentTab = 1;
                               });
                             },
                             icon: currentTab == 1
                                 ? ShaderMask(
-                                    shaderCallback: (rect) => LinearGradient(
-                                            colors: iconsGradientColors,
-                                            begin: Alignment.topLeft)
+                                    shaderCallback: (rect) => primaryGradient
                                         .createShader(rect),
                                     child: const Icon(
                                       Icons.pie_chart_outline_rounded,
@@ -192,9 +206,7 @@ class _RootPageState extends State<RootPage> with TickerProviderStateMixin{
                             },
                             icon: currentTab == 2
                                 ? ShaderMask(
-                                    shaderCallback: (rect) => LinearGradient(
-                                            colors: iconsGradientColors,
-                                            begin: Alignment.topLeft)
+                                    shaderCallback: (rect) => primaryGradient 
                                         .createShader(rect),
                                     child: const Icon(
                                       Icons.access_time_rounded,
@@ -211,9 +223,7 @@ class _RootPageState extends State<RootPage> with TickerProviderStateMixin{
                             },
                             icon: currentTab == 3
                                 ? ShaderMask(
-                                    shaderCallback: (rect) => LinearGradient(
-                                            colors: iconsGradientColors,
-                                            begin: Alignment.topLeft)
+                                    shaderCallback: (rect) => primaryGradient
                                         .createShader(rect),
                                     child: const Icon(
                                       Icons.account_circle_outlined,
