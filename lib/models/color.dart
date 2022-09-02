@@ -98,6 +98,10 @@ const ColorScheme _customColorScheme = ColorScheme(
 const Color darkBlueOne = Color.fromRGBO(21, 21, 71, 1);
 const Color textWhite = Colors.white;
 const Color toggleableActiveColor = Colors.blue;
+final iconsGradientColors = List<Color>.from(
+      [Colors.yellowAccent, Colors.greenAccent, Colors.lightBlueAccent]);
+
+	
 
 const primaryGradient = LinearGradient(
 	begin: Alignment.topLeft,

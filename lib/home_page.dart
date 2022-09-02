@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:my_habit/data.dart';
 import 'package:my_habit/models/color.dart';
+import 'package:my_habit/pages/detail_habit_page.dart';
 import 'package:my_habit/provider/data_habits_provider.dart';
 import 'package:my_habit/provider/pop_up_provider.dart';
 import 'package:my_habit/root.dart';
+import 'package:my_habit/widget/regulerhabit_bottomsheet.dart';
 import 'package:provider/provider.dart';
 import 'utils/date_utils.dart' as date_util;
 
 CarouselController carouselController = CarouselController();
 CarouselController carouselController1 = CarouselController();
+DateTime currentDateTime = DateTime.now();
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,43 +25,47 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final _controllerDatePicker = DatePickerController();
   DateTime _selectedValue = DateTime.now();
-	late ScrollController scrollController;
-	List<DateTime> currentMonthList = List.empty();
-	DateTime currentDateTime = DateTime.now();
+  late ScrollController scrollController;
+  List<DateTime> currentMonthList = List.empty();
 
-	late AnimationController _animationController;
-	late Animation<double> _animation;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
 
   //List<IconData> dataIcon = [];
   int count = 3;
 
-	void getAnimation(int timeDuration){
-		_animationController = AnimationController(vsync: this, duration: Duration(seconds: timeDuration))..forward();
-		_animation = CurvedAnimation(parent: _animationController, curve: Curves.easeIn);
-	}
+  void getAnimation(int timeDuration) {
+    _animationController = AnimationController(
+        vsync: this, duration: Duration(seconds: timeDuration))
+      ..forward();
+    _animation =
+        CurvedAnimation(parent: _animationController, curve: Curves.easeIn);
+  }
 
-	@override
+  @override
   void initState() {
     super.initState();
     currentMonthList = date_util.DateUtils.daysInMonth(currentDateTime);
     currentMonthList.sort((a, b) => a.day.compareTo(b.day));
     currentMonthList = currentMonthList.toSet().toList();
-		print("================");
-		print(currentMonthList[1]);
-		print(currentMonthList[1].weekday);
-    scrollController = ScrollController(initialScrollOffset: 70.0 * currentDateTime.day);
+    print("================");
+    print(currentMonthList[1]);
+    print(currentMonthList[1].weekday);
+    scrollController =ScrollController(initialScrollOffset: 70.0 * currentDateTime.day);
 
-	}
+  }
 
-	@override
-	  void dispose() {
-	    super.dispose();
-			scrollController.dispose();
-			_animationController.dispose();
-	  }
+  @override
+  void dispose() {
+    super.dispose();
+    scrollController.dispose();
+    _animationController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+	
     return ChangeNotifierProvider<PopUpProvider>(
       create: (context) => PopUpProvider(),
       child: Scaffold(
@@ -90,32 +97,53 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               itemBuilder: (BuildContext context, int itemIndex,
                                       int pageViewIndex) =>
                                   Consumer<DataHabitsProvider>(
-                                    builder: (context, data, _) {
-																				getAnimation(math.Random().nextInt(4));
-                                       return  GestureDetector(
+                                      builder: (context, data, _) {
+                                    getAnimation(math.Random().nextInt(4));
+                                    return GestureDetector(
                                       onTap: () {
                                         if (data.listDataHabits.isNotEmpty && itemIndex < data.listDataHabits.length) {
-                                          Provider.of<PopUpProvider>(context,listen: false).setStatus(true);
+                                          // Provider.of<PopUpProvider>(context,listen: false).setStatus(true);
+																					showDialog(
+																						context: context, 
+																						builder: (context){
+																							return getPopUpHabit(); 
+																						}
+																					);
                                         }
                                       },
                                       child: FadeTransition(
-																				opacity: _animation,
+                                        opacity: _animation,
                                         child: Container(
                                             width: 78,
                                             decoration: BoxDecoration(
-                                              borderRadius: const BorderRadius.all(Radius.circular(15)),
-																							gradient: LinearGradient(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(15)),
+                                              gradient: LinearGradient(
                                                   begin: Alignment.topLeft,
                                                   colors: [
                                                     Color.fromRGBO(
                                                         random.nextInt(256),
                                                         random.nextInt(256),
                                                         random.nextInt(256),
-                                                        data.listDataHabits.isNotEmpty && itemIndex < data.listDataHabits.length ? 1 : .35),
+                                                        data.listDataHabits
+                                                                    .isNotEmpty &&
+                                                                itemIndex <
+                                                                    data.listDataHabits
+                                                                        .length
+                                                            ? 1
+                                                            : .35),
                                                     Color.fromRGBO(
                                                         random.nextInt(256),
                                                         random.nextInt(256),
-                                                        random.nextInt(256), data.listDataHabits.isNotEmpty && itemIndex <data.listDataHabits.length ? 1 : .35),
+                                                        random.nextInt(256),
+                                                        data.listDataHabits
+                                                                    .isNotEmpty &&
+                                                                itemIndex <
+                                                                    data.listDataHabits
+                                                                        .length
+                                                            ? 1
+                                                            : .35),
                                                   ]),
                                             ),
                                             child: Stack(
@@ -135,13 +163,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                 DataHabits
                                                                     .bankIcon
                                                                     .length)])),
-                                                data.listDataHabits.isNotEmpty &&
+                                                data.listDataHabits
+                                                            .isNotEmpty &&
                                                         itemIndex <
                                                             data.listDataHabits
                                                                 .length
                                                     ? const Align(
-                                                        alignment:
-                                                            Alignment.bottomRight,
+                                                        alignment: Alignment
+                                                            .bottomRight,
                                                         child: Padding(
                                                           padding:
                                                               EdgeInsets.only(
@@ -150,7 +179,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                           child: Text(
                                                             "active",
                                                             style: TextStyle(
-																															color: darkBlueOne,	
+                                                                color:
+                                                                    darkBlueOne,
                                                                 fontSize: 12,
                                                                 fontWeight:
                                                                     FontWeight
@@ -163,9 +193,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                               ],
                                             )),
                                       ),
-																		
-																		);}
-                                  )),
+                                    );
+                                  })),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 3),
@@ -180,20 +209,26 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                     const Duration(seconds: 3),
                                 autoPlayInterval: const Duration(seconds: 4)),
                             itemCount: count,
-                            itemBuilder: (BuildContext context, int itemIndex,int pageViewIndex) => Consumer<DataHabitsProvider>(
-                              builder: (context, data, _) {
-																getAnimation(math.Random().nextInt(4));
-																return GestureDetector(
+                            itemBuilder: (BuildContext context, int itemIndex,
+                                    int pageViewIndex) =>
+                                Consumer<DataHabitsProvider>(
+                                    builder: (context, data, _) {
+                              getAnimation(math.Random().nextInt(4));
+                              return GestureDetector(
                                 onTap: () {
-                                  if (data.listDataHabits.isNotEmpty &&
-                                      itemIndex < data.listDataHabits.length) {
-                                    Provider.of<PopUpProvider>(context,
-                                            listen: false)
-                                        .setStatus(true);
+                                  if (data.listDataHabits.isNotEmpty && itemIndex + count < data.listDataHabits.length) {
+                                    //Provider.of<PopUpProvider>(context,listen: false).setStatus(true);
+																		showDialog(
+																			context: context, 
+																			builder: (context){
+																				return getPopUpHabit(); 
+																			}
+																		);
+
                                   }
                                 },
                                 child: FadeTransition(
-																	opacity: _animation,
+                                  opacity: _animation,
                                   child: Container(
                                       width: 78,
                                       decoration: BoxDecoration(
@@ -235,13 +270,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                         itemIndex + count <
                                                 data.listDataHabits.length
                                             ? const Align(
-                                                alignment: Alignment.bottomRight,
+                                                alignment:
+                                                    Alignment.bottomRight,
                                                 child: Padding(
                                                   padding: EdgeInsets.only(
                                                       bottom: 3, right: 5),
                                                   child: Text(
                                                     "active",
                                                     style: TextStyle(
+																												color: darkBlueOne,
                                                         fontSize: 12,
                                                         fontWeight:
                                                             FontWeight.w600,
@@ -251,8 +288,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                             : const Text(''),
                                       ])),
                                 ),
-                              );}
-                            ),
+                              );
+                            }),
                           ),
                         ),
                         getCarousel(),
@@ -310,55 +347,66 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     const SizedBox(
                       height: 15,
                     ),
-										//sgetDatePicker(),
+                    //sgetDatePicker(),
 
-										SizedBox(
-											height: 60,	
-											child: ListView.builder( 
-												controller: scrollController,
-												scrollDirection: Axis.horizontal,
-												shrinkWrap: true,
-												physics: BouncingScrollPhysics(),
-												itemCount: currentMonthList.length,
-												itemBuilder: (BuildContext context, int index){
-													return GestureDetector(
-														onTap: (){
-															setState(() {
-																currentDateTime = currentMonthList[index];
-															});
-														},
-													  child: Container(
-													  	width: 50,
-													  	height: 60,
-															decoration: BoxDecoration(
-																color: currentMonthList[index].day != currentDateTime.day ? Colors.transparent : Colors.lightBlueAccent,
-																borderRadius: const BorderRadius.all(Radius.circular(10))
-															),
-													    child: Column(
-																mainAxisAlignment: MainAxisAlignment.center,
-													    	children: [
-													    		Text(date_util.DateUtils.weekdays[currentMonthList[index].weekday-1],
-																	style: TextStyle(
-																		color: currentMonthList[index].day != currentDateTime.day ? Colors.white54 : Colors.black,
-																		fontSize: 14,
-																		fontWeight: FontWeight.w500
-																	),
-																	),
-																	const SizedBox(height: 8,),
-																	Text(currentMonthList[index].day.toString(),
-																		style: TextStyle(
-																			color: currentMonthList[index].day != currentDateTime.day ? Colors.white : Colors.black,
-																			fontSize: 18,
-																			fontWeight: FontWeight.w700
-																		),
-																	)
-													    	],
-													    ),
-													  ),
-													);
-												}
-											),
-										),
+                    SizedBox(
+                      height: 60,
+                      child: ListView.builder(
+                          controller: scrollController,
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          physics: BouncingScrollPhysics(),
+                          itemCount: currentMonthList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  currentDateTime = currentMonthList[index];
+                                });
+                              },
+                              child: Container(
+                                width: 50,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                    color: currentMonthList[index].day !=
+                                            currentDateTime.day
+                                        ? Colors.transparent
+                                        : Colors.lightBlueAccent,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(10))),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      date_util.DateUtils.weekdays[
+                                          currentMonthList[index].weekday - 1],
+                                      style: TextStyle(
+                                          color: currentMonthList[index].day !=
+                                                  currentDateTime.day
+                                              ? Colors.white54
+                                              : Colors.black,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text(
+                                      currentMonthList[index].day.toString(),
+                                      style: TextStyle(
+                                          color: currentMonthList[index].day !=
+                                                  currentDateTime.day
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
+                    ),
                     const SizedBox(height: 8),
                     const Divider(
                       color: Colors.white54,
@@ -368,15 +416,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       children: [
                         Text(
                           "All habits:",
-                          style:Theme.of(context).textTheme.headline2,
+                          style: Theme.of(context).textTheme.headline2,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           "two task",
-													style: TextStyle(
-														fontWeight: FontWeight.w500,
-													),
-
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ],
                     ),
@@ -388,39 +435,39 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: Padding(
                 padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
                       "Work Habits",
-									  	style: TextStyle(
-										  color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w600),
                     ),
                     // ini getpopuphabits
-										getPopUpHabit(),
+     //               getPopUpHabit(),
                   ],
                 ),
               ),
             ),
-						Align(
-							alignment: Alignment.bottomCenter,
-							child: Container(
-								width: MediaQuery.of(context).size.width,
-								height: MediaQuery.of(context).size.height * .18,
-								decoration: BoxDecoration(
-									gradient: LinearGradient(
-										begin: Alignment.bottomCenter,
-										end: Alignment.topCenter,
-										colors: [
-											Colors.black.withOpacity(1),
-											Colors.black.withOpacity(.8),
-											Colors.black.withOpacity(.4),
-											Colors.black.withOpacity(0),
-										]
-									),
-								),
-							),
-						),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * .18,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        Colors.black.withOpacity(1),
+                        Colors.black.withOpacity(.8),
+                        Colors.black.withOpacity(.4),
+                        Colors.black.withOpacity(0),
+                      ]),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -441,14 +488,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           items: [1, 2, 3, 4, 5, 6].map((e) {
             return Builder(
               builder: (BuildContext context) {
-								getAnimation(math.Random().nextInt(6));
+                getAnimation(math.Random().nextInt(6));
                 return FadeTransition(
-									opacity: _animation,
+                  opacity: _animation,
                   child: Container(
                     width: 78,
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
-                      gradient: LinearGradient(begin: Alignment.topLeft, colors: [
+                      gradient:
+                          LinearGradient(begin: Alignment.topLeft, colors: [
                         Color.fromRGBO(random.nextInt(256), random.nextInt(256),
                             random.nextInt(256), .35),
                         Color.fromRGBO(random.nextInt(256), random.nextInt(256),
@@ -489,78 +537,91 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget getPopUpHabit() {
-    return Consumer<PopUpProvider>(
-      builder: (context, status, _) => AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-        child: SizedBox(
-          key: UniqueKey(),
-          child: status.getStatus
-              ? Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  width: MediaQuery.of(context).size.width * .9,
-                  height: MediaQuery.of(context).size.height * .25,
-                  decoration: const BoxDecoration(
-                    color: Colors.black87,
-                    borderRadius: BorderRadius.all(Radius.circular(35)),
-                  ),
+	var width = MediaQuery.of(context).size.width;
+	var height = MediaQuery.of(context).size.height;
+    return AlertDialog(
+			insetPadding: EdgeInsets.symmetric(vertical: height * .1, horizontal: width * .05),
+			alignment: Alignment.topCenter,
+			contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+			shape: const RoundedRectangleBorder(
+					borderRadius: BorderRadius.all(Radius.circular(30))
+				),
+			backgroundColor: Colors.black.withOpacity(.7), // status.getStatus ? Container : null
+          content: Container(
+						height: MediaQuery.of(context).size.height *.22,
+						width: MediaQuery.of(context).size.width,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.info_outline_rounded,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 2),
-                            constraints: const BoxConstraints(),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.edit_rounded,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 2),
-                            constraints: const BoxConstraints(),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.pause_rounded,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 2),
-                            constraints: const BoxConstraints(),
-                          ),
-                          IconButton(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 2),
-                              constraints: const BoxConstraints(),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10, top: 2),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
                               onPressed: () {
-                                Provider.of<PopUpProvider>(context,
-                                        listen: false)
-                                    .setStatus(false);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            const DetailHabit()));
                               },
                               icon: const Icon(
-                                Icons.close_rounded,
+                                Icons.info_outline_rounded,
                                 color: Colors.white,
-                                size: 18,
-                              )),
-                        ],
+                                size: 20,
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 2),
+                              constraints: const BoxConstraints(),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                showModalBottomSheet(
+                                    context: context,
+                                    backgroundColor: darkBlueOne,
+                                    isScrollControlled: true,
+                                    shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(35))),
+                                    builder: (context) {
+                                      return RegulerHabitBottomSheet();
+                                    });
+                              },
+                              icon: const Icon(
+                                Icons.edit_rounded,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 2),
+                              constraints: const BoxConstraints(),
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.pause_rounded,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 2),
+                              constraints: const BoxConstraints(),
+                            ),
+                            IconButton(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 2),
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  //Provider.of<PopUpProvider>(context,
+                                   //       listen: false)
+                                    //  .setStatus(false);
+																	Navigator.pop(context);
+                                },
+                                icon: const Icon(
+                                  Icons.close_rounded,
+                                  color: Colors.white,
+                                  size: 20,
+                                )),
+                          ],
+                        ),
                       ),
                       ListTile(
                         leading: Icon(
@@ -571,8 +632,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         title: Text(
                           "Coding",
                           style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w500),
+                              fontSize: 22, fontWeight: FontWeight.w500),
                         ),
                         subtitle: Row(children: [
                           Icon(
@@ -586,8 +646,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           Text(
                             "Got for it!",
                             style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500),
+                                fontSize: 12, fontWeight: FontWeight.w500),
                           )
                         ]),
                       ),
@@ -598,12 +657,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           children: [
                             Text("Do Anytime",
                                 style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500)),
+                                    fontSize: 16, fontWeight: FontWeight.w500)),
                             Text(
                               "active",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500),
+                              style: TextStyle(fontWeight: FontWeight.w500),
                             )
                           ],
                         ),
@@ -635,8 +692,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 ]),
                             Row(
                               children: [
-																IconButton(
-                                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                                IconButton(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 2),
                                     constraints: const BoxConstraints(),
                                     onPressed: () {},
                                     icon: const Icon(
@@ -644,7 +702,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       color: Colors.white,
                                       size: 20,
                                     )),
-																IconButton(
+                                IconButton(
                                   onPressed: () {},
                                   icon: const Icon(
                                     Icons.close_rounded,
@@ -655,7 +713,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       const EdgeInsets.symmetric(horizontal: 2),
                                   constraints: const BoxConstraints(),
                                 ),
-                                                                IconButton(
+                                IconButton(
                                   onPressed: () {},
                                   icon: const Icon(
                                     Icons.done_rounded,
@@ -666,7 +724,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       const EdgeInsets.symmetric(horizontal: 2),
                                   constraints: const BoxConstraints(),
                                 ),
-																IconButton(
+                                IconButton(
                                   onPressed: () {},
                                   icon: const Icon(
                                     Icons.remove,
@@ -677,15 +735,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       const EdgeInsets.symmetric(horizontal: 2),
                                   constraints: const BoxConstraints(),
                                 ),
-																IconButton(
+                                IconButton(
                                   onPressed: () {},
                                   icon: const Icon(
                                     Icons.add,
                                     color: Colors.white,
                                     size: 20,
                                   ),
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 2),
+                                  padding:const EdgeInsets.symmetric(horizontal: 2),
                                   constraints: const BoxConstraints(),
                                 ),
                               ],
@@ -696,9 +753,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ],
                   ),
                 )
-              : null,
-        ),
-      ),
     );
   }
 }

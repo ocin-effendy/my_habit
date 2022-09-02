@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:my_habit/models/color.dart';
+import 'package:my_habit/pages/detail_habit_page.dart';
 
 class Habits extends StatelessWidget {
   Habits({Key? key}) : super(key: key);
 
-  Color primaryColor = const Color.fromRGBO(21, 21, 71, 1);
-  final iconsGradientColors = List<Color>.from(
-      [Colors.yellowAccent, Colors.greenAccent, Colors.lightBlueAccent]);
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +38,11 @@ class Habits extends StatelessWidget {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                           gradient: LinearGradient(
-                              begin: Alignment.bottomLeft,
-                              end: Alignment.topRight,
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
                               colors: [
                                 Color.fromRGBO(123, 223, 230, 1),
-                                Color.fromRGBO(88, 148, 166, 1)
+                                Color.fromRGBO(88, 148, 119, 1)
                               ]
                               //colors: [Colors.yellowAccent, Colors.greenAccent, Colors.lightBlueAccent]
                               ),
@@ -305,43 +303,48 @@ class Habits extends StatelessWidget {
                     Container(
                       child: Column(
                         children: [
-                          Container(
-                            margin: EdgeInsets.only(top: 10),
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * .08,
-                            padding: EdgeInsets.symmetric(horizontal: 15),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
-                              border: GradientBoxBorder(
-                                gradient: LinearGradient(
+                          GestureDetector(
+														onTap:(){
+															Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=> const DetailHabit()));
+														},
+                            child: Container(
+                              margin: EdgeInsets.only(top: 10),
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height * .08,
+                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(15)),
+                                border: GradientBoxBorder(
+                                  gradient: LinearGradient(
 																begin: Alignment.bottomLeft,
 																end: Alignment.topRight,
 																colors: iconsGradientColors,
 															),
+                                ),
                               ),
-                            ),
-                            child: Row(
-                              children: [
-                                    ShaderMask(
-                                      shaderCallback: (rect) => LinearGradient(
-                                        colors: iconsGradientColors,
-                                        begin: Alignment.topLeft
+                              child: Row(
+                                children: [
+                                      ShaderMask(
+                                        shaderCallback: (rect) => LinearGradient(
+                                          colors: iconsGradientColors,
+                                          begin: Alignment.topLeft
 																		).createShader(rect),
-                                      child: const Icon(
-                                        Icons.local_drink_rounded,
-                                        color: Colors.white,
+                                        child: const Icon(
+                                          Icons.local_drink_rounded,
+                                          color: Colors.white,
 																		)
 																	),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      "Drink Water",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20),
-                                    )
-                                ],
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        "Drink Water",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 20),
+                                      )
+                                  ],
+                              ),
                             ),
                           ),
                           Container(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:my_habit/home_page.dart';
 import 'package:my_habit/models/color.dart';
+import 'package:my_habit/root.dart';
 import 'package:my_habit/utils/date_utils.dart' as date_util;
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
@@ -11,19 +13,9 @@ class Achievements extends StatefulWidget {
 class _AchievementsState extends State<Achievements> {
 	List<DateTime> currentMonthList = List.empty();
 	//List<DateTime> current = List.empty();
-	DateTime currentDateTime = DateTime.now();
 	int positionWeekDays = 0;
 	//DateTime lastDayOfMonth = DateTime(2022, 8, 1);
 
-	List<String> listDays = [
-    'Su',
-    'Mo',
-    'Tu',
-    'We',
-    'Th',
-    'Fr',
-    'Sa',
-  ];
 
 
 

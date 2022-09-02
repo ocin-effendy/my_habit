@@ -15,6 +15,7 @@ class RegulerHabitBottomSheet extends StatefulWidget {
 }
 
 class _RegulerHabitBottomSheetState extends State<RegulerHabitBottomSheet> {
+  TimeOfDay _time = TimeOfDay.now();
   final bankIcons = DataHabits.bankIcon;
   final _nameHabitController = TextEditingController(); //title
   final _goalsHabitController = TextEditingController(); // goals
@@ -38,6 +39,8 @@ class _RegulerHabitBottomSheetState extends State<RegulerHabitBottomSheet> {
     "Fr": false,
     "Sa": false,
   };
+  late String time;
+  List<String> listTime = ['14:50'];
 
   List<Map<String, dynamic>> dataHabits = [
     {
@@ -62,8 +65,30 @@ class _RegulerHabitBottomSheetState extends State<RegulerHabitBottomSheet> {
     }
   ];
 
-  final iconsGradientColors = List<Color>.from(
-      [Colors.yellowAccent, Colors.greenAccent, Colors.lightBlueAccent]);
+  void _selectTime() async {
+    final newTime = await showTimePicker(
+      context: context,
+      initialTime: _time,
+    );
+    if (newTime != null) {
+      setState(() {
+        _time = newTime;
+        time = _time.toString().split("(")[1].split(")")[0];
+        //Provider.of<DataHabitsProvider>(context, listen: false).addTimeReminder(time);
+        listTime.add(time);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (listTime.isNotEmpty) {
+      setState(() {
+        statusSwitchReminders = true;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -222,7 +247,8 @@ class _RegulerHabitBottomSheetState extends State<RegulerHabitBottomSheet> {
                             });
                       },
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 5),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -336,7 +362,7 @@ class _RegulerHabitBottomSheetState extends State<RegulerHabitBottomSheet> {
                                         color: Colors.white,
                                         fontWeight: FontWeight.w500),
                                     decoration: InputDecoration(
-                                      hintText: "Input here",
+                                      hintText: _descGoals == "times" ? "Ex. 3 times" : "Ex. 10 minutes",
                                       hintStyle: TextStyle(
                                           color: Colors.grey,
                                           fontWeight: FontWeight.w500),
@@ -715,10 +741,67 @@ class _RegulerHabitBottomSheetState extends State<RegulerHabitBottomSheet> {
                             onChanged: (value) {
                               setState(() {
                                 statusSwitchReminders = value;
+																if(!statusSwitchReminders){
+																	listTime.clear();
+																}
                               });
                             })
                       ],
-                    )
+                    ),
+                    Visibility(
+                      visible: statusSwitchReminders,
+                      child: Column(
+                        children: [
+                          for (int i = 0; i < listTime.length; i++)
+                            ListTile(
+                              leading: Container(
+                                height: double.infinity,
+                                child: Icon(
+                                  Icons.access_time_rounded,
+                                  color: Colors.lightBlueAccent,
+                                ),
+                              ),
+                              title: Text(
+                                listTime[i],
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w500),
+                              ),
+                              trailing: SizedBox(
+                                  height: double.infinity,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        listTime.removeAt(i);
+                                      });
+                                    },
+                                    icon: Icon(
+                                      Icons.close_rounded,
+                                      color: Colors.white,
+                                    ),
+                                  )),
+                              minLeadingWidth: 0,
+                            ),
+                          ListTile(
+                            onTap: () {
+                              _selectTime();
+                            },
+                            leading: Container(
+                              height: double.infinity,
+                              child: Icon(
+                                Icons.add_circle_rounded,
+                                color: Colors.lightBlueAccent,
+                              ),
+                            ),
+                            title: Text(
+                              "Add reminder time",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w500),
+                            ),
+                            minLeadingWidth: 0,
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ))),
       ),

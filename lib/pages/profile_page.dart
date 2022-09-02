@@ -9,7 +9,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-	TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
+	TimeOfDay _time = TimeOfDay.now();
 	bool switchSound = false;
 	String morning = "00:00";
 	String afternoon = "12:00";

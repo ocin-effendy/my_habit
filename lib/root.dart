@@ -11,6 +11,16 @@ import 'dart:math' as math;
 import 'package:my_habit/widget/regulerhabit_bottomsheet.dart';
 
 final math.Random random = math.Random();
+List<String> listDays = [
+    'Su',
+    'Mo',
+    'Tu',
+    'We',
+    'Th',
+    'Fr',
+    'Sa',
+  ];
+
 
 class RootPage extends StatefulWidget {
   const RootPage({Key? key}) : super(key: key);
@@ -89,7 +99,7 @@ class _RootPageState extends State<RootPage> with TickerProviderStateMixin{
 										} 
 									);
 								},
-								child: const Icon(Icons.format_list_bulleted_rounded, color: darkBlueOne,)),
+								child: const Icon(Icons.calendar_month_rounded, color: darkBlueOne,)),
               SpeedDialChild(
 								backgroundColor: Color.fromRGBO(52, 232, 158, 1),
 								onTap: (){
@@ -106,11 +116,8 @@ class _RootPageState extends State<RootPage> with TickerProviderStateMixin{
 										}
 									);
 								},
-								child: const Icon(Icons.flag_rounded, color: darkBlueOne,)),
-              SpeedDialChild(
-								backgroundColor: Color.fromRGBO(52, 232, 158, 1),
-								child: const Icon(Icons.calendar_month_rounded, color: darkBlueOne,)),
-            ],
+								child: const Icon(Icons.event_available_rounded, color: darkBlueOne,)),
+							] 
       ),
     );
   }
