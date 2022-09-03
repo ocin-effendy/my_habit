@@ -1,45 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:my_habit/home_page.dart';
+import 'package:get/get.dart';
+import 'package:my_habit/controllers/datecontroller.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/root.dart';
 import 'package:my_habit/utils/date_utils.dart' as date_util;
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
-class Achievements extends StatefulWidget {
-  @override
-  State<Achievements> createState() => _AchievementsState();
-}
-
-class _AchievementsState extends State<Achievements> {
-	List<DateTime> currentMonthList = List.empty();
+class Achievements extends StatelessWidget {
+  const Achievements({Key? key}) : super(key: key);
 	//List<DateTime> current = List.empty();
-	int positionWeekDays = 0;
 	//DateTime lastDayOfMonth = DateTime(2022, 8, 1);
-
-
-
-
-	@override
-  void initState() {
-    currentMonthList = date_util.DateUtils.daysInMonth(currentDateTime);
-    currentMonthList.sort((a, b) => a.day.compareTo(b.day));
-    currentMonthList = currentMonthList.toSet().toList();
-		print(currentMonthList);
-		print(currentMonthList[0].day);
-		print(date_util.DateUtils.weekdays[currentMonthList[0].weekday ]);
-		positionWeekDays = date_util.DateUtils.weekdays.indexOf(date_util.DateUtils.weekdays[currentMonthList[0].weekday]);
-		print('===========================');
-		print(positionWeekDays);
-		print(currentMonthList.length.toString());
-
-
-		print('-----------------------------------------');
-		//print(currentDateTime);
-		//print(lastDayOfMonth);
-
 		//print("${lastDayOfMonth.month}/${lastDayOfMonth.day}");
-
-
 		//current = date_util.DateUtils.daysInMonth(lastDayOfMonth);
     //current.sort((a, b) => a.day.compareTo(b.day));
     //current = current.toSet().toList();
@@ -47,9 +18,6 @@ class _AchievementsState extends State<Achievements> {
 		//print(date_util.DateUtils.weekdays[current[0].weekday ]);
 		//positionWeekDays = date_util.DateUtils.weekdays.indexOf(date_util.DateUtils.weekdays[current[0].weekday]);
 		//print("position terbaru = $positionWeekDays");
-
-    super.initState();
-  }
 
 
   @override
@@ -130,66 +98,69 @@ class _AchievementsState extends State<Achievements> {
                       ),
 							const SizedBox(height: 30),
 
-							SizedBox(
-								width: MediaQuery.of(context).size.width,
-								child: Column(
-									mainAxisAlignment: MainAxisAlignment.center,
-									children: [
-										Text(date_util.DateUtils.months[currentDateTime.month -1] + " " + currentDateTime.year.toString(),
-											style: Theme.of(context).textTheme.headline1,
-										),
-										SizedBox(
-											width: 329,
-										  child: Wrap(
-										  	children: [
-										  		for(int i = 0; i < listDays.length; i++)
-										  			Container(
-															margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
-															padding: EdgeInsets.zero,
-										  				width: 35,
-										  				height: 35,
-										  				child: Center(child: Text(listDays[i], style: Theme.of(context).textTheme.headline2)),
+							GetBuilder<DateController>(
+								init: DateController(),
+							  builder: (controller) => SizedBox(
+							  	width: MediaQuery.of(context).size.width,
+							  	child: Column(
+							  		mainAxisAlignment: MainAxisAlignment.center,
+							  		children: [
+							  			Text(date_util.DateUtils.months[controller.currentDateTime.month -1] + " " + controller.currentDateTime.year.toString(),
+							  				style: Theme.of(context).textTheme.headline1,
+							  			),
+							  			SizedBox(
+							  				width: 329,
+							  			  child: Wrap(
+							  			  	children: [
+							  			  		for(int i = 0; i < listDays.length; i++)
+							  			  			Container(
+							  								margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+							  								padding: EdgeInsets.zero,
+							  			  				width: 35,
+							  			  				height: 35,
+							  			  				child: Center(child: Text(listDays[i], style: Theme.of(context).textTheme.headline2)),
 
-										  			),
-										  	],
-										  ),
-										),
-										SizedBox(
-											width: 329,
-										  child: Wrap(
-										  	children: [
-													// Use current (custom date)
-										  		for(int i = 0; i < positionWeekDays + currentMonthList.length; i++)
-										  		Container(
-														margin: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
-														padding: EdgeInsets.zero,
-										  			width: 35,
-										  			height: 35,
-										  		//	child: i >= positionWeekDays  ? Center(child: Text(currentMonthList[i - positionWeekDays].day.toString())) : null,
-														child: i >= positionWeekDays ? Stack(
-														  children: [
-																SimpleCircularProgressBar(
-																	maxValue: 100,
-																	progressStrokeWidth: 2.5,
-																	backStrokeWidth: 2.5,
-																	progressColors: const [Colors.deepOrangeAccent, Colors.greenAccent, Colors.lightBlueAccent, Colors.purpleAccent],
-																	backColor: Colors.transparent,
-																	fullProgressColor: Colors.greenAccent,
-																	valueNotifier: ValueNotifier(i.toDouble() + 70.0),
-																	mergeMode: true,
-																	animationDuration: 2,
-														  ),
-																Center(child: Text(currentMonthList[i - positionWeekDays].day.toString(),
-																)),
-															]
-														): null,
-										  		),
-										  	],
-										  ),
-										),
-										const SizedBox(height: 30,),
-									],
-								),
+							  			  			),
+							  			  	],
+							  			  ),
+							  			),
+							  			SizedBox(
+							  				width: 329,
+							  			  child: Wrap(
+							  			  	children: [
+							  						// Use current (custom date)
+							  			  		for(int i = 0; i < controller.positionWeekDays + controller.currentMonthList.length; i++)
+							  			  		Container(
+							  							margin: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+							  							padding: EdgeInsets.zero,
+							  			  			width: 35,
+							  			  			height: 35,
+							  			  		//	child: i >= positionWeekDays  ? Center(child: Text(currentMonthList[i - positionWeekDays].day.toString())) : null,
+							  							child: i >= controller.positionWeekDays ? Stack(
+							  							  children: [
+							  									SimpleCircularProgressBar(
+							  										maxValue: 100,
+							  										progressStrokeWidth: 2.5,
+							  										backStrokeWidth: 2.5,
+							  										progressColors: const [Colors.deepOrangeAccent, Colors.greenAccent, Colors.lightBlueAccent, Colors.purpleAccent],
+							  										backColor: Colors.transparent,
+							  										fullProgressColor: Colors.greenAccent,
+							  										valueNotifier: ValueNotifier(i.toDouble() + 70.0),
+							  										mergeMode: true,
+							  										animationDuration: 2,
+							  							  ),
+							  									Center(child: Text(controller.currentMonthList[i - controller.positionWeekDays].day.toString(),
+							  									)),
+							  								]
+							  							): null,
+							  			  		),
+							  			  	],
+							  			  ),
+							  			),
+							  			const SizedBox(height: 30,),
+							  		],
+							  	),
+							  ),
 							),
               ],
               ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:my_habit/controllers/habitcontroller.dart';
 import 'package:my_habit/data.dart';
 import 'package:my_habit/home_page.dart';
 import 'package:my_habit/models/color.dart';
@@ -6,42 +8,10 @@ import 'package:my_habit/provider/data_habits_provider.dart';
 import 'package:my_habit/root.dart';
 import 'package:provider/provider.dart';
 
-class RegulerHabitBottomSheet extends StatefulWidget {
-  const RegulerHabitBottomSheet({Key? key}) : super(key: key);
+class RegulerHabitBottomSheet extends StatelessWidget {
+  RegulerHabitBottomSheet({Key? key}) : super(key: key);
 
-  @override
-  State<RegulerHabitBottomSheet> createState() =>
-      _RegulerHabitBottomSheetState();
-}
-
-class _RegulerHabitBottomSheetState extends State<RegulerHabitBottomSheet> {
-  TimeOfDay _time = TimeOfDay.now();
   final bankIcons = DataHabits.bankIcon;
-  final _nameHabitController = TextEditingController(); //title
-  final _goalsHabitController = TextEditingController(); // goals
-  bool statusInput = true;
-  bool statusSwitchGoalhabits = false;
-  bool statusSwitchRepeatEveryday = false;
-  bool statusSwitchReminders = false;
-  IconData _iconHabit = Icons.star_rate_rounded; //IconHabit
-  String _descGoals = 'times'; //descGoals
-  String statusRepeat = 'daily'; //statusRepeat
-  int week = 1;
-  int month = 1;
-  String statusHabits = "active";
-  String timeReminders = "Do anytime";
-  Map<String, bool> listDays = {
-    "Su": true,
-    "Mo": false,
-    "Tu": false,
-    "We": false,
-    "Th": false,
-    "Fr": false,
-    "Sa": false,
-  };
-  late String time;
-  List<String> listTime = ['14:50'];
-
   List<Map<String, dynamic>> dataHabits = [
     {
       "title": "Coding",
@@ -65,529 +35,388 @@ class _RegulerHabitBottomSheetState extends State<RegulerHabitBottomSheet> {
     }
   ];
 
-  void _selectTime() async {
-    final newTime = await showTimePicker(
-      context: context,
-      initialTime: _time,
-    );
-    if (newTime != null) {
-      setState(() {
-        _time = newTime;
-        time = _time.toString().split("(")[1].split(")")[0];
-        //Provider.of<DataHabitsProvider>(context, listen: false).addTimeReminder(time);
-        listTime.add(time);
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    if (listTime.isNotEmpty) {
-      setState(() {
-        statusSwitchReminders = true;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _nameHabitController.dispose();
-    _goalsHabitController.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<DataHabitsProvider>(
-      builder: (cotext, data, _) => GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Container(
-            height: MediaQuery.of(context).size.height * 0.97,
-            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-            child: DefaultTabController(
-                length: 3,
-                child: ListView(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              "Regular Habit",
-                              style: TextStyle(
-                                  fontSize: 36, fontWeight: FontWeight.w600),
-                            ),
-                            Text(
-                              "Creating a new habit",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500, fontSize: 16),
-                            )
-                          ],
-                        ),
-                        IconButton(
-                            onPressed: () {
-                              if (_nameHabitController.text.isNotEmpty) {
-                                if (data.listDataHabits.length < 3) {
-                                  print("masukkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                                  carouselController.nextPage(
-                                      duration: const Duration(seconds: 2),
-                                      curve: Curves.ease);
-                                } else {
-                                  carouselController1.nextPage(
-                                      duration: const Duration(seconds: 2),
-                                      curve: Curves.ease);
-                                }
-
-                                Provider.of<DataHabitsProvider>(context,
-                                        listen: false)
-                                    .addDatahabits(DataHabits.bankIcon[random
-                                        .nextInt(DataHabits.bankIcon.length)]);
-                                Navigator.pop(context);
-                                statusSwitchGoalhabits = false;
-                                print(
-                                    "===========================================");
-                              } else {
-                                setState(() {
-                                  statusInput = false;
-                                });
-                              }
-                            },
-                            icon: ShaderMask(
-                                shaderCallback: (rect) =>
-                                    primaryGradient.createShader(rect),
-                                child: const Icon(
-                                  Icons.done_all_rounded,
-                                  color: Colors.white,
-                                )))
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Stack(
-                      children: [
-                        TextField(
-                          controller: _nameHabitController,
-                          cursorColor: Colors.lightBlueAccent,
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                          decoration: InputDecoration(
-                            hintText: "Name your habit",
-                            hintStyle: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w500),
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: 15.0,
-                              horizontal: 15.0,
-                            ),
-                            suffixIcon: statusInput
-                                ? null
-                                : Icon(
-                                    Icons.error,
-                                    color: Colors.red,
-                                  ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 1,
-                          child: Container(
-                            height: 1.5,
-                            width: MediaQuery.of(context).size.width,
-                            decoration:
-                                BoxDecoration(gradient: primaryGradient),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                backgroundColor: Color.fromRGBO(21, 21, 70, 1),
-                                title: Text("Choose Icon"),
-                                titleTextStyle: TextStyle(
-                                    fontSize: 24, fontWeight: FontWeight.bold),
-                                content: SingleChildScrollView(
-                                  child: Wrap(
-                                    alignment: WrapAlignment.center,
-                                    children: [
-                                      for (int i = 0; i < bankIcons.length; i++)
-                                        Padding(
-                                          padding: const EdgeInsets.all(5.0),
-                                          child: ShaderMask(
-                                              shaderCallback: (rect) =>
-                                                  primaryGradient
-                                                      .createShader(rect),
-                                              child: IconButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _iconHabit = bankIcons[i];
-                                                    Navigator.pop(context);
-                                                  });
-                                                },
-                                                icon: Icon(
-                                                  bankIcons[i],
-                                                  size: 36,
-                                                ),
-                                                color: Colors.white,
-                                              )),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 5),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            ShaderMask(
-                                shaderCallback: (rect) =>
-                                    primaryGradient.createShader(rect),
-                                child: Icon(
-                                  _iconHabit,
-                                  color: Colors.white,
-                                  size: 34,
-                                )),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Text(
-                              "Change Icon",
-                              style: Theme.of(context).textTheme.headline1,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Column(children: [
+      builder: (cotext, data, _) => GetBuilder<HabitController>(
+				init: HabitController(),
+        builder: (controller) => GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: Container(
+              height: MediaQuery.of(context).size.height * 0.97,
+              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+              child: DefaultTabController(
+                  length: 3,
+                  child: ListView(
+                    children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Goal for Habit',
-                            style: Theme.of(context).textTheme.headline1,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text(
+                                "Regular Habit",
+                                style: TextStyle(
+                                    fontSize: 36, fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                "Creating a new habit",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500, fontSize: 16),
+                              )
+                            ],
                           ),
-                          Switch(
-                              value: statusSwitchGoalhabits,
-                              onChanged: (value) {
-                                setState(() {
-                                  statusSwitchGoalhabits = value;
-                                });
-                              })
+                          IconButton(
+                              onPressed: () {
+                                if (controller.nameHabitController.text.isNotEmpty) {
+                                  if (data.listDataHabits.length < 3) {
+                                    print("masukkkkkkkkkkkkkkkkkkkkkkkkkkk");
+                                    carouselController.nextPage(
+                                        duration: const Duration(seconds: 2),
+                                        curve: Curves.ease);
+                                  } else {
+                                    carouselController1.nextPage(
+                                        duration: const Duration(seconds: 2),
+                                        curve: Curves.ease);
+                                  }
+
+                                  Provider.of<DataHabitsProvider>(context,
+                                          listen: false)
+                                      .addDatahabits(DataHabits.bankIcon[random
+                                          .nextInt(DataHabits.bankIcon.length)]);
+																	//controller.addDatahabits(DataHabits.bankIcon[random.nextInt(DataHabits.bankIcon.length)]);
+                                  Navigator.pop(context);
+                                  controller.statusSwitchGoalhabits = false;
+                                  print(
+                                      "===========================================");
+                                } else {
+																	controller.setStatusInput(false);
+                                  //setState(() {
+                                  //  statusInput = false;
+                                  //});
+                                }
+                              },
+                              icon: ShaderMask(
+                                  shaderCallback: (rect) =>
+                                      primaryGradient.createShader(rect),
+                                  child: const Icon(
+                                    Icons.done_all_rounded,
+                                    color: Colors.white,
+                                  )))
                         ],
                       ),
-                      Visibility(
-                        visible: statusSwitchGoalhabits,
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Stack(
+                        children: [
+                          TextField(
+                            controller: controller.nameHabitController,
+                            cursorColor: Colors.lightBlueAccent,
+                            style: TextStyle(
+                                color: Colors.white, fontWeight: FontWeight.bold),
+                            decoration: InputDecoration(
+                              hintText: "Name your habit",
+                              hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500),
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 15.0,
+                                horizontal: 15.0,
+                              ),
+                              suffixIcon: controller.statusInput
+                                  ? null
+                                  : Icon(
+                                      Icons.error,
+                                      color: Colors.red,
+                                    ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 1,
+                            child: Container(
+                              height: 1.5,
+                              width: MediaQuery.of(context).size.width,
+                              decoration:
+                                  BoxDecoration(gradient: primaryGradient),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  backgroundColor: Color.fromRGBO(21, 21, 70, 1),
+                                  title: Text("Choose Icon"),
+                                  titleTextStyle: TextStyle(
+                                      fontSize: 24, fontWeight: FontWeight.bold),
+                                  content: SingleChildScrollView(
+                                    child: Wrap(
+                                      alignment: WrapAlignment.center,
+                                      children: [
+                                        for (int i = 0; i < bankIcons.length; i++)
+                                          Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: ShaderMask(
+                                                shaderCallback: (rect) =>
+                                                    primaryGradient
+                                                        .createShader(rect),
+                                                child: IconButton(
+                                                  onPressed: () {
+																										controller.setIconHabit(bankIcons[i]);
+                                                      Navigator.pop(context);
+                                                    //setState(() {
+                                                    //  _iconHabit = bankIcons[i];
+                                                    //  Navigator.pop(context);
+                                                    //});
+                                                  },
+                                                  icon: Icon(
+                                                    bankIcons[i],
+                                                    size: 36,
+                                                  ),
+                                                  color: Colors.white,
+                                                )),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              });
+                        },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Column(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 5),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        primary: _descGoals == "times"
-                                            ? Colors.lightBlueAccent
-                                            : Colors.grey,
-                                        shape: const StadiumBorder(),
-                                        fixedSize: Size(
-                                            MediaQuery.of(context).size.width /
-                                                    2 -
-                                                40,
-                                            40),
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _descGoals = "times";
-                                        });
-                                      },
-                                      child: Text(
-                                        "of times",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline1,
-                                      )),
-                                  ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        primary: _descGoals == "minutes"
-                                            ? Colors.lightBlueAccent
-                                            : Colors.grey,
-                                        shape: const StadiumBorder(),
-                                        fixedSize: Size(
-                                            MediaQuery.of(context).size.width /
-                                                    2 -
-                                                40,
-                                            40),
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _descGoals = "minutes";
-                                        });
-                                      },
-                                      child: Text(
-                                        "time",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline1,
-                                      )),
-                                ],
-                              ),
+                              ShaderMask(
+                                  shaderCallback: (rect) =>
+                                      primaryGradient.createShader(rect),
+                                  child: Icon(
+                                    controller.iconHabit,
+                                    color: Colors.white,
+                                    size: 34,
+                                  )),
                               const SizedBox(
-                                height: 10,
+                                width: 20,
                               ),
-                              Stack(
-                                children: [
-                                  TextField(
-                                    controller: _goalsHabitController,
-                                    keyboardType: TextInputType.number,
-                                    cursorColor: Colors.lightBlueAccent,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500),
-                                    decoration: InputDecoration(
-                                      hintText: _descGoals == "times" ? "Ex. 3 times" : "Ex. 10 minutes",
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500),
-                                      contentPadding: EdgeInsets.symmetric(
-                                        vertical: 15.0,
-                                        horizontal: 15.0,
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    bottom: 1,
-                                    child: Container(
-                                      height: 1.5,
-                                      width: MediaQuery.of(context).size.width,
-                                      decoration: const BoxDecoration(
-                                          gradient: primaryGradient),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              Text(
+                                "Change Icon",
+                                style: Theme.of(context).textTheme.headline1,
+                              )
                             ],
                           ),
                         ),
                       ),
-                    ]),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Column(
-                      children: [
-                        TabBar(
-                          // ============= for get statusRepeat
-                          onTap: (index) {
-                            if (index == 0) {
-                              setState(() {
-                                statusRepeat = "daily";
-                              });
-                            } else if (index == 1) {
-                              setState(() {
-                                statusRepeat = "weekly";
-                              });
-                            } else {
-                              setState(() {
-                                statusRepeat = "monthly";
-                              });
-                            }
-                            print("ini index : $index");
-                          },
-                          indicatorPadding: const EdgeInsets.all(0.0),
-                          indicatorWeight: 3.0,
-                          labelPadding:
-                              const EdgeInsets.only(left: 0.0, right: 0.0),
-                          indicator: const ShapeDecoration(
-                            shape: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.transparent,
-                                    width: 0.0,
-                                    style: BorderStyle.solid)),
-                            gradient: primaryGradient,
-                          ),
-                          tabs: [
-                            Container(
-                              height: 40,
-                              alignment: Alignment.center,
-                              color: const Color.fromRGBO(21, 21, 70, 1),
-                              child: Text(
-                                "Daily",
-                                style: Theme.of(context).textTheme.headline1,
-                              ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Column(children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Goal for Habit',
+                              style: Theme.of(context).textTheme.headline1,
                             ),
-                            Container(
-                              height: 40,
-                              alignment: Alignment.center,
-                              color: const Color.fromRGBO(21, 21, 70, 1),
-                              child: Text(
-                                "Weekly",
-                                style: Theme.of(context).textTheme.headline1,
-                              ),
-                            ),
-                            Container(
-                              height: 40,
-                              alignment: Alignment.center,
-                              color: const Color.fromRGBO(21, 21, 70, 1),
-                              child: Text(
-                                "Monthly",
-                                style: Theme.of(context).textTheme.headline1,
-                              ),
-                            ),
+                            Switch(
+                                value: controller.statusSwitchGoalhabits,
+                                onChanged: (value) {
+																	controller.setStatusSwitchGoalHabits(value);
+                                 // setState(() {
+                                  //  statusSwitchGoalhabits = value;
+                                  //});
+                                })
                           ],
                         ),
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 160,
-                          child: TabBarView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 30),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                        Visibility(
+                          visible: controller.statusSwitchGoalhabits,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    Text(
-                                      "During these day",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: listDays
-                                            .map((key, value) => MapEntry(
-                                                  key,
-                                                  Container(
-                                                      width: 43,
-                                                      height: 43,
-                                                      decoration: const BoxDecoration(
-                                                          gradient:
-                                                              primaryGradient,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .all(Radius
-                                                                      .circular(
-                                                                          14))),
-                                                      child: ElevatedButton(
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              listDays[key] =
-                                                                  !value;
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          primary: controller.descGoals == "times"
+                                              ? Colors.lightBlueAccent
+                                              : Colors.grey,
+                                          shape: const StadiumBorder(),
+                                          fixedSize: Size(
+                                              MediaQuery.of(context).size.width /
+                                                      2 -
+                                                  40,
+                                              40),
+                                        ),
+                                        onPressed: () {
+																					controller.setDescGoals("times");
 
-                                                              if (listDays
-                                                                  .containsValue(
-                                                                      false)) {
-                                                                statusSwitchRepeatEveryday =
-                                                                    false;
-                                                              } else {
-                                                                statusSwitchRepeatEveryday =
-                                                                    true;
-                                                              }
-                                                              week = month = 1;
-                                                            });
-                                                          },
-                                                          style: ElevatedButton
-                                                              .styleFrom(
-                                                                  shape:
-                                                                      RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            14.0),
-                                                                  ),
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .zero,
-                                                                  primary: value
-                                                                      ? Colors
-                                                                          .transparent
-                                                                      : Colors
-                                                                          .grey,
-                                                                  shadowColor:
-                                                                      Colors
-                                                                          .transparent),
-                                                          child: Text(
-                                                            key,
-                                                            style: TextStyle(
-                                                                fontSize: 14),
-                                                          ))),
-                                                ))
-                                            .values
-                                            .toList()),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Every Days",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline1,
-                                          ),
-                                          Switch(
-                                              value: statusSwitchRepeatEveryday,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  statusSwitchRepeatEveryday =
-                                                      value;
-                                                  if (statusSwitchRepeatEveryday) {
-                                                    listDays['Su'] = listDays[
-                                                        'Mo'] = listDays[
-                                                            'Tu'] =
-                                                        listDays['We'] =
-                                                            listDays[
-                                                                'Th'] = listDays[
-                                                                    'Fr'] =
-                                                                listDays['Sa'] =
-                                                                    true;
-                                                  } else {
-                                                    listDays['Su'] = true;
-                                                    listDays['Mo'] = listDays[
-                                                        'Tu'] = listDays[
-                                                            'We'] =
-                                                        listDays['Th'] =
-                                                            listDays['Fr'] =
-                                                                listDays['Sa'] =
-                                                                    false;
-                                                  }
-                                                  week = month = 1;
-                                                });
-                                              })
-                                        ]),
+                                          //setState(() {
+                                           // _descGoals = "times";
+                                          //});
+                                        },
+                                        child: Text(
+                                          "of times",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline1,
+                                        )),
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          primary: controller.descGoals == "minutes"
+                                              ? Colors.lightBlueAccent
+                                              : Colors.grey,
+                                          shape: const StadiumBorder(),
+                                          fixedSize: Size(
+                                              MediaQuery.of(context).size.width /
+                                                      2 -
+                                                  40,
+                                              40),
+                                        ),
+                                        onPressed: () {
+																					controller.setDescGoals("minutes");
+                                          //setState(() {
+                                           // _descGoals = "minutes";
+                                          //});
+                                        },
+                                        child: Text(
+                                          "time",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline1,
+                                        )),
                                   ],
                                 ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Stack(
+                                  children: [
+                                    TextField(
+                                      controller: controller.goalsHabitController,
+                                      keyboardType: TextInputType.number,
+                                      cursorColor: Colors.lightBlueAccent,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500),
+                                      decoration: InputDecoration(
+                                        hintText: controller.descGoals == "times" ? "Ex. 3 times" : "Ex. 10 minutes",
+                                        hintStyle: TextStyle(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.w500),
+                                        contentPadding: EdgeInsets.symmetric(
+                                          vertical: 15.0,
+                                          horizontal: 15.0,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      bottom: 1,
+                                      child: Container(
+                                        height: 1.5,
+                                        width: MediaQuery.of(context).size.width,
+                                        decoration: const BoxDecoration(
+                                            gradient: primaryGradient),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ]),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Column(
+                        children: [
+                          TabBar(
+                            // ============= for get statusRepeat
+                            onTap: (index) {
+                              if (index == 0) {
+																controller.setStatusRepeat("daily");
+
+                                //setState(() {
+                                //  statusRepeat = "daily";
+                                //});
+                              } else if (index == 1) {
+																controller.setStatusRepeat("weekly");
+                               // setState(() {
+                               //   statusRepeat = "weekly";
+                               // });
+                              } else {
+																controller.setStatusRepeat("monthly");
+                               // setState(() {
+                               //   statusRepeat = "monthly";
+                                //});
+                              }
+                            },
+                            indicatorPadding: const EdgeInsets.all(0.0),
+                            indicatorWeight: 3.0,
+                            labelPadding:
+                                const EdgeInsets.only(left: 0.0, right: 0.0),
+                            indicator: const ShapeDecoration(
+                              shape: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.transparent,
+                                      width: 0.0,
+                                      style: BorderStyle.solid)),
+                              gradient: primaryGradient,
+                            ),
+                            tabs: [
+                              Container(
+                                height: 40,
+                                alignment: Alignment.center,
+                                color: const Color.fromRGBO(21, 21, 70, 1),
+                                child: Text(
+                                  "Daily",
+                                  style: Theme.of(context).textTheme.headline1,
+                                ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 30),
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                              Container(
+                                height: 40,
+                                alignment: Alignment.center,
+                                color: const Color.fromRGBO(21, 21, 70, 1),
+                                child: Text(
+                                  "Weekly",
+                                  style: Theme.of(context).textTheme.headline1,
+                                ),
+                              ),
+                              Container(
+                                height: 40,
+                                alignment: Alignment.center,
+                                color: const Color.fromRGBO(21, 21, 70, 1),
+                                child: Text(
+                                  "Monthly",
+                                  style: Theme.of(context).textTheme.headline1,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            height: 160,
+                            child: TabBarView(
+                              physics: const NeverScrollableScrollPhysics(),
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 30),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "$week times a week",
+                                        "During these day",
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,
@@ -599,211 +428,301 @@ class _RegulerHabitBottomSheetState extends State<RegulerHabitBottomSheet> {
                                       ),
                                       Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            for (int i = 1; i < 7; i++)
-                                              Container(
-                                                  width: 43,
-                                                  height: 43,
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                          gradient:
-                                                              primaryGradient,
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          14))),
-                                                  child: ElevatedButton(
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          week = i;
-                                                          month = 1;
-                                                          listDays['Su'] = true;
-                                                          listDays['Mo'] = listDays[
-                                                              'Tu'] = listDays[
-                                                                  'We'] =
-                                                              listDays[
-                                                                  'Th'] = listDays[
-                                                                      'Fr'] =
-                                                                  listDays[
-                                                                          'Sa'] =
-                                                                      false;
-                                                        });
-                                                      },
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                              shape:
-                                                                  RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
+                                              MainAxisAlignment.spaceBetween,
+                                          children: controller.listDays
+                                              .map((key, value) => MapEntry(
+                                                    key,
+                                                    Container(
+                                                        width: 43,
+                                                        height: 43,
+                                                        decoration: const BoxDecoration(
+                                                            gradient:
+                                                                primaryGradient,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .all(Radius
                                                                         .circular(
-                                                                            14.0),
-                                                              ),
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .zero,
-                                                              primary: week == i
-                                                                  ? Colors
-                                                                      .transparent
-                                                                  : Colors.grey,
-                                                              shadowColor: Colors
-                                                                  .transparent),
-                                                      child: Text(
-                                                        i.toString(),
-                                                        style: TextStyle(
-                                                            fontSize: 14),
-                                                      ))),
+                                                                            14))),
+                                                        child: ElevatedButton(
+                                                            onPressed: () {
+																															controller.setListDays(key, !value);
+																															if (controller.listDays.containsValue(false)) {
+																																	controller.setStatusSwicthRepeatEveriday(false);
+                                                                } else {
+																																	controller.setStatusSwicthRepeatEveriday(true);
+                                                                }
+
+
+																																// tanpa update 
+                                                                controller.week = controller.month = 1;
+
+                                                              //setState(() {
+                                                                //listDays[key] =!value;
+
+                                                               // if (listDays.containsValue(false)) {
+                                                               //   statusSwitchRepeatEveryday =false;
+                                                               // } else {
+                                                               //   statusSwitchRepeatEveryday =
+                                                               //       true;
+                                                               // }
+                                                               // week = month = 1;
+                                                              //});
+                                                            },
+                                                            style: ElevatedButton
+                                                                .styleFrom(
+                                                                    shape:
+                                                                        RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              14.0),
+                                                                    ),
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .zero,
+                                                                    primary: value
+                                                                        ? Colors
+                                                                            .transparent
+                                                                        : Colors
+                                                                            .grey,
+                                                                    shadowColor:
+                                                                        Colors
+                                                                            .transparent),
+                                                            child: Text(
+                                                              key,
+                                                              style: TextStyle(
+                                                                  fontSize: 14),
+                                                            ))),
+                                                  ))
+                                              .values
+                                              .toList()),
+                                      Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Every Days",
+                                              style: Theme.of(context).textTheme .headline1,
+                                            ),
+                                            Switch(
+                                                value: controller.statusSwitchRepeatEveryday,
+                                                onChanged: (value) {
+																									controller.setStatusSwicthRepeatEveriday(value);
+                                                  //setState(() {
+                                                    //statusSwitchRepeatEveryday = value;
+                                                  if (controller.statusSwitchRepeatEveryday) {
+																										controller.setValueStatusSwitchRepeatEveriday(true, 'day', 1);
+                                                  } else {
+																										controller.setValueStatusSwitchRepeatEveriday(false, 'day', 1);
+																									}
+                                                  //});
+                                                })
                                           ]),
-                                    ]),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 30),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "$month times a month",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
-                                    Row(children: [
-                                      for (int i = 1; i < 4; i++)
-                                        Container(
-                                            margin: const EdgeInsets.only(
-                                                right: 10),
-                                            width: 43,
-                                            height: 43,
-                                            decoration: const BoxDecoration(
-                                                gradient: primaryGradient,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(14))),
-                                            child: ElevatedButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    month = i;
-                                                    week = 1;
-                                                    listDays['Su'] = true;
-                                                    listDays['Mo'] = listDays[
-                                                        'Tu'] = listDays[
-                                                            'We'] =
-                                                        listDays['Th'] =
-                                                            listDays['Fr'] =
-                                                                listDays['Sa'] =
-                                                                    false;
-                                                  });
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              14.0),
-                                                    ),
-                                                    padding: EdgeInsets.zero,
-                                                    primary: month == i
-                                                        ? Colors.transparent
-                                                        : Colors.grey,
-                                                    shadowColor:
-                                                        Colors.transparent),
-                                                child: Text(
-                                                  i.toString(),
-                                                  style:
-                                                      TextStyle(fontSize: 14),
-                                                ))),
-                                    ]),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Get Reminders',
-                          style: Theme.of(context).textTheme.headline1,
-                        ),
-                        Switch(
-                            value: statusSwitchReminders,
-                            onChanged: (value) {
-                              setState(() {
-                                statusSwitchReminders = value;
-																if(!statusSwitchReminders){
-																	listTime.clear();
-																}
-                              });
-                            })
-                      ],
-                    ),
-                    Visibility(
-                      visible: statusSwitchReminders,
-                      child: Column(
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 30),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${controller.week} times a week",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 15,
+                                        ),
+                                        Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              for (int i = 1; i < 7; i++)
+                                                Container(
+                                                    width: 43,
+                                                    height: 43,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                            gradient: primaryGradient,
+                                                            borderRadius:
+                                                                BorderRadius.all(Radius.circular( 14))),
+                                                    child: ElevatedButton(
+                                                        onPressed: () {
+                                                          //setState(() {
+                                                            controller.setValueStatusSwitchRepeatEveriday(false, 'week', i);
+																														controller.setStatusSwicthRepeatEveriday(false);
+                                                            
+                                                          //});
+                                                        },
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              14.0),
+                                                                ),
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .zero,
+                                                                primary: controller.week == i
+                                                                    ? Colors
+                                                                        .transparent
+                                                                    : Colors.grey,
+                                                                shadowColor: Colors
+                                                                    .transparent),
+                                                        child: Text(
+                                                          i.toString(),
+                                                          style: TextStyle(
+                                                              fontSize: 14),
+                                                        ))),
+                                            ]),
+                                      ]),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 30),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${controller.month} times a month",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Row(children: [
+                                        for (int i = 1; i < 4; i++)
+                                          Container(
+                                              margin: const EdgeInsets.only(
+                                                  right: 10),
+                                              width: 43,
+                                              height: 43,
+                                              decoration: const BoxDecoration(
+                                                  gradient: primaryGradient,
+                                                  borderRadius: BorderRadius.all(
+                                                      Radius.circular(14))),
+                                              child: ElevatedButton(
+                                                  onPressed: () {
+                                                    //setState(() {
+                                                     // month = i;
+                                                    //  week = 1;
+																											controller.setValueStatusSwitchRepeatEveriday(false, 'month', i);
+																											controller.setStatusSwicthRepeatEveriday(false);
+                                                     //});
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                14.0),
+                                                      ),
+                                                      padding: EdgeInsets.zero,
+                                                      primary: controller.month == i
+                                                          ? Colors.transparent
+                                                          : Colors.grey,
+                                                      shadowColor:
+                                                          Colors.transparent),
+                                                  child: Text(
+                                                    i.toString(),
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ))),
+                                      ]),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          for (int i = 0; i < listTime.length; i++)
+                          Text(
+                            'Get Reminders',
+                            style: Theme.of(context).textTheme.headline1,
+                          ),
+                          Switch(
+                              value: controller.statusSwitchReminders,
+                              onChanged: (value) {
+                                //setState(() {
+                                controller.setStatusSwicthReminder(value);
+																if(!controller.statusSwitchReminders){
+																	controller.listTime.clear();
+																}
+                               // });
+                              })
+                        ],
+                      ),
+                      Visibility(
+                        visible: controller.statusSwitchReminders,
+                        child: Column(
+                          children: [
+                            for (int i = 0; i < controller.listTime.length; i++)
+                              ListTile(
+                                leading: SizedBox(
+                                  height: double.infinity,
+                                  child: Icon(
+                                    Icons.access_time_rounded,
+                                    color: Colors.lightBlueAccent,
+                                  ),
+                                ),
+                                title: Text(
+                                  controller.listTime[i],
+                                  style: TextStyle(
+                                      fontSize: 16, fontWeight: FontWeight.w500),
+                                ),
+                                trailing: SizedBox(
+                                    height: double.infinity,
+                                    child: IconButton(
+                                      onPressed: () {
+																				controller.deleteListTime(i);
+                                      },
+                                      icon: Icon(
+                                        Icons.close_rounded,
+                                        color: Colors.white,
+                                      ),
+                                    )),
+                                minLeadingWidth: 0,
+                              ),
                             ListTile(
-                              leading: Container(
+                              onTap: () {
+                                controller.selectTime(context);
+                              },
+                              leading: SizedBox(
                                 height: double.infinity,
                                 child: Icon(
-                                  Icons.access_time_rounded,
+                                  Icons.add_circle_rounded,
                                   color: Colors.lightBlueAccent,
                                 ),
                               ),
                               title: Text(
-                                listTime[i],
+                                "Add reminder time",
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w500),
                               ),
-                              trailing: SizedBox(
-                                  height: double.infinity,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        listTime.removeAt(i);
-                                      });
-                                    },
-                                    icon: Icon(
-                                      Icons.close_rounded,
-                                      color: Colors.white,
-                                    ),
-                                  )),
                               minLeadingWidth: 0,
                             ),
-                          ListTile(
-                            onTap: () {
-                              _selectTime();
-                            },
-                            leading: Container(
-                              height: double.infinity,
-                              child: Icon(
-                                Icons.add_circle_rounded,
-                                color: Colors.lightBlueAccent,
-                              ),
-                            ),
-                            title: Text(
-                              "Add reminder time",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w500),
-                            ),
-                            minLeadingWidth: 0,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ))),
+                    ],
+                  ))),
+        ),
       ),
     );
   }

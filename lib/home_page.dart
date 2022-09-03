@@ -1,74 +1,30 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
+import 'package:get/get.dart';
+import 'package:my_habit/controllers/animationcontroller.dart';
+import 'package:my_habit/controllers/datecontroller.dart';
 import 'package:my_habit/data.dart';
 import 'package:my_habit/models/color.dart';
-import 'package:my_habit/pages/detail_habit_page.dart';
 import 'package:my_habit/provider/data_habits_provider.dart';
 import 'package:my_habit/provider/pop_up_provider.dart';
 import 'package:my_habit/root.dart';
-import 'package:my_habit/widget/regulerhabit_bottomsheet.dart';
+import 'package:my_habit/widget/dialoghabit.dart';
 import 'package:provider/provider.dart';
 import 'utils/date_utils.dart' as date_util;
+import 'dart:math' as math;
 
 CarouselController carouselController = CarouselController();
 CarouselController carouselController1 = CarouselController();
 DateTime currentDateTime = DateTime.now();
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  final _controllerDatePicker = DatePickerController();
-  DateTime _selectedValue = DateTime.now();
-  late ScrollController scrollController;
-  List<DateTime> currentMonthList = List.empty();
-
-  late AnimationController _animationController;
-  late Animation<double> _animation;
-
-
-  //List<IconData> dataIcon = [];
+class HomePage extends StatelessWidget {
+  HomePage({Key? key}) : super(key: key);
   int count = 3;
-
-  void getAnimation(int timeDuration) {
-    _animationController = AnimationController(
-        vsync: this, duration: Duration(seconds: timeDuration))
-      ..forward();
-    _animation =
-        CurvedAnimation(parent: _animationController, curve: Curves.easeIn);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    currentMonthList = date_util.DateUtils.daysInMonth(currentDateTime);
-    currentMonthList.sort((a, b) => a.day.compareTo(b.day));
-    currentMonthList = currentMonthList.toSet().toList();
-    print("================");
-    print(currentMonthList[1]);
-    print(currentMonthList[1].weekday);
-    scrollController =ScrollController(initialScrollOffset: 70.0 * currentDateTime.day);
-
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    scrollController.dispose();
-    _animationController.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-	
-    return ChangeNotifierProvider<PopUpProvider>(
-      create: (context) => PopUpProvider(),
-      child: Scaffold(
+		// Delete PopUpProvider
+      return Scaffold(
         extendBody: true,
         body: Stack(
           children: [
@@ -93,12 +49,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 height: 99,
                                 autoPlay: false,
                               ),
-                              itemCount: count,
+                              itemCount: 3,
                               itemBuilder: (BuildContext context, int itemIndex,
                                       int pageViewIndex) =>
                                   Consumer<DataHabitsProvider>(
                                       builder: (context, data, _) {
-                                    getAnimation(math.Random().nextInt(4));
+																				Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(6));
+																				//animationControllerHabit.getAnimation(math.Random().nextInt(6));
+                                    //getAnimation(math.Random().nextInt(4));
                                     return GestureDetector(
                                       onTap: () {
                                         if (data.listDataHabits.isNotEmpty && itemIndex < data.listDataHabits.length) {
@@ -106,92 +64,95 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 																					showDialog(
 																						context: context, 
 																						builder: (context){
-																							return getPopUpHabit(); 
+																							return DialogHabit(); 
 																						}
 																					);
                                         }
                                       },
-                                      child: FadeTransition(
-                                        opacity: _animation,
-                                        child: Container(
-                                            width: 78,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(15)),
-                                              gradient: LinearGradient(
-                                                  begin: Alignment.topLeft,
-                                                  colors: [
-                                                    Color.fromRGBO(
-                                                        random.nextInt(256),
-                                                        random.nextInt(256),
-                                                        random.nextInt(256),
-                                                        data.listDataHabits
-                                                                    .isNotEmpty &&
-                                                                itemIndex <
-                                                                    data.listDataHabits
-                                                                        .length
-                                                            ? 1
-                                                            : .35),
-                                                    Color.fromRGBO(
-                                                        random.nextInt(256),
-                                                        random.nextInt(256),
-                                                        random.nextInt(256),
-                                                        data.listDataHabits
-                                                                    .isNotEmpty &&
-                                                                itemIndex <
-                                                                    data.listDataHabits
-                                                                        .length
-                                                            ? 1
-                                                            : .35),
-                                                  ]),
-                                            ),
-                                            child: Stack(
-                                              children: [
-                                                Align(
-                                                    alignment: Alignment.center,
-                                                    child: Icon(data
-                                                                .listDataHabits
-                                                                .isNotEmpty &&
-                                                            itemIndex <
-                                                                data.listDataHabits
-                                                                    .length
-                                                        ? data.listDataHabits[
-                                                            itemIndex]
-                                                        : DataHabits.bankIcon[
-                                                            random.nextInt(
-                                                                DataHabits
-                                                                    .bankIcon
-                                                                    .length)])),
-                                                data.listDataHabits
-                                                            .isNotEmpty &&
-                                                        itemIndex <
-                                                            data.listDataHabits
-                                                                .length
-                                                    ? const Align(
-                                                        alignment: Alignment
-                                                            .bottomRight,
-                                                        child: Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  bottom: 3,
-                                                                  right: 5),
-                                                          child: Text(
-                                                            "active",
-                                                            style: TextStyle(
-                                                                color:
-                                                                    darkBlueOne,
-                                                                fontSize: 12,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                letterSpacing:
-                                                                    -.5),
-                                                          ),
-                                                        ))
-                                                    : const Text(''),
-                                              ],
-                                            )),
+                                      child: GetBuilder<AnimationControllerHabit>(
+																				init: AnimationControllerHabit(),
+                                        builder: (controller) => FadeTransition(
+                                          opacity: controller.animation,
+                                          child: Container(
+                                              width: 78,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(15)),
+                                                gradient: LinearGradient(
+                                                    begin: Alignment.topLeft,
+                                                    colors: [
+                                                      Color.fromRGBO(
+                                                          random.nextInt(256),
+                                                          random.nextInt(256),
+                                                          random.nextInt(256),
+                                                          data.listDataHabits
+                                                                      .isNotEmpty &&
+                                                                  itemIndex <
+                                                                      data.listDataHabits
+                                                                          .length
+                                                              ? 1
+                                                              : .35),
+                                                      Color.fromRGBO(
+                                                          random.nextInt(256),
+                                                          random.nextInt(256),
+                                                          random.nextInt(256),
+                                                          data.listDataHabits
+                                                                      .isNotEmpty &&
+                                                                  itemIndex <
+                                                                      data.listDataHabits
+                                                                          .length
+                                                              ? 1
+                                                              : .35),
+                                                    ]),
+                                              ),
+                                              child: Stack(
+                                                children: [
+                                                  Align(
+                                                      alignment: Alignment.center,
+                                                      child: Icon(data
+                                                                  .listDataHabits
+                                                                  .isNotEmpty &&
+                                                              itemIndex <
+                                                                  data.listDataHabits
+                                                                      .length
+                                                          ? data.listDataHabits[
+                                                              itemIndex]
+                                                          : DataHabits.bankIcon[
+                                                              random.nextInt(
+                                                                  DataHabits
+                                                                      .bankIcon
+                                                                      .length)])),
+                                                  data.listDataHabits
+                                                              .isNotEmpty &&
+                                                          itemIndex <
+                                                              data.listDataHabits
+                                                                  .length
+                                                      ? const Align(
+                                                          alignment: Alignment
+                                                              .bottomRight,
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    bottom: 3,
+                                                                    right: 5),
+                                                            child: Text(
+                                                              "active",
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      darkBlueOne,
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  letterSpacing:
+                                                                      -.5),
+                                                            ),
+                                                          ))
+                                                      : const Text(''),
+                                                ],
+                                              )),
+                                        ),
                                       ),
                                     );
                                   })),
@@ -213,7 +174,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                     int pageViewIndex) =>
                                 Consumer<DataHabitsProvider>(
                                     builder: (context, data, _) {
-                              getAnimation(math.Random().nextInt(4));
+																				Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(6));
+																//animationControllerHabit.getAnimation(math.Random().nextInt(6));
+                              //getAnimation(math.Random().nextInt(4));
                               return GestureDetector(
                                 onTap: () {
                                   if (data.listDataHabits.isNotEmpty && itemIndex + count < data.listDataHabits.length) {
@@ -221,72 +184,75 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 																		showDialog(
 																			context: context, 
 																			builder: (context){
-																				return getPopUpHabit(); 
+																				return DialogHabit(); 
 																			}
 																		);
 
                                   }
                                 },
-                                child: FadeTransition(
-                                  opacity: _animation,
-                                  child: Container(
-                                      width: 78,
-                                      decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(15)),
-                                        gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            colors: [
-                                              Color.fromRGBO(
-                                                  random.nextInt(256),
-                                                  random.nextInt(256),
-                                                  random.nextInt(256),
-                                                  itemIndex + count <
-                                                          data.listDataHabits
-                                                              .length
-                                                      ? 1
-                                                      : .35),
-                                              Color.fromRGBO(
-                                                  random.nextInt(256),
-                                                  random.nextInt(256),
-                                                  random.nextInt(256),
-                                                  itemIndex + count <
-                                                          data.listDataHabits
-                                                              .length
-                                                      ? 1
-                                                      : .35),
-                                            ]),
-                                      ),
-                                      child: Stack(children: [
-                                        Align(
-                                            alignment: Alignment.center,
-                                            child: Icon(itemIndex + count <
-                                                    data.listDataHabits.length
-                                                ? data.listDataHabits[
-                                                    itemIndex + count]
-                                                : DataHabits.bankIcon[
-                                                    random.nextInt(DataHabits
-                                                        .bankIcon.length)])),
-                                        itemIndex + count <
-                                                data.listDataHabits.length
-                                            ? const Align(
-                                                alignment:
-                                                    Alignment.bottomRight,
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      bottom: 3, right: 5),
-                                                  child: Text(
-                                                    "active",
-                                                    style: TextStyle(
+                                child: GetBuilder<AnimationControllerHabit>(
+																	init: AnimationControllerHabit(),
+                                  builder: (controller)=> FadeTransition(
+                                    opacity: controller.animation,
+                                    child: Container(
+                                        width: 78,
+                                        decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(15)),
+                                          gradient: LinearGradient(
+                                              begin: Alignment.topLeft,
+                                              colors: [
+                                                Color.fromRGBO(
+                                                    random.nextInt(256),
+                                                    random.nextInt(256),
+                                                    random.nextInt(256),
+                                                    itemIndex + count <
+                                                            data.listDataHabits
+                                                                .length
+                                                        ? 1
+                                                        : .35),
+                                                Color.fromRGBO(
+                                                    random.nextInt(256),
+                                                    random.nextInt(256),
+                                                    random.nextInt(256),
+                                                    itemIndex + count <
+                                                            data.listDataHabits
+                                                                .length
+                                                        ? 1
+                                                        : .35),
+                                              ]),
+                                        ),
+                                        child: Stack(children: [
+                                          Align(
+                                              alignment: Alignment.center,
+                                              child: Icon(itemIndex + count <
+                                                      data.listDataHabits.length
+                                                  ? data.listDataHabits[
+                                                      itemIndex + count]
+                                                  : DataHabits.bankIcon[
+                                                      random.nextInt(DataHabits
+                                                          .bankIcon.length)])),
+                                          itemIndex + count <
+                                                  data.listDataHabits.length
+                                              ? const Align(
+                                                  alignment:
+                                                      Alignment.bottomRight,
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        bottom: 3, right: 5),
+                                                    child: Text(
+                                                      "active",
+                                                      style: TextStyle(
 																												color: darkBlueOne,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        letterSpacing: -.5),
-                                                  ),
-                                                ))
-                                            : const Text(''),
-                                      ])),
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          letterSpacing: -.5),
+                                                    ),
+                                                  ))
+                                              : const Text(''),
+                                        ])),
+                                  ),
                                 ),
                               );
                             }),
@@ -302,7 +268,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: Expanded(
                   child: Container(
                 padding:
                     const EdgeInsets.symmetric(vertical: 35, horizontal: 20),
@@ -349,63 +314,68 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                     //sgetDatePicker(),
 
-                    SizedBox(
-                      height: 60,
-                      child: ListView.builder(
-                          controller: scrollController,
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          physics: BouncingScrollPhysics(),
-                          itemCount: currentMonthList.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  currentDateTime = currentMonthList[index];
-                                });
-                              },
-                              child: Container(
-                                width: 50,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                    color: currentMonthList[index].day !=
-                                            currentDateTime.day
-                                        ? Colors.transparent
-                                        : Colors.lightBlueAccent,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(10))),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      date_util.DateUtils.weekdays[
-                                          currentMonthList[index].weekday - 1],
-                                      style: TextStyle(
-                                          color: currentMonthList[index].day !=
-                                                  currentDateTime.day
-                                              ? Colors.white54
-                                              : Colors.black,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    Text(
-                                      currentMonthList[index].day.toString(),
-                                      style: TextStyle(
-                                          color: currentMonthList[index].day !=
-                                                  currentDateTime.day
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w700),
-                                    )
-                                  ],
+                    GetBuilder<DateController>(
+											init: DateController(),
+                      builder:(controller) => SizedBox(
+                        height: 60,
+                        child: ListView.builder(
+                            controller: controller.scrollControllerDateInline,
+                            scrollDirection: Axis.horizontal,
+                            shrinkWrap: true,
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: controller.currentMonthList.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return GestureDetector(
+                                onTap: () {
+																	controller.setCurrentDateTime(controller.currentMonthList[index]);
+
+                                  //setState(() {
+                                   // currentDateTime = currentMonthList[index];
+                                 // });
+                                },
+                                child: Container(
+                                  width: 50,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                      color: controller.currentMonthList[index].day !=
+                                              controller.currentDateTime.day
+                                          ? Colors.transparent
+                                          : Colors.lightBlueAccent,
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10))),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        date_util.DateUtils.weekdays[
+                                            controller.currentMonthList[index].weekday - 1],
+                                        style: TextStyle(
+                                            color: controller.currentMonthList[index].day !=
+                                                    controller.currentDateTime.day
+                                                ? Colors.white54
+                                                : Colors.black,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      const SizedBox(
+                                        height: 8,
+                                      ),
+                                      Text(
+                                        controller.currentMonthList[index].day.toString(),
+                                        style: TextStyle(
+                                            color: controller.currentMonthList[index].day !=
+                                                    controller.currentDateTime.day
+                                                ? Colors.white
+                                                : Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700),
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          }),
+                              );
+                            }),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     const Divider(
@@ -429,7 +399,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                   ],
                 ),
-              )),
+              ),
             ),
             SafeArea(
               child: Padding(
@@ -470,7 +440,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -488,24 +457,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           items: [1, 2, 3, 4, 5, 6].map((e) {
             return Builder(
               builder: (BuildContext context) {
-                getAnimation(math.Random().nextInt(6));
-                return FadeTransition(
-                  opacity: _animation,
-                  child: Container(
-                    width: 78,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(15)),
-                      gradient:
-                          LinearGradient(begin: Alignment.topLeft, colors: [
-                        Color.fromRGBO(random.nextInt(256), random.nextInt(256),
-                            random.nextInt(256), .35),
-                        Color.fromRGBO(random.nextInt(256), random.nextInt(256),
-                            random.nextInt(256), .35),
-                      ]),
+								Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(6));
+							//	animationControllerHabit.getAnimation(math.Random().nextInt(6));
+                return GetBuilder<AnimationControllerHabit>(
+									init: AnimationControllerHabit(),
+                  builder: (controller)=>FadeTransition(
+                    opacity: controller.animation,
+                    child: Container(
+                      width: 78,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(Radius.circular(15)),
+                        gradient:
+                            LinearGradient(begin: Alignment.topLeft, colors: [
+                          Color.fromRGBO(random.nextInt(256), random.nextInt(256),
+                              random.nextInt(256), .35),
+                          Color.fromRGBO(random.nextInt(256), random.nextInt(256),
+                              random.nextInt(256), .35),
+                        ]),
+                      ),
+                      child: Center(
+                          child: Icon(DataHabits.bankIcon[
+                              random.nextInt(DataHabits.bankIcon.length)])),
                     ),
-                    child: Center(
-                        child: Icon(DataHabits.bankIcon[
-                            random.nextInt(DataHabits.bankIcon.length)])),
                   ),
                 );
               },
@@ -513,246 +486,4 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           }).toList()),
     );
   }
-
-  Widget getDatePicker() {
-    return DatePicker(
-      DateTime.now(),
-      width: 57,
-      controller: _controllerDatePicker,
-      initialSelectedDate: DateTime.now(),
-      selectionColor: Colors.lightBlueAccent,
-      selectedTextColor: Colors.black,
-      monthTextStyle: const TextStyle(color: Colors.white54, fontSize: 11),
-      dateTextStyle: const TextStyle(
-          color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
-      dayTextStyle: const TextStyle(
-          color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w500),
-      onDateChange: (date) {
-        // New date selected
-        setState(() {
-          _selectedValue = date;
-        });
-      },
-    );
-  }
-
-  Widget getPopUpHabit() {
-	var width = MediaQuery.of(context).size.width;
-	var height = MediaQuery.of(context).size.height;
-    return AlertDialog(
-			insetPadding: EdgeInsets.symmetric(vertical: height * .1, horizontal: width * .05),
-			alignment: Alignment.topCenter,
-			contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-			shape: const RoundedRectangleBorder(
-					borderRadius: BorderRadius.all(Radius.circular(30))
-				),
-			backgroundColor: Colors.black.withOpacity(.7), // status.getStatus ? Container : null
-          content: Container(
-						height: MediaQuery.of(context).size.height *.22,
-						width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10, top: 2),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            const DetailHabit()));
-                              },
-                              icon: const Icon(
-                                Icons.info_outline_rounded,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 2),
-                              constraints: const BoxConstraints(),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                showModalBottomSheet(
-                                    context: context,
-                                    backgroundColor: darkBlueOne,
-                                    isScrollControlled: true,
-                                    shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(35))),
-                                    builder: (context) {
-                                      return RegulerHabitBottomSheet();
-                                    });
-                              },
-                              icon: const Icon(
-                                Icons.edit_rounded,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 2),
-                              constraints: const BoxConstraints(),
-                            ),
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.pause_rounded,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 2),
-                              constraints: const BoxConstraints(),
-                            ),
-                            IconButton(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 2),
-                                constraints: const BoxConstraints(),
-                                onPressed: () {
-                                  //Provider.of<PopUpProvider>(context,
-                                   //       listen: false)
-                                    //  .setStatus(false);
-																	Navigator.pop(context);
-                                },
-                                icon: const Icon(
-                                  Icons.close_rounded,
-                                  color: Colors.white,
-                                  size: 20,
-                                )),
-                          ],
-                        ),
-                      ),
-                      ListTile(
-                        leading: Icon(
-                          Icons.laptop_mac_rounded,
-                          color: Colors.white,
-                          size: 32,
-                        ),
-                        title: Text(
-                          "Coding",
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.w500),
-                        ),
-                        subtitle: Row(children: [
-                          Icon(
-                            Icons.star_rounded,
-                            color: Colors.white,
-                            size: 14,
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            "Got for it!",
-                            style: TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.w500),
-                          )
-                        ]),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Do Anytime",
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w500)),
-                            Text(
-                              "active",
-                              style: TextStyle(fontWeight: FontWeight.w500),
-                            )
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "0/3",
-                                    style: TextStyle(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    "times",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600),
-                                  )
-                                ]),
-                            Row(
-                              children: [
-                                IconButton(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 2),
-                                    constraints: const BoxConstraints(),
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.replay_rounded,
-                                      color: Colors.white,
-                                      size: 20,
-                                    )),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    Icons.close_rounded,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 2),
-                                  constraints: const BoxConstraints(),
-                                ),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    Icons.done_rounded,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 2),
-                                  constraints: const BoxConstraints(),
-                                ),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    Icons.remove,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 2),
-                                  constraints: const BoxConstraints(),
-                                ),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                                  padding:const EdgeInsets.symmetric(horizontal: 2),
-                                  constraints: const BoxConstraints(),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-    );
-  }
-}
+ }

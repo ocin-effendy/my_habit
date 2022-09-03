@@ -5,6 +5,7 @@ import 'package:my_habit/models/color.dart';
 import 'package:my_habit/provider/data_habits_provider.dart';
 import 'package:my_habit/utils/date_utils.dart' as date_util;
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 class OneTaskBottomSheet extends StatefulWidget {
   @override
@@ -99,205 +100,208 @@ class _OneTaskBottomSheetState extends State<OneTaskBottomSheet> {
 			builder: (context, data, _) => Container(
         height: MediaQuery.of(context).size.height * 0.97,
         padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      "One Task",
-                      style: TextStyle(fontSize: 36, fontWeight: FontWeight.w600),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        "One Task",
+                        style: TextStyle(fontSize: 36, fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        "Creating a new One Task",
+                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                      )
+                    ],
+                  ),
+                  IconButton(
+                      onPressed: () {
+											Navigator.pop(context);
+										},
+                      icon: ShaderMask(
+                          shaderCallback: (rect) =>
+                              primaryGradient.createShader(rect),
+                          child: const Icon(
+                            Icons.done_all_rounded,
+                            color: Colors.white,
+                          ))),
+                ],
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Stack(
+                children: [
+                  TextField(
+                    controller: _nameOneTaskController,
+
+                    style:
+                        TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    decoration: InputDecoration(
+                      hintText: "Name your One Task",
+                      hintStyle: TextStyle(
+                          color: Colors.grey, fontWeight: FontWeight.w500),
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 15.0,
+                        horizontal: 15.0,
+                      ),
+                      suffixIcon: statusInput
+                          ? null
+                          : const Icon(
+                              Icons.error,
+                              color: Colors.red,
+                            ),
                     ),
-                    Text(
-                      "Creating a new One Task",
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-                    )
-                  ],
-                ),
-                IconButton(
-                    onPressed: () {},
-                    icon: ShaderMask(
-                        shaderCallback: (rect) =>
-                            primaryGradient.createShader(rect),
-                        child: const Icon(
-                          Icons.done_all_rounded,
-                          color: Colors.white,
-                        ))),
-              ],
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Stack(
-              children: [
-                TextField(
-                  controller: _nameOneTaskController,
-                  cursorColor: Colors.lightBlueAccent,
-                  style:
-                      TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                  decoration: InputDecoration(
-                    hintText: "Name your One Task",
-                    hintStyle: TextStyle(
-                        color: Colors.grey, fontWeight: FontWeight.w500),
-                    contentPadding: EdgeInsets.symmetric(
-                      vertical: 15.0,
-                      horizontal: 15.0,
+                  ),
+                  Positioned(
+                    bottom: 1,
+                    child: Container(
+                      height: 1.5,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(gradient: primaryGradient),
                     ),
-                    suffixIcon: statusInput
-                        ? null
-                        : const Icon(
-                            Icons.error,
-                            color: Colors.red,
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              InkWell(
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          backgroundColor: Color.fromRGBO(21, 21, 70, 1),
+                          title: Text("Choose Icon"),
+                          titleTextStyle:
+                              TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          content: SingleChildScrollView(
+                            child: Wrap(
+                              alignment: WrapAlignment.center,
+                              children: [
+                                for (int i = 0; i < bankIcons.length; i++)
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: ShaderMask(
+                                        shaderCallback: (rect) =>
+                                            primaryGradient.createShader(rect),
+                                        child: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _iconHabit = bankIcons[i];
+                                              Navigator.pop(context);
+                                            });
+                                          },
+                                          icon: Icon(
+                                            bankIcons[i],
+                                            size: 36,
+                                          ),
+                                          color: Colors.white,
+                                        )),
+                                  ),
+                              ],
+                            ),
                           ),
+                        );
+                      });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ShaderMask(
+                          shaderCallback: (rect) =>
+                              primaryGradient.createShader(rect),
+                          child: Icon(
+                            _iconHabit,
+                            color: Colors.white,
+                            size: 34,
+                          )),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        "Change Icon",
+                        style: Theme.of(context).textTheme.headline1,
+                      )
+                    ],
                   ),
                 ),
-                Positioned(
-                  bottom: 1,
-                  child: Container(
-                    height: 1.5,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(gradient: primaryGradient),
+              ),
+              InkWell(
+                onTap: () {
+                  _getDatePicker();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                  child: Row(
+                    children: [
+                      ShaderMask(
+                          shaderCallback: (rect) =>
+                              primaryGradient.createShader(rect),
+                          child: Icon(
+                            Icons.event_rounded,
+                            color: Colors.white,
+                            size: 34,
+                          )),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        dateTime,
+                        style: Theme.of(context).textTheme.headline1,
+                      )
+                    ],
                   ),
                 ),
-              ],
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            InkWell(
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        backgroundColor: Color.fromRGBO(21, 21, 70, 1),
-                        title: Text("Choose Icon"),
-                        titleTextStyle:
-                            TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                        content: SingleChildScrollView(
-                          child: Wrap(
-                            alignment: WrapAlignment.center,
-                            children: [
-                              for (int i = 0; i < bankIcons.length; i++)
-                                Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: ShaderMask(
-                                      shaderCallback: (rect) =>
-                                          primaryGradient.createShader(rect),
-                                      child: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _iconHabit = bankIcons[i];
-                                            Navigator.pop(context);
-                                          });
-                                        },
-                                        icon: Icon(
-                                          bankIcons[i],
-                                          size: 36,
-                                        ),
-                                        color: Colors.white,
-                                      )),
-                                ),
-                            ],
-                          ),
-                        ),
-                      );
-                    });
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ShaderMask(
-                        shaderCallback: (rect) =>
-                            primaryGradient.createShader(rect),
-                        child: Icon(
-                          _iconHabit,
-                          color: Colors.white,
-                          size: 34,
-                        )),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      "Change Icon",
-                      style: Theme.of(context).textTheme.headline1,
-                    )
-                  ],
-                ),
               ),
-            ),
-            InkWell(
-              onTap: () {
-                _getDatePicker();
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                child: Row(
-                  children: [
-                    ShaderMask(
-                        shaderCallback: (rect) =>
-                            primaryGradient.createShader(rect),
-                        child: Icon(
-                          Icons.event_rounded,
-                          color: Colors.white,
-                          size: 34,
-                        )),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      dateTime,
-                      style: Theme.of(context).textTheme.headline1,
-                    )
-                  ],
-                ),
+              const SizedBox(
+                height: 20,
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Get Reminders',
-                  style: Theme.of(context).textTheme.headline1,
-                ),
-                Switch(
-                    value: statusSwitchReminders,
-                    onChanged: (value) {
-                      setState(() {
-                        statusSwitchReminders = value;
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Get Reminders',
+                    style: Theme.of(context).textTheme.headline1,
+                  ),
+                  Switch(
+                      value: statusSwitchReminders,
+                      onChanged: (value) {
+                        setState(() {
+                          statusSwitchReminders = value;
 												if(!statusSwitchReminders){
 													listTime.clear();
 												}
-                      });
-                    })
-              ],
-            ),
-            Visibility(
-              visible: statusSwitchReminders,
-              child: Column(
-                children: [
-                  for (int i = 0; i < listTime.length; i++)
-                    ListTile(
-                      leading: Container(
-                        height: double.infinity,
-                        child: Icon(
-                          Icons.access_time_rounded,
-                          color: Colors.lightBlueAccent,
+                        });
+                      })
+                ],
+              ),
+              Visibility(
+                visible: statusSwitchReminders,
+                child: Column(
+                  children: [
+                    for (int i = 0; i < listTime.length; i++)
+                      ListTile(
+                        leading: Container(
+                          height: double.infinity,
+                          child: Icon(
+                            Icons.access_time_rounded,
+                            color: Colors.lightBlueAccent,
+                          ),
                         ),
-                      ),
-                      title: Text(
-                        listTime[i],
-                        style:
-                            TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
+                        title: Text(
+                          listTime[i],
+                          style:
+                              TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
 											trailing: SizedBox(
 												height: double.infinity, 
 												child: IconButton(
@@ -307,29 +311,30 @@ class _OneTaskBottomSheetState extends State<OneTaskBottomSheet> {
 														});
 													}, 
 													icon:Icon(Icons.close_rounded, color: Colors.white,),)),
-                      minLeadingWidth: 0,
-                    ),
-                  ListTile(
+                        minLeadingWidth: 0,
+                      ),
+                    ListTile(
 										onTap: (){
 											_selectTime();
 										},
-                    leading: Container(
-                      height: double.infinity,
-                      child: Icon(
-                        Icons.add_circle_rounded,
-                        color: Colors.lightBlueAccent,
+                      leading: Container(
+                        height: double.infinity,
+                        child: Icon(
+                          Icons.add_circle_rounded,
+                          color: Colors.lightBlueAccent,
+                        ),
                       ),
+                      title: Text(
+                        "Add reminder time",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      minLeadingWidth: 0,
                     ),
-                    title: Text(
-                      "Add reminder time",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                    minLeadingWidth: 0,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -60,9 +60,6 @@ class _GetBottomSheetState extends State<GetBottomSheet> {
   ];
 
 
-  final iconsGradientColors = List<Color>.from(
-      [Colors.yellowAccent, Colors.greenAccent, Colors.lightBlueAccent]);
-
   @override
   void dispose() {
     super.dispose();
