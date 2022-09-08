@@ -1,23 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:my_habit/controllers/habitcontroller.dart';
 import 'package:my_habit/data.dart';
 import 'package:my_habit/models/color.dart';
+import 'package:get/get.dart';
 
-class DialogIcons extends StatefulWidget {
-  @override
-  State<DialogIcons> createState() => _DialogIconsState();
-}
-
-class _DialogIconsState extends State<DialogIcons> {
+class DialogIcons extends StatelessWidget {
   final bankIcons = DataHabits.bankIcon;
 
-  IconData _iconHabit = Icons.star_rate_rounded; 
- //IconHabit
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-
-      child: AlertDialog(
+    return AlertDialog(
 			backgroundColor: darkBlueOne,
         title: Text("Choose Icon"),
         titleTextStyle: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -33,10 +25,8 @@ class _DialogIconsState extends State<DialogIcons> {
                           primaryGradient.createShader(rect),
                       child: IconButton(
                         onPressed: () {
-                          setState(() {
-                            _iconHabit = bankIcons[i];
-                            Navigator.pop(context);
-                          });
+												Get.find<HabitController>().setIconHabit(bankIcons[i]);	
+                         Navigator.pop(context);
                         },
                         icon: Icon(
                           bankIcons[i],
@@ -48,7 +38,6 @@ class _DialogIconsState extends State<DialogIcons> {
             ],
           ),
         ),
-      ),
     );
   }
 }

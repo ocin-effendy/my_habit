@@ -15,10 +15,10 @@ class AnimationControllerHabit extends GetxController with GetTickerProviderStat
         CurvedAnimation(parent: animationController, curve: Curves.easeIn);
   }
 
-
 	@override
 	  void onInit() {
 		animationControllerBottomSheet = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+			print("ANIMATIONCONTROLLER CREATE");
 	    super.onInit();
 	  }
 	
@@ -26,6 +26,7 @@ class AnimationControllerHabit extends GetxController with GetTickerProviderStat
 	  void dispose() {
 			animationController.dispose();
 			animationControllerBottomSheet.dispose();
+			print("ANIMATIONCONTROLLER DISPOSEE");
 	    super.dispose();
 	  }
 

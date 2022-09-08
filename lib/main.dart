@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_habit/models/color.dart';
+import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/provider/data_habits_provider.dart';
 import 'package:my_habit/root.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+	WidgetsFlutterBinding.ensureInitialized();
+
+	// initalize hive
+	await Hive.initFlutter();
+	Hive.registerAdapter(HabitAdapter());
+	await Hive.openBox<Habit>('habit');
+	
+
+
   runApp(const MyApp());
 }
 

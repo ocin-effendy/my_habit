@@ -20,6 +20,7 @@ class DateController extends GetxController{
 			currentMonthList = currentMonthList.toSet().toList();
 			scrollControllerDateInline = ScrollController(initialScrollOffset: 70.0 * currentDateTime.day);
 			positionWeekDays = date_util.DateUtils.weekdays.indexOf(date_util.DateUtils.weekdays[currentMonthList[0].weekday]);
+			print("DATE CONTROLLER CRESTE");
 	    super.onInit();
 	  }
 

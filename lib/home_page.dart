@@ -5,11 +5,13 @@ import 'package:my_habit/controllers/animationcontroller.dart';
 import 'package:my_habit/controllers/datecontroller.dart';
 import 'package:my_habit/data.dart';
 import 'package:my_habit/models/color.dart';
+import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/provider/data_habits_provider.dart';
-import 'package:my_habit/provider/pop_up_provider.dart';
 import 'package:my_habit/root.dart';
+import 'package:my_habit/widget/boxes.dart';
 import 'package:my_habit/widget/dialoghabit.dart';
 import 'package:provider/provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'utils/date_utils.dart' as date_util;
 import 'dart:math' as math;
 
@@ -21,250 +23,220 @@ class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
   int count = 3;
 
+	int i = Icons.menu_book_rounded.codePoint;
+
   @override
   Widget build(BuildContext context) {
-		// Delete PopUpProvider
       return Scaffold(
         extendBody: true,
         body: Stack(
           children: [
-            Container(
-              color: const Color.fromRGBO(21, 21, 71, 1),
-              child: Transform.translate(
-                offset: const Offset(-35, -35),
-                child: Transform.rotate(
-                  angle: -math.pi / 15,
-                  child: Transform(
-                    transform: Matrix4.diagonal3Values(1.3, 1, 1),
-                    child: Column(
-                      children: [
-                        getCarousel(),
-                        getCarousel(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 3),
-                          child: CarouselSlider.builder(
-                              carouselController: carouselController,
+            ValueListenableBuilder<Box<Habit>>(
+							valueListenable: Boxes.getHabit().listenable(),
+							builder: (context, box, _){
+							final habit = box.values.toList().cast<Habit>();
+							print("======= cok ===========");
+							//print(habit[0].day);
+              return  Container(
+                color: const Color.fromRGBO(21, 21, 71, 1),
+                child: Transform.translate(
+                  offset: const Offset(-35, -35),
+                  child: Transform.rotate(
+                    angle: -math.pi / 15,
+                    child: Transform(
+                      transform: Matrix4.diagonal3Values(1.3, 1, 1),
+                      child: Column(
+                        children: [
+                          getCarousel(),
+                          getCarousel(),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 3),
+                            child: CarouselSlider.builder(
+                                carouselController: carouselController,
+                                options: CarouselOptions(
+                                  viewportFraction: 0.23,
+                                  height: 99,
+                                  autoPlay: false,
+                                ),
+                                itemCount: 3,
+                                itemBuilder: (BuildContext context, int itemIndex,int pageViewIndex) {
+																				Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(6));
+                                      return GestureDetector(
+                                        onTap: () {
+																				//	habit[0].delete();
+																				//print("=========== berhasil di delete =======");
+
+																					if(habit.isNotEmpty && itemIndex < habit.length){
+																						showDialog(
+																						context: context, 
+																						builder: (context){
+																							return DialogHabit(habit: habit[itemIndex],); 
+																						}
+																					);
+
+
+																					}
+
+                                          //if (data.listDataHabits.isNotEmpty && itemIndex < data.listDataHabits.length) {
+																				//	showDialog(
+																				//		context: context, 
+																				//		builder: (context){
+																				//			return DialogHabit(); 
+																				//		}
+																			//		);
+                                         // }
+                                        },
+                                        child: GetBuilder<AnimationControllerHabit>(
+																				init: AnimationControllerHabit(),
+                                          builder: (controller) => FadeTransition(
+                                            opacity: controller.animation,
+                                            child: Container(
+                                                width: 78,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(15)),
+                                                  gradient: LinearGradient(
+                                                      begin: Alignment.topLeft,
+                                                      colors: [
+                                                        Color.fromRGBO(
+                                                            random.nextInt(256),
+                                                            random.nextInt(256),
+                                                            random.nextInt(257),
+                                                            habit.isNotEmpty &&itemIndex < habit.length? 1: .35
+																													),
+                                                        Color.fromRGBO(
+                                                            random.nextInt(256),
+                                                            random.nextInt(256),
+                                                            random.nextInt(256),
+                                                            habit.isNotEmpty &&itemIndex < habit.length? 1: .35
+                                                            //data.listDataHabits.isNotEmpty &&itemIndex < data.listDataHabits.length? 1: .35
+																													),
+                                                      ]),
+                                                ),
+																									child: Stack(children: [
+                                            Align(
+                                                alignment: Alignment.center,
+																								// icon masih bermasalah
+                                                child: Icon(itemIndex < habit.length ? IconData(habit[itemIndex].icon, fontFamily: "MaterialIcons")
+                                                    : DataHabits.bankIcon[random.nextInt(DataHabits.bankIcon.length)])),
+																								itemIndex < habit.length
+                                                ? Align(
+                                                    alignment: Alignment.bottomRight,
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(bottom: 3, right: 5),
+                                                      child: Text(
+                                                        habit[itemIndex].status,
+																												//'active',
+                                                        style: TextStyle(color: darkBlueOne,
+                                                            fontSize: 12,
+                                                            fontWeight:FontWeight.w600,
+                                                            letterSpacing: -.5),
+                                                      ),
+                                                    ))
+                                                : const Text(''),
+                                          ])),
+
+
+                                            ),
+                                        ),
+                                      );
+                                    }),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 3),
+                            child: CarouselSlider.builder(
+                              carouselController: carouselController1,
                               options: CarouselOptions(
-                                viewportFraction: 0.23,
-                                height: 99,
-                                autoPlay: false,
-                              ),
-                              itemCount: 3,
-                              itemBuilder: (BuildContext context, int itemIndex,
-                                      int pageViewIndex) =>
+                                  pageSnapping: true,
+                                  viewportFraction: 0.23,
+                                  height: 99,
+                                  autoPlay: false,
+                                  autoPlayAnimationDuration:const Duration(seconds: 3),
+                                  autoPlayInterval: const Duration(seconds: 4)),
+                              itemCount: count,
+                              itemBuilder: (BuildContext context, int itemIndex,int pageViewIndex) =>
                                   Consumer<DataHabitsProvider>(
                                       builder: (context, data, _) {
 																				Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(6));
-																				//animationControllerHabit.getAnimation(math.Random().nextInt(6));
-                                    //getAnimation(math.Random().nextInt(4));
-                                    return GestureDetector(
-                                      onTap: () {
-                                        if (data.listDataHabits.isNotEmpty && itemIndex < data.listDataHabits.length) {
-                                          // Provider.of<PopUpProvider>(context,listen: false).setStatus(true);
-																					showDialog(
-																						context: context, 
-																						builder: (context){
-																							return DialogHabit(); 
-																						}
-																					);
-                                        }
-                                      },
-                                      child: GetBuilder<AnimationControllerHabit>(
-																				init: AnimationControllerHabit(),
-                                        builder: (controller) => FadeTransition(
-                                          opacity: controller.animation,
-                                          child: Container(
-                                              width: 78,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                        Radius.circular(15)),
-                                                gradient: LinearGradient(
-                                                    begin: Alignment.topLeft,
-                                                    colors: [
-                                                      Color.fromRGBO(
-                                                          random.nextInt(256),
-                                                          random.nextInt(256),
-                                                          random.nextInt(256),
-                                                          data.listDataHabits
-                                                                      .isNotEmpty &&
-                                                                  itemIndex <
-                                                                      data.listDataHabits
-                                                                          .length
-                                                              ? 1
-                                                              : .35),
-                                                      Color.fromRGBO(
-                                                          random.nextInt(256),
-                                                          random.nextInt(256),
-                                                          random.nextInt(256),
-                                                          data.listDataHabits
-                                                                      .isNotEmpty &&
-                                                                  itemIndex <
-                                                                      data.listDataHabits
-                                                                          .length
-                                                              ? 1
-                                                              : .35),
-                                                    ]),
-                                              ),
-                                              child: Stack(
-                                                children: [
-                                                  Align(
-                                                      alignment: Alignment.center,
-                                                      child: Icon(data
-                                                                  .listDataHabits
-                                                                  .isNotEmpty &&
-                                                              itemIndex <
-                                                                  data.listDataHabits
-                                                                      .length
-                                                          ? data.listDataHabits[
-                                                              itemIndex]
-                                                          : DataHabits.bankIcon[
-                                                              random.nextInt(
-                                                                  DataHabits
-                                                                      .bankIcon
-                                                                      .length)])),
-                                                  data.listDataHabits
-                                                              .isNotEmpty &&
-                                                          itemIndex <
-                                                              data.listDataHabits
-                                                                  .length
-                                                      ? const Align(
-                                                          alignment: Alignment
-                                                              .bottomRight,
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    bottom: 3,
-                                                                    right: 5),
-                                                            child: Text(
-                                                              "active",
-                                                              style: TextStyle(
-                                                                  color:
-                                                                      darkBlueOne,
-                                                                  fontSize: 12,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  letterSpacing:
-                                                                      -.5),
-                                                            ),
-                                                          ))
-                                                      : const Text(''),
-                                                ],
-                                              )),
-                                        ),
-                                      ),
-                                    );
-                                  })),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 3),
-                          child: CarouselSlider.builder(
-                            carouselController: carouselController1,
-                            options: CarouselOptions(
-                                pageSnapping: true,
-                                viewportFraction: 0.23,
-                                height: 99,
-                                autoPlay: false,
-                                autoPlayAnimationDuration:
-                                    const Duration(seconds: 3),
-                                autoPlayInterval: const Duration(seconds: 4)),
-                            itemCount: count,
-                            itemBuilder: (BuildContext context, int itemIndex,
-                                    int pageViewIndex) =>
-                                Consumer<DataHabitsProvider>(
-                                    builder: (context, data, _) {
-																				Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(6));
 																//animationControllerHabit.getAnimation(math.Random().nextInt(6));
-                              //getAnimation(math.Random().nextInt(4));
-                              return GestureDetector(
-                                onTap: () {
-                                  if (data.listDataHabits.isNotEmpty && itemIndex + count < data.listDataHabits.length) {
-                                    //Provider.of<PopUpProvider>(context,listen: false).setStatus(true);
+                                //getAnimation(math.Random().nextInt(4));
+                                return GestureDetector(
+                                  onTap: () {
+																		if (habit.isNotEmpty && itemIndex + count < habit.length) {
+                                      //Provider.of<PopUpProvider>(context,listen: false).setStatus(true);
 																		showDialog(
 																			context: context, 
 																			builder: (context){
-																				return DialogHabit(); 
+																				return DialogHabit(habit: habit[itemIndex + count],); 
 																			}
 																		);
-
-                                  }
-                                },
-                                child: GetBuilder<AnimationControllerHabit>(
+                                    }
+                                  },
+                                  child: GetBuilder<AnimationControllerHabit>(
 																	init: AnimationControllerHabit(),
-                                  builder: (controller)=> FadeTransition(
-                                    opacity: controller.animation,
-                                    child: Container(
-                                        width: 78,
-                                        decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(15)),
-                                          gradient: LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              colors: [
-                                                Color.fromRGBO(
-                                                    random.nextInt(256),
-                                                    random.nextInt(256),
-                                                    random.nextInt(256),
-                                                    itemIndex + count <
-                                                            data.listDataHabits
-                                                                .length
-                                                        ? 1
-                                                        : .35),
-                                                Color.fromRGBO(
-                                                    random.nextInt(256),
-                                                    random.nextInt(256),
-                                                    random.nextInt(256),
-                                                    itemIndex + count <
-                                                            data.listDataHabits
-                                                                .length
-                                                        ? 1
-                                                        : .35),
-                                              ]),
-                                        ),
-                                        child: Stack(children: [
-                                          Align(
-                                              alignment: Alignment.center,
-                                              child: Icon(itemIndex + count <
-                                                      data.listDataHabits.length
-                                                  ? data.listDataHabits[
-                                                      itemIndex + count]
-                                                  : DataHabits.bankIcon[
-                                                      random.nextInt(DataHabits
-                                                          .bankIcon.length)])),
-                                          itemIndex + count <
-                                                  data.listDataHabits.length
-                                              ? const Align(
-                                                  alignment:
-                                                      Alignment.bottomRight,
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        bottom: 3, right: 5),
-                                                    child: Text(
-                                                      "active",
-                                                      style: TextStyle(
+                                    builder: (controller)=> FadeTransition(
+                                      opacity: controller.animation,
+                                      child: Container(
+                                          width: 78,
+                                          decoration: BoxDecoration(
+                                            borderRadius: const BorderRadius.all(
+                                                Radius.circular(15)),
+                                            gradient: LinearGradient(
+                                                begin: Alignment.topLeft,
+                                                colors: [
+                                                  Color.fromRGBO(
+                                                      random.nextInt(256),
+                                                      random.nextInt(256),
+                                                      random.nextInt(256),
+                                                      itemIndex + count < habit.length? 1: .35),
+                                                  Color.fromRGBO(
+                                                      random.nextInt(256),
+                                                      random.nextInt(256),
+                                                      random.nextInt(256),
+                                                      itemIndex + count < habit.length? 1 : .35),
+                                                ]),
+                                          ),
+                                          child: Stack(children: [
+                                            Align(
+                                                alignment: Alignment.center,
+                                                child: Icon(itemIndex + count < habit.length ? IconData(habit[itemIndex + count].icon, fontFamily: "MaterialIcons")
+                                                    : DataHabits.bankIcon[random.nextInt(DataHabits .bankIcon.length)])),
+                                            itemIndex + count < habit.length
+                                                ? Align(
+                                                    alignment:
+                                                        Alignment.bottomRight,
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                          bottom: 3, right: 5),
+                                                      child: Text(
+                                                        habit[itemIndex + count].status,
+																												//'active',
+                                                        style: TextStyle(
 																												color: darkBlueOne,
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          letterSpacing: -.5),
-                                                    ),
-                                                  ))
-                                              : const Text(''),
-                                        ])),
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            letterSpacing: -.5),
+                                                      ),
+                                                    ))
+                                                : const Text(''),
+                                          ])),
+                                    ),
                                   ),
-                                ),
-                              );
-                            }),
+                                );
+                              }),
+                            ),
                           ),
-                        ),
-                        getCarousel(),
-                        getCarousel(),
-                      ],
+                          getCarousel(),
+                          getCarousel(),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
+              );
+							}
             ),
             Align(
               alignment: Alignment.bottomCenter,
@@ -293,11 +265,15 @@ class HomePage extends StatelessWidget {
                               fontWeight: FontWeight.w500),
                         ),
                         Row(
-                          children: const [
-                            Icon(
-                              Icons.arrow_back_ios_rounded,
-                              color: Colors.white,
-                              size: 18,
+                          children: [
+                            IconButton(
+															onPressed: (){
+															},
+                              icon: const Icon(
+																Icons.arrow_back_ios_rounded,
+																color: Colors.white,
+																size: 18
+                              ),
                             ),
                             SizedBox(width: 20),
                             Icon(

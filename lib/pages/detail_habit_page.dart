@@ -1,33 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:gradient_borders/gradient_borders.dart';
-import 'package:my_habit/home_page.dart';
+import 'package:get/get.dart';
+import 'package:my_habit/controllers/datecontroller.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/root.dart';
 import 'package:my_habit/utils/date_utils.dart' as date_util;
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
-class DetailHabit extends StatefulWidget {
+class DetailHabit extends StatelessWidget {
   const DetailHabit({Key? key}) : super(key: key);
-
-  @override
-  State<DetailHabit> createState() => _DetailHabitState();
-}
-
-class _DetailHabitState extends State<DetailHabit> {
-  List<DateTime> currentMonthList = List.empty();
-  //List<DateTime> current = List.empty();
-  int positionWeekDays = 0;
-  //DateTime lastDayOfMonth = DateTime(2022, 8, 1);
-
-  @override
-  void initState() {
-    currentMonthList = date_util.DateUtils.daysInMonth(currentDateTime);
-    currentMonthList.sort((a, b) => a.day.compareTo(b.day));
-    currentMonthList = currentMonthList.toSet().toList();
-    positionWeekDays = date_util.DateUtils.weekdays
-        .indexOf(date_util.DateUtils.weekdays[currentMonthList[0].weekday]);
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +26,7 @@ class _DetailHabitState extends State<DetailHabit> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                      onPressed: () => Get.back(), 
                       icon: Icon(
                         Icons.arrow_back_ios_rounded,
                         color: Colors.white,
@@ -61,7 +39,7 @@ class _DetailHabitState extends State<DetailHabit> {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Container(
@@ -106,7 +84,7 @@ class _DetailHabitState extends State<DetailHabit> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Row(
@@ -169,23 +147,23 @@ class _DetailHabitState extends State<DetailHabit> {
                             Row(
                               children: [
                                 Icon(
-                                  Icons.event_available_rounded,
+                                  Icons.done_rounded,
                                   size: 18,
                                 ),
                                 const SizedBox(
                                   width: 5,
                                 ),
                                 Text(
-                                  "15 Days",
+                                  "25",
                                   style: Theme.of(context).textTheme.headline3,
                                 )
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 2,
                             ),
                             Text(
-                              "Total perfect days",
+                              "Times Completed",
                               style: Theme.of(context).textTheme.headline4,
                             ),
                           ],
@@ -213,23 +191,23 @@ class _DetailHabitState extends State<DetailHabit> {
                             Row(
                               children: [
                                 Icon(
-                                  Icons.done_rounded,
+                                  Icons.bar_chart_rounded,
                                   size: 18,
                                 ),
                                 const SizedBox(
                                   width: 5,
                                 ),
                                 Text(
-                                  "25",
+                                  "1,8",
                                   style: Theme.of(context).textTheme.headline3,
                                 )
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 2,
                             ),
                             Text(
-                              "Times Completed",
+                              "Average daily",
                               style: Theme.of(context).textTheme.headline4,
                             ),
                           ],
@@ -269,7 +247,7 @@ class _DetailHabitState extends State<DetailHabit> {
                                 )
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 2,
                             ),
                             Text(
@@ -279,51 +257,10 @@ class _DetailHabitState extends State<DetailHabit> {
                           ],
                         ),
                       ),
-                      Container(
-                        margin: EdgeInsets.only(right: 15),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                        width: MediaQuery.of(context).size.width / 3,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          gradient: LinearGradient(
-                              begin: Alignment.bottomLeft,
-                              end: Alignment.topRight,
-                              colors: [
-                                Color.fromRGBO(239, 142, 56, 1),
-                                Color.fromRGBO(16, 141, 199, 1)
-                              ]),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.bar_chart_rounded,
-                                  size: 18,
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Text(
-                                  "1,8",
-                                  style: Theme.of(context).textTheme.headline3,
-                                )
-                              ],
-                            ),
-                            Text(
-                              "Average daily",
-                              style: Theme.of(context).textTheme.headline4,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                   ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Text(
@@ -333,83 +270,86 @@ class _DetailHabitState extends State<DetailHabit> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-								SizedBox(height: 30,),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        date_util.DateUtils.months[currentDateTime.month - 1] +
-                            " " +
-                            currentDateTime.year.toString(),
-                        style: Theme.of(context).textTheme.headline1,
-                      ),
-                      SizedBox(
-                        width: 329,
-                        child: Wrap(
-                          children: [
-                            for (int i = 0; i < listDays.length; i++)
-                              Container(
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 5),
-                                padding: EdgeInsets.zero,
-                                width: 35,
-                                height: 35,
-                                child: Center(
-                                    child: Text(listDays[i],
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline2)),
-                              ),
-                          ],
+								const SizedBox(height: 30,),
+                GetBuilder<DateController>(
+									init: DateController(),
+                  builder: (controller) => SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          date_util.DateUtils.months[controller.currentDateTime.month - 1] +
+                              " " +
+                              controller.currentDateTime.year.toString(),
+                          style: Theme.of(context).textTheme.headline1,
                         ),
-                      ),
-                      SizedBox(
-                        width: 329,
-                        child: Wrap(
-                          children: [
-                            // Use current (custom date)
-                            for (int i = 0;i < positionWeekDays + currentMonthList.length;i++)
-                              Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 12),
-                                padding: EdgeInsets.zero,
-                                width: 35,
-                                height: 35,
-                                //	child: i >= positionWeekDays  ? Center(child: Text(currentMonthList[i - positionWeekDays].day.toString())) : null,
-                                child: i >= positionWeekDays
-                                    ? Stack(children: [
-                                        SimpleCircularProgressBar(
-                                          maxValue: 100,
-                                          progressStrokeWidth: 2.5,
-                                          backStrokeWidth: 2.5,
-                                          progressColors: const [
-                                            Colors.deepOrangeAccent,
-                                            Colors.greenAccent,
-                                            Colors.lightBlueAccent,
-                                            Colors.purpleAccent
-                                          ],
-                                          backColor: Colors.transparent,
-                                          fullProgressColor: Colors.greenAccent,
-                                          valueNotifier: ValueNotifier(
-                                              i.toDouble() + 70.0),
-                                          mergeMode: true,
-                                          animationDuration: 2,
-                                        ),
-                                        Center(
-                                            child: Text(
-                                          currentMonthList[i - positionWeekDays]
-                                              .day
-                                              .toString(),
-                                        )),
-                                      ])
-                                    : null,
-                              ),
-                          ],
+                        SizedBox(
+                          width: 329,
+                          child: Wrap(
+                            children: [
+                              for (int i = 0; i < listDays.length; i++)
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 5),
+                                  padding: EdgeInsets.zero,
+                                  width: 35,
+                                  height: 35,
+                                  child: Center(
+                                      child: Text(listDays[i],
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline2)),
+                                ),
+                            ],
+                          ),
                         ),
-                      ),
+                        SizedBox(
+                          width: 329,
+                          child: Wrap(
+                            children: [
+                              // Use current (custom date)
+                              for (int i = 0;i < controller.positionWeekDays + controller.currentMonthList.length; i++)
+                                Container(
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 12),
+                                  padding: EdgeInsets.zero,
+                                  width: 35,
+                                  height: 35,
+                                  //	child: i >= positionWeekDays  ? Center(child: Text(currentMonthList[i - positionWeekDays].day.toString())) : null,
+                                  child: i >= controller.positionWeekDays
+                                      ? Stack(children: [
+                                          SimpleCircularProgressBar(
+                                            maxValue: 100,
+                                            progressStrokeWidth: 2.5,
+                                            backStrokeWidth: 2.5,
+                                            progressColors: const [
+                                              Colors.deepOrangeAccent,
+                                              Colors.greenAccent,
+                                              Colors.lightBlueAccent,
+                                              Colors.purpleAccent
+                                            ],
+                                            backColor: Colors.transparent,
+                                            fullProgressColor: Colors.greenAccent,
+                                            valueNotifier: ValueNotifier(
+                                                i.toDouble() + 70.0),
+                                            mergeMode: true,
+                                            animationDuration: 2,
+                                          ),
+                                          Center(
+                                              child: Text(
+                                            controller.currentMonthList[i - controller.positionWeekDays]
+                                                .day
+                                                .toString(),
+                                          )),
+                                        ])
+                                      : null,
+                                ),
+                            ],
+                          ),
+                        ),
 										],
+                    ),
                   ),
                 ),
 								const SizedBox(

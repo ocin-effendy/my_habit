@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:hive/hive.dart';
 import 'package:my_habit/controllers/animationcontroller.dart';
 import 'package:my_habit/controllers/screencontroller.dart';
 import 'package:my_habit/home_page.dart';
 import 'package:my_habit/models/color.dart';
+import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/pages/achievements_page.dart';
 import 'package:my_habit/pages/habits_page.dart';
 import 'package:my_habit/pages/profile_page.dart';

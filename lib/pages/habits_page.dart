@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/pages/detail_habit_page.dart';
+import 'package:get/get.dart';
 
 class Habits extends StatelessWidget {
   Habits({Key? key}) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -304,9 +304,8 @@ class Habits extends StatelessWidget {
                       child: Column(
                         children: [
                           GestureDetector(
-														onTap:(){
-															Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=> const DetailHabit()));
-														},
+														onTap:() => Get.to(DetailHabit()),
+															//Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=> const DetailHabit()));
                             child: Container(
                               margin: EdgeInsets.only(top: 10),
                               width: MediaQuery.of(context).size.width,

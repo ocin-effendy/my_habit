@@ -6,17 +6,20 @@ import 'package:my_habit/home_page.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/provider/data_habits_provider.dart';
 import 'package:my_habit/root.dart';
+import 'package:my_habit/widget/dialogicons.dart';
 import 'package:provider/provider.dart';
 
 class RegulerHabitBottomSheet extends StatelessWidget {
   RegulerHabitBottomSheet({Key? key}) : super(key: key);
 
-  final bankIcons = DataHabits.bankIcon;
   List<Map<String, dynamic>> dataHabits = [
     {
+			"type": "reguler",
+			"start": DateTime,
       "title": "Coding",
       "icon": Icons.laptop_mac_rounded,
       "goals": "10",
+			"currentGoals": "0",
       "descGoals": "minutes",
       "statusRepeat": "daily",
       "day": {
@@ -30,8 +33,13 @@ class RegulerHabitBottomSheet extends StatelessWidget {
       },
       "week": "",
       "month": "",
-      "statusHabits": "active",
-      "timeReminders": "Do anytime"
+      "status": "active",
+      "timeReminders": [TimeOfDay], 
+			"completeDay": {
+				DateTime: "currentGoals / goals"
+			},
+			"currentStreaks": 5,
+			"longestStreaks": 10,
     }
   ];
 
@@ -80,6 +88,8 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                         duration: const Duration(seconds: 2),
                                         curve: Curves.ease);
                                   }
+
+																	controller.addHabit("reguler");
 
                                   Provider.of<DataHabitsProvider>(context,
                                           listen: false)
@@ -138,8 +148,7 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                             child: Container(
                               height: 1.5,
                               width: MediaQuery.of(context).size.width,
-                              decoration:
-                                  BoxDecoration(gradient: primaryGradient),
+                              decoration: const BoxDecoration(gradient: primaryGradient),
                             ),
                           ),
                         ],
@@ -152,43 +161,9 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                           showDialog(
                               context: context,
                               builder: (context) {
-                                return AlertDialog(
-                                  backgroundColor: Color.fromRGBO(21, 21, 70, 1),
-                                  title: Text("Choose Icon"),
-                                  titleTextStyle: TextStyle(
-                                      fontSize: 24, fontWeight: FontWeight.bold),
-                                  content: SingleChildScrollView(
-                                    child: Wrap(
-                                      alignment: WrapAlignment.center,
-                                      children: [
-                                        for (int i = 0; i < bankIcons.length; i++)
-                                          Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: ShaderMask(
-                                                shaderCallback: (rect) =>
-                                                    primaryGradient
-                                                        .createShader(rect),
-                                                child: IconButton(
-                                                  onPressed: () {
-																										controller.setIconHabit(bankIcons[i]);
-                                                      Navigator.pop(context);
-                                                    //setState(() {
-                                                    //  _iconHabit = bankIcons[i];
-                                                    //  Navigator.pop(context);
-                                                    //});
-                                                  },
-                                                  icon: Icon(
-                                                    bankIcons[i],
-                                                    size: 36,
-                                                  ),
-                                                  color: Colors.white,
-                                                )),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              });
+                                return DialogIcons();
+															});
+
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
@@ -454,7 +429,6 @@ class RegulerHabitBottomSheet extends StatelessWidget {
 
 
 																																// tanpa update 
-                                                                controller.week = controller.month = 1;
 
                                                               //setState(() {
                                                                 //listDays[key] =!value;
