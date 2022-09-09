@@ -29,6 +29,16 @@ class DateUtils {
     'Su',
   ];
 
+	static const List<String> nameDays = [
+    'Mo',
+    'Tu',
+    'We',
+    'Th',
+    'Fr',
+    'Sa',
+    'Su',
+  ];
+
   static const List months = [
     'January',
     'February',

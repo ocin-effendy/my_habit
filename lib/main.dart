@@ -15,8 +15,6 @@ void main() async {
 	Hive.registerAdapter(HabitAdapter());
 	await Hive.openBox<Habit>('habit');
 	
-
-
   runApp(const MyApp());
 }
 
