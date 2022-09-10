@@ -4,6 +4,7 @@ import '/utils/date_utils.dart' as date_util;
 
 class DateController extends GetxController{
 	DateTime dateToday = DateTime.now();
+	//DateTime dateToday = DateTime(22, 9, 11);
 	DateTime currentDateTime = DateTime.now();
   List<DateTime> currentMonthList = List.empty();
   late ScrollController scrollControllerDateInline;

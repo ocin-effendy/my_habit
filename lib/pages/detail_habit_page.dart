@@ -7,7 +7,8 @@ import 'package:my_habit/utils/date_utils.dart' as date_util;
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
 class DetailHabit extends StatelessWidget {
-  const DetailHabit({Key? key}) : super(key: key);
+  DetailHabit({Key? key}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -331,16 +332,13 @@ class DetailHabit extends StatelessWidget {
                                             ],
                                             backColor: Colors.transparent,
                                             fullProgressColor: Colors.greenAccent,
-                                            valueNotifier: ValueNotifier(
-                                                i.toDouble() + 70.0),
+                                            valueNotifier: ValueNotifier(i.toDouble() + 70.0),
                                             mergeMode: true,
                                             animationDuration: 2,
                                           ),
                                           Center(
                                               child: Text(
-                                            controller.currentMonthList[i - controller.positionWeekDays]
-                                                .day
-                                                .toString(),
+                                            controller.currentMonthList[i - controller.positionWeekDays].day.toString(),
                                           )),
                                         ])
                                       : null,

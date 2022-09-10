@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_habit/models/color.dart';
+import 'package:my_habit/models/completeday.dart';
 import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/utils/date_utils.dart' as date_util;
 import 'package:my_habit/widget/boxes.dart';
@@ -36,8 +37,8 @@ class HabitController extends GetxController {
   int week = 1; // week
   int month = 1; // month
   String status = "active"; // status
-  List<TimeOfDay> timeReminders = []; // timeReminders
-	Map<DateTime, double> completeDay = {}; // completeDay
+  List<String> timeReminders = []; // timeReminders
+	List completeDay = []; // completeDay
 	int currentStreaks = 0; // currentStreaks
 	int longestStreaks = 0; // longestStreaks
   
@@ -45,7 +46,7 @@ class HabitController extends GetxController {
 
   late String dateTime;
   late String time;
-  List<String> listTime = ['12:50'];
+  List<String> listTime = [];
 
 
 	List<IconData> dataHabits = [];
@@ -121,7 +122,7 @@ class HabitController extends GetxController {
 	}
 
 	void deleteListTime(int i){
-		listTime.removeAt(i);
+		timeReminders.removeAt(i);
 		update();
 	}
 
@@ -132,15 +133,16 @@ class HabitController extends GetxController {
     );
     if (newTime != null) {
       _time = newTime;
-			timeReminders.add(_time);
       time = _time.toString().split("(")[1].split(")")[0];
-      listTime.add(time);
+			timeReminders.add(time);
+      //listTime.add(time);
 			update();
     }
   }
 
 
 
+	// Function for oneTask input date
   void getDatePicker(context) async {
     final selectedDate = await showDatePicker(
         context: context,
@@ -183,7 +185,63 @@ class HabitController extends GetxController {
     }
   }
 
+	// Function to clear data habit for new data Habit
+	void clearDatahabit(){
+		statusInput = true;
+		statusSwitchGoalhabits = false;
+		statusSwitchRepeatEveryday = false;
+		statusSwitchReminders = false;
 
+		nameHabitController.clear();
+		iconHabit = Icons.star_rate_rounded;
+		descGoals = "times";
+		goalsHabitController.clear();
+		statusRepeat = "daily";
+		listDays = { // day
+			"Su": true,
+			"Mo": false,
+			"Tu": false,
+			"We": false,
+			"Th": false,
+			"Fr": false,
+			"Sa": false,
+		};
+		week = 1;
+		month = 1;
+		status = "active";
+		timeReminders = [];
+	}
+
+	// Function to put data in temp variabel data habit
+	void setToUpdate(Habit habit, String type){
+		if(habit.type == "reguler"){
+			if(habit.goals != 0){
+				statusSwitchGoalhabits = true;
+			}
+
+			if(habit.timeReminders.isNotEmpty){
+				statusSwitchReminders = true;
+			}
+
+			nameHabitController.text = habit.title;
+			iconHabit = IconData(habit.icon, fontFamily: "MaterialIcons");
+			descGoals = habit.descGoals;
+			goalsHabitController.text = habit.goals.toString();
+			statusRepeat = habit.statusRepeat;
+			listDays = habit.day;
+			week = habit.week;
+			month = habit.month;
+			status = habit.status;
+			timeReminders = habit.timeReminders;
+			update();
+		}
+		// for Onetask
+		//else {}
+
+	}
+
+
+	// Function add data to local with hive
 	void addHabit(String type){
 		final habit = Habit()
 		..type = type
@@ -206,6 +264,25 @@ class HabitController extends GetxController {
 		final box = Boxes.getHabit();
 		box.add(habit);
 		print("data ditambahkan");
+	}
+
+
+
+	void updateHabit(Habit habit){
+		if(habit.type == "reguler"){
+			habit.title = nameHabitController.text;
+			habit.icon = iconHabit.codePoint;
+			habit.descGoals = descGoals;
+			habit.goals = goalsHabitController.text == "" ? 0 : int.parse(goalsHabitController.text);
+			habit.statusRepeat = statusRepeat;
+			habit.day= listDays;
+			habit.week = week;
+			habit.month = month;
+			habit.status = status;
+			habit.timeReminders = timeReminders;
+		}
+		habit.save();
+
 	}
 
 

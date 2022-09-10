@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 part 'habit.g.dart';
 
@@ -43,10 +42,10 @@ class Habit extends HiveObject{
 	late String status;
 
 	@HiveField(12)
-	late List<TimeOfDay> timeReminders;
+	late List<String> timeReminders;
 
 	@HiveField(13)
-	late Map<DateTime, double> completeDay;
+	late List completeDay;
 
 	@HiveField(14)
 	late int currentStreaks;

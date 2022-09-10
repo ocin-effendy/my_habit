@@ -4,13 +4,16 @@ import 'package:my_habit/controllers/habitcontroller.dart';
 import 'package:my_habit/data.dart';
 import 'package:my_habit/home_page.dart';
 import 'package:my_habit/models/color.dart';
+import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/provider/data_habits_provider.dart';
 import 'package:my_habit/root.dart';
 import 'package:my_habit/widget/dialogicons.dart';
 import 'package:provider/provider.dart';
 
 class RegulerHabitBottomSheet extends StatelessWidget {
-  RegulerHabitBottomSheet({Key? key}) : super(key: key);
+  RegulerHabitBottomSheet({Key? key, this.habit}) : super(key: key);
+	final controller = Get.put(HabitController());
+	Habit? habit;
 
   List<Map<String, dynamic>> dataHabits = [
     {
@@ -47,7 +50,14 @@ class RegulerHabitBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DataHabitsProvider>(
       builder: (cotext, data, _) => GetBuilder<HabitController>(
-				init: HabitController(),
+				initState: (_){
+					if(habit != null){
+						Get.find<HabitController>().setToUpdate(habit!, "reguler");
+					}else{
+						Get.find<HabitController>().clearDatahabit();
+						
+					}
+				},
         builder: (controller) => GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Container(
@@ -89,7 +99,14 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                         curve: Curves.ease);
                                   }
 
-																	controller.addHabit("reguler");
+																	if(habit != null){
+																		controller.updateHabit(habit!);
+																		print("Data DI UPDATE");
+
+																	}else{
+																		controller.addHabit("reguler");
+																	}
+
 
                                   Provider.of<DataHabitsProvider>(context,
                                           listen: false)
@@ -125,7 +142,7 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                             controller: controller.nameHabitController,
                             cursorColor: Colors.lightBlueAccent,
                             style: TextStyle(
-                                color: Colors.white, fontWeight: FontWeight.bold),
+                              color: Colors.white, fontWeight: FontWeight.bold),
                             decoration: InputDecoration(
                               hintText: "Name your habit",
                               hintStyle: TextStyle(
@@ -228,17 +245,10 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                               : Colors.grey,
                                           shape: const StadiumBorder(),
                                           fixedSize: Size(
-                                              MediaQuery.of(context).size.width /
-                                                      2 -
-                                                  40,
-                                              40),
+                                              MediaQuery.of(context).size.width / 2 -40, 40),
                                         ),
                                         onPressed: () {
 																					controller.setDescGoals("times");
-
-                                          //setState(() {
-                                           // _descGoals = "times";
-                                          //});
                                         },
                                         child: Text(
                                           "of times",
@@ -586,19 +596,13 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                                       Radius.circular(14))),
                                               child: ElevatedButton(
                                                   onPressed: () {
-                                                    //setState(() {
-                                                     // month = i;
-                                                    //  week = 1;
 																											controller.setValueStatusSwitchRepeatEveriday(false, 'month', i);
 																											controller.setStatusSwicthRepeatEveriday(false);
-                                                     //});
                                                   },
                                                   style: ElevatedButton.styleFrom(
-                                                      shape:
-                                                          RoundedRectangleBorder(
+                                                      shape:RoundedRectangleBorder(
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                14.0),
+                                                            BorderRadius.circular(14.0),
                                                       ),
                                                       padding: EdgeInsets.zero,
                                                       primary: controller.month == i
@@ -608,8 +612,7 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                                           Colors.transparent),
                                                   child: Text(
                                                     i.toString(),
-                                                    style:
-                                                        TextStyle(fontSize: 14),
+                                                    style: TextStyle(fontSize: 14),
                                                   ))),
                                       ]),
                                     ],
@@ -636,7 +639,7 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                 //setState(() {
                                 controller.setStatusSwicthReminder(value);
 																if(!controller.statusSwitchReminders){
-																	controller.listTime.clear();
+																	controller.timeReminders.clear();
 																}
                                // });
                               })
@@ -646,7 +649,7 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                         visible: controller.statusSwitchReminders,
                         child: Column(
                           children: [
-                            for (int i = 0; i < controller.listTime.length; i++)
+                            for (int i = 0; i < controller.timeReminders.length; i++)
                               ListTile(
                                 leading: SizedBox(
                                   height: double.infinity,
@@ -656,7 +659,8 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                   ),
                                 ),
                                 title: Text(
-                                  controller.listTime[i],
+                                  //controller.timeReminders[i].toString().split("(")[1].split(")")[0],
+                                  controller.timeReminders[i],
                                   style: TextStyle(
                                       fontSize: 16, fontWeight: FontWeight.w500),
                                 ),

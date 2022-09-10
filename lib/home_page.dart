@@ -37,13 +37,12 @@ class HomePage extends StatelessWidget {
 							builder: (context, box, _){
 							final habit = box.values.toList().cast<Habit>();
 							print("======= cok ===========");
-							//print(habit[0].day);
+						//	print(habit[0].day);
               return  GetBuilder<DateController>(
 								initState: (_){
-									print("============= dateToday =============");
-									print(dateController.dateToday);
-									print("============= currentDateTime =============");
-									print(dateController.currentDateTime);
+									print("============= complate day =============");
+									print(habit[0].completeDay);
+									
 								},
                 builder: (x) => Container(
                   color: const Color.fromRGBO(21, 21, 71, 1),
@@ -71,27 +70,16 @@ class HomePage extends StatelessWidget {
 																			Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(5));
                                         return GestureDetector(
                                           onTap: () {
-																				//	habit[0].delete();
-																				//print("=========== berhasil di delete =======");
-
-																					if(itemIndex < habit.length && habit[itemIndex].day[dateController.today]! ){
+																					if(itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex].start.day){
 																						showDialog(
 																						context: context, 
 																						builder: (context){
+																							// push data habit by index and check this habit for today or not
 																							return DialogHabit(habit: habit[itemIndex],today: dateController.dateToday.day == dateController.currentDateTime.day,); 
 																						}
 																					);
 
-																					}
-
-                                            //if (data.listDataHabits.isNotEmpty && itemIndex < data.listDataHabits.length) {
-																				//	showDialog(
-																				//		context: context, 
-																				//		builder: (context){
-																				//			return DialogHabit(); 
-																				//		}
-																			//		);
-                                           // }
+																				}
                                           },
                                           child: GetBuilder<AnimationControllerHabit>(
 																				init: AnimationControllerHabit(),
@@ -110,14 +98,15 @@ class HomePage extends StatelessWidget {
                                                               random.nextInt(256),
                                                               random.nextInt(256),
                                                               random.nextInt(257),
-                                                              itemIndex < habit.length && habit[itemIndex].day[dateController.today]! ? 1: .35
+                                                              itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex].start.day ? 1: .35
                                                               //habit.isNotEmpty &&itemIndex < habit.length? 1: .35
 																													),
                                                           Color.fromRGBO(
                                                               random.nextInt(256),
                                                               random.nextInt(256),
                                                               random.nextInt(256),
-                                                              itemIndex < habit.length && habit[itemIndex].day[dateController.today]! ? 1: .35
+                                                              itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex].start.day ? 1: .35
+                                                              //itemIndex < habit.length && habit[itemIndex].day[dateController.today]! ? 1: .35
                                                               //habit.isNotEmpty &&itemIndex < habit.length? 1: .35
                                                               //data.listDataHabits.isNotEmpty &&itemIndex < data.listDataHabits.length? 1: .35
 																													),
@@ -127,16 +116,16 @@ class HomePage extends StatelessWidget {
 																										children: [
 																								Align(
                                                   alignment: Alignment.center,
-																								// icon masih bermasalah
-                                                  child: Icon(itemIndex < habit.length && habit[itemIndex].day[dateController.today]! ? IconData(habit[itemIndex].icon, fontFamily: "MaterialIcons")
+                                                  child: Icon(itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex].start.day ? IconData(habit[itemIndex].icon, fontFamily: "MaterialIcons")
                                                       : DataHabits.bankIcon[random.nextInt(DataHabits.bankIcon.length)])),
-																								itemIndex < habit.length && habit[itemIndex].day[dateController.today]!
+																								itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex].start.day
                                                   ? Align(
                                                       alignment: Alignment.bottomRight,
                                                       child: Padding(
                                                         padding: EdgeInsets.only(bottom: 3, right: 5),
                                                         child: Text(
-                                                          habit[itemIndex].status,
+																												// if today return status, if last return done, if future return active
+                                                          dateController.dateToday.day == dateController.currentDateTime.day ? habit[itemIndex].status : dateController.dateToday.day > dateController.currentDateTime.day ? "done" : "active",
 																												//'active',
                                                           style: TextStyle(color: darkBlueOne,
                                                               fontSize: 12,
@@ -169,11 +158,9 @@ class HomePage extends StatelessWidget {
                                     Consumer<DataHabitsProvider>(
                                         builder: (context, data, _) {
 																				Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(5));
-																//animationControllerHabit.getAnimation(math.Random().nextInt(6));
-                                  //getAnimation(math.Random().nextInt(4));
                                   return GestureDetector(
                                     onTap: () {
-																		if (itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]!) {
+																		if (itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex + count].start.day) {
                                         //Provider.of<PopUpProvider>(context,listen: false).setStatus(true);
 																		showDialog(
 																			context: context, 
@@ -199,12 +186,13 @@ class HomePage extends StatelessWidget {
                                                         random.nextInt(256),
                                                         random.nextInt(256),
                                                         random.nextInt(256),
-                                                        itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]!? 1: .35),
+                                                        itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex + count].start.day ? 1: .35),
                                                     Color.fromRGBO(
                                                         random.nextInt(256),
                                                         random.nextInt(256),
                                                         random.nextInt(256),
-                                                        itemIndex + count < habit.length	&& habit[itemIndex + count].day[dateController.today]!? 1 : .35),
+                                                        itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex + count].start.day ? 1: .35),
+                                                        //itemIndex + count < habit.length	&& habit[itemIndex + count].day[dateController.today]!? 1 : .35),
                                                   ]),
                                             ),
                                             child: Stack(children: [
@@ -212,7 +200,7 @@ class HomePage extends StatelessWidget {
                                                   alignment: Alignment.center,
                                                   child: Icon(itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! ? IconData(habit[itemIndex + count].icon, fontFamily: "MaterialIcons")
                                                       : DataHabits.bankIcon[random.nextInt(DataHabits .bankIcon.length)])),
-                                              itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]!
+                                              itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex + count].start.day
                                                   ? Align(
                                                       alignment:
                                                           Alignment.bottomRight,
@@ -220,7 +208,9 @@ class HomePage extends StatelessWidget {
                                                         padding: EdgeInsets.only(
                                                             bottom: 3, right: 5),
                                                         child: Text(
-                                                          habit[itemIndex + count].status,
+																												// if today return status, if last return done, if future return active
+                                                          dateController.dateToday.day == dateController.currentDateTime.day ? habit[itemIndex + count].status : dateController.dateToday.day > dateController.currentDateTime.day ? "done" : "active",
+                                                         // habit[itemIndex + count].status,
 																												//'active',
                                                           style: TextStyle(
 																												color: darkBlueOne,

@@ -29,8 +29,8 @@ class HabitAdapter extends TypeAdapter<Habit> {
       ..week = fields[9] as int
       ..month = fields[10] as int
       ..status = fields[11] as String
-      ..timeReminders = (fields[12] as List).cast<TimeOfDay>()
-      ..completeDay = (fields[13] as Map).cast<DateTime, double>()
+      ..timeReminders = (fields[12] as List).cast<String>()
+      ..completeDay = (fields[13] as List).cast<dynamic>()
       ..currentStreaks = fields[14] as int
       ..longestStreaks = fields[15] as int;
   }
