@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:my_habit/controllers/datecontroller.dart';
 import 'package:my_habit/models/color.dart';
-import 'package:my_habit/models/completeday.dart';
 import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/utils/date_utils.dart' as date_util;
 import 'package:my_habit/widget/boxes.dart';
@@ -9,12 +9,15 @@ import 'package:my_habit/widget/boxes.dart';
 class HabitController extends GetxController {
   TimeOfDay _time = TimeOfDay.now();
   DateTime _date = DateTime.now();
+	final dateController = Get.find<DateController>();
 
 	// UI interactive
   bool statusInput = true;
   bool statusSwitchGoalhabits = false;
   bool statusSwitchRepeatEveryday = false;
   bool statusSwitchReminders = false;
+	bool checkGoals = true;
+
 
 	// Data Create Habit
 	//String type = ""; // type
@@ -34,6 +37,15 @@ class HabitController extends GetxController {
     "Fr": false,
     "Sa": false,
   };
+	Map<String, bool> noDay = {
+		"Su": false,
+    "Mo": false,
+    "Tu": false,
+    "We": false,
+    "Th": false,
+    "Fr": false,
+    "Sa": false,
+	};
   int week = 1; // week
   int month = 1; // month
   String status = "active"; // status
@@ -58,6 +70,11 @@ class HabitController extends GetxController {
 
 	void setStatusInput(bool value){
 		statusInput = value;
+		update();
+	}
+
+	void setCheckGoals(bool value){
+		checkGoals = value;
 		update();
 	}
 
@@ -121,11 +138,13 @@ class HabitController extends GetxController {
 		update();
 	}
 
+	// Funtion to delete item in list time reminders
 	void deleteListTime(int i){
 		timeReminders.removeAt(i);
 		update();
 	}
-
+	
+	// Function to select time for time reminders
 	void selectTime(BuildContext context) async {
 		final newTime = await showTimePicker(
       context: context,
@@ -146,8 +165,8 @@ class HabitController extends GetxController {
   void getDatePicker(context) async {
     final selectedDate = await showDatePicker(
         context: context,
-        initialDate: _date,
-        firstDate: DateTime(_date.year, _date.month, _date.day),
+        initialDate: dateController.dateToday,
+        firstDate: DateTime(dateController.dateToday.year, dateController.dateToday.month, dateController.dateToday.day),
         lastDate: DateTime(_date.year + 2),
         builder: (context, child) {
           return Theme(
@@ -223,6 +242,10 @@ class HabitController extends GetxController {
 				statusSwitchReminders = true;
 			}
 
+			if(!habit.day.containsValue(false)){
+				statusSwitchRepeatEveryday = true;
+			}
+
 			nameHabitController.text = habit.title;
 			iconHabit = IconData(habit.icon, fontFamily: "MaterialIcons");
 			descGoals = habit.descGoals;
@@ -233,11 +256,21 @@ class HabitController extends GetxController {
 			month = habit.month;
 			status = habit.status;
 			timeReminders = habit.timeReminders;
-			update();
 		}
 		// for Onetask
-		//else {}
+		else {
+			if(habit.timeReminders.isNotEmpty){
+				statusSwitchReminders = true;
+			}
+			start = dateController.dateToday;
+			nameHabitController.text = habit.title;
+			iconHabit = IconData(habit.icon, fontFamily: "MaterialIcons");
+			status = habit.status;
+			timeReminders = habit.timeReminders;
+      dateTime ="${dateController.dateToday.day} ${date_util.DateUtils.months[dateController.dateToday.month - 1]} ${dateController.dateToday.year}";
 
+		}
+		update();
 	}
 
 
@@ -248,11 +281,12 @@ class HabitController extends GetxController {
 		..start = start
 		..title = nameHabitController.text
 		..icon = iconHabit.codePoint
-		..goals = goalsHabitController.text == "" ? 0 : int.parse(goalsHabitController.text)
+		..goals = type == "oneTask" ? 1 : int.parse(goalsHabitController.text) 
 		..currentGoals = currentGoals
+		//..descGoals = descGoals == "minutes" && goalsHabitController.text == "" ? "times" : descGoals
 		..descGoals = descGoals
 		..statusRepeat = statusRepeat
-		..day = listDays
+		..day = type == "reguler" ? listDays : noDay
 		..week = week
 		..month = month
 		..status = status
@@ -267,23 +301,30 @@ class HabitController extends GetxController {
 	}
 
 
-
+	// FUnction to 
 	void updateHabit(Habit habit){
 		if(habit.type == "reguler"){
 			habit.title = nameHabitController.text;
 			habit.icon = iconHabit.codePoint;
 			habit.descGoals = descGoals;
-			habit.goals = goalsHabitController.text == "" ? 0 : int.parse(goalsHabitController.text);
+			habit.goals = int.parse(goalsHabitController.text);
 			habit.statusRepeat = statusRepeat;
 			habit.day= listDays;
 			habit.week = week;
 			habit.month = month;
 			habit.status = status;
 			habit.timeReminders = timeReminders;
+		}else{
+			habit.start = start;
+			habit.title = nameHabitController.text;
+			habit.icon = iconHabit.codePoint;
+			habit.status = status;
+			habit.timeReminders = timeReminders;
 		}
 		habit.save();
 
 	}
+
 
 
 	@override

@@ -2,12 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_habit/controllers/datecontroller.dart';
 import 'package:my_habit/models/color.dart';
+import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/root.dart';
 import 'package:my_habit/utils/date_utils.dart' as date_util;
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
 class DetailHabit extends StatelessWidget {
-  DetailHabit({Key? key}) : super(key: key);
+  DetailHabit({Key? key, this.habit}) : super(key: key);
+	Habit? habit;
+
+
+	bool checkDate(int day){
+		print("melbuo cokkkkk jancom,kkkkkkkkkkkk dfhndsjkfnasfjkdnfasdjkfnfjkn");
+		for(int i = 0; i < habit!.completeDay.length; i++){
+			if(habit!.completeDay[i]["day"] == day){
+				return true;
+			}
+		}
+		return false;
+	}	
+	int getIndexCompleteDay(int day){
+		print("melbuo cokkkkk jancom,kkkkkkkkkkkk dfhndsjkfnasfjkdnfasdjkfnfjkn");
+		for(int i = 0; i < habit!.completeDay.length; i++){
+			if(habit!.completeDay[i]["day"] == day){
+				return i;
+			}
+		}
+		return 0;
+	}
 
 
   @override
@@ -330,9 +352,11 @@ class DetailHabit extends StatelessWidget {
                                               Colors.lightBlueAccent,
                                               Colors.purpleAccent
                                             ],
-                                            backColor: Colors.transparent,
+                                            backColor: Colors.white.withOpacity(.05),
                                             fullProgressColor: Colors.greenAccent,
-                                            valueNotifier: ValueNotifier(i.toDouble() + 70.0),
+                                            valueNotifier: ValueNotifier(
+																						checkDate(controller.currentMonthList[i - controller.positionWeekDays].day) ?	(( habit!.completeDay[getIndexCompleteDay(controller.currentMonthList[i - controller.positionWeekDays].day)]["finishGoals"] / habit!.completeDay[getIndexCompleteDay(controller.currentMonthList[i - controller.positionWeekDays].day)]["goals"]) * 100 ) : 0.0 
+																							),
                                             mergeMode: true,
                                             animationDuration: 2,
                                           ),

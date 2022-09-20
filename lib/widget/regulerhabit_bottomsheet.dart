@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:my_habit/controllers/datecontroller.dart';
 import 'package:my_habit/controllers/habitcontroller.dart';
 import 'package:my_habit/data.dart';
 import 'package:my_habit/home_page.dart';
@@ -11,9 +12,10 @@ import 'package:my_habit/widget/dialogicons.dart';
 import 'package:provider/provider.dart';
 
 class RegulerHabitBottomSheet extends StatelessWidget {
-  RegulerHabitBottomSheet({Key? key, this.habit}) : super(key: key);
+  RegulerHabitBottomSheet({Key? key, this.habit, this.indexCompleteDay}) : super(key: key);
 	final controller = Get.put(HabitController());
 	Habit? habit;
+	int? indexCompleteDay;
 
   List<Map<String, dynamic>> dataHabits = [
     {
@@ -52,9 +54,9 @@ class RegulerHabitBottomSheet extends StatelessWidget {
       builder: (cotext, data, _) => GetBuilder<HabitController>(
 				initState: (_){
 					if(habit != null){
-						Get.find<HabitController>().setToUpdate(habit!, "reguler");
+						controller.setToUpdate(habit!, "reguler");
 					}else{
-						Get.find<HabitController>().clearDatahabit();
+						controller.clearDatahabit();
 						
 					}
 				},
@@ -88,6 +90,12 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                           IconButton(
                               onPressed: () {
                                 if (controller.nameHabitController.text.isNotEmpty) {
+																	if(controller.goalsHabitController.text.isEmpty || int.parse(controller.goalsHabitController.text) == 0){
+																			controller.setCheckGoals(false);
+																			controller.setStatusSwitchGoalHabits(true);
+																	}else{
+																		controller.setCheckGoals(true);
+
                                   if (data.listDataHabits.length < 3) {
                                     print("masukkkkkkkkkkkkkkkkkkkkkkkkkkk");
                                     carouselController.nextPage(
@@ -101,10 +109,105 @@ class RegulerHabitBottomSheet extends StatelessWidget {
 
 																	if(habit != null){
 																		controller.updateHabit(habit!);
+																		if(habit!.completeDay.isNotEmpty){
+																			// if today or habit.completeDay[0] 0 change goals so completeDay today changes too
+																			if(habit!.completeDay[indexCompleteDay!]["day"] == Get.find<DateController>().dateToday.day){
+																				if(int.parse(controller.goalsHabitController.text) != 0){
+																					habit!.completeDay[indexCompleteDay!]["goals"] = int.parse(controller.goalsHabitController.text);
+																				}else{
+																					habit!.completeDay[indexCompleteDay!]["goals"] = habit!.goals;
+																				}
+
+																				if(habit!.completeDay[indexCompleteDay!]["finishGoals"] > int.parse(controller.goalsHabitController.text)){
+																					habit!.completeDay[indexCompleteDay!]["finishGoals"] = 0;
+																					habit!.currentGoals = 0;
+																					habit!.status = "active";
+																				}else if(habit!.descGoals == "minutes"){
+																					habit!.completeDay[indexCompleteDay!]["finishGoals"] = 0;
+																					habit!.currentGoals = 0;
+																					habit!.status = "active";
+																				}
+
+																				if(habit!.completeDay[indexCompleteDay!]["finishGoals"] != habit!.goals){
+																					habit!.status = "active";
+																				}else{
+																					habit!.status = "done";
+																				}
+																				
+																				//if(habit!.descGoals == "minutes"){
+																				//	print("JUANCOKKKKKKKKKKKKKKKKKKKKKKKK");
+																			//		habit!.completeDay[indexCompleteDay!]["finishGoals"] = 0;
+																			//		habit!.completeDay[indexCompleteDay!]["goals"] = habit!.goals;
+																			//		habit!.status = "active";
+																			//	}else if(habit!.descGoals == "times"){
+																			//		habit!.completeDay[indexCompleteDay!]["finishGoals"] = 0;
+																			//		habit!.currentGoals = 0;
+																			//		habit!.status = "active";
+																			//	}
+
+
+																			// if future change goals so completeDay today changes too
+																			}else if(indexCompleteDay == 0 && Get.find<DateController>().currentDateTime.day > Get.find<DateController>().dateToday.day){
+																				print("MASUK KE BESOKOK coklllllll");
+																				for(int i = 0; i < habit!.completeDay.length; i++){
+																					if(habit!.completeDay[i]["day"] == Get.find<DateController>().dateToday.day){
+																						if(int.parse(controller.goalsHabitController.text) != 0){
+																							habit!.completeDay[i]["goals"] = int.parse(controller.goalsHabitController.text);
+																						}else{
+																							habit!.completeDay[i]["goals"] = habit!.goals;
+																						}
+																						if(habit!.completeDay[i]["finishGoals"] > int.parse(controller.goalsHabitController.text)){
+																							habit!.completeDay[i]["finishGoals"] = 0;
+																							habit!.currentGoals = 0;
+																							habit!.status = "active";
+																						}else if(habit!.descGoals == "minutes"){
+																							habit!.completeDay[i]["finishGoals"] = 0;
+																							habit!.currentGoals = 0;
+																							habit!.status = "active";
+																						}
+																						if(habit!.completeDay[i]["finishGoals"] != habit!.goals){
+																							habit!.status = "active";
+																						}else{
+																							habit!.status = "done";
+																						}
+
+																					}
+																				}
+																			// if last change goals so completeDay today changes too
+																			}else if(habit!.completeDay[indexCompleteDay!]["day"] < Get.find<DateController>().dateToday.day){
+																				print("MASUK KE WINGINSNE JUANNNN coklllllll");
+																				for(int i = 0; i < habit!.completeDay.length; i++){
+																					if(habit!.completeDay[i]["day"] == Get.find<DateController>().dateToday.day){
+																						if(int.parse(controller.goalsHabitController.text) != 0){
+																							habit!.completeDay[i]["goals"] = int.parse(controller.goalsHabitController.text);
+																						}else{
+																							habit!.completeDay[i]["goals"] = habit!.goals;
+																						}
+																						if(habit!.completeDay[i]["finishGoals"] > int.parse(controller.goalsHabitController.text)){
+																							habit!.completeDay[i]["finishGoals"] = 0;
+																							habit!.currentGoals = 0;
+																							habit!.status = "active";
+																						}else if(habit!.descGoals == "minutes"){
+																							habit!.completeDay[i]["finishGoals"] = 0;
+																							habit!.currentGoals = 0;
+																							habit!.status = "active";
+																						}
+
+																						if(habit!.completeDay[i]["finishGoals"] != habit!.goals){
+																							habit!.status = "active";
+																						}else{
+																							habit!.status = "done";
+																						}
+																					}
+																				}
+																			}
+																			habit!.save();
+																		}
 																		print("Data DI UPDATE");
 
 																	}else{
 																		controller.addHabit("reguler");
+
 																	}
 
 
@@ -115,13 +218,9 @@ class RegulerHabitBottomSheet extends StatelessWidget {
 																	//controller.addDatahabits(DataHabits.bankIcon[random.nextInt(DataHabits.bankIcon.length)]);
                                   Navigator.pop(context);
                                   controller.statusSwitchGoalhabits = false;
-                                  print(
-                                      "===========================================");
+																	}
                                 } else {
 																	controller.setStatusInput(false);
-                                  //setState(() {
-                                  //  statusInput = false;
-                                  //});
                                 }
                               },
                               icon: ShaderMask(
@@ -248,8 +347,10 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                               MediaQuery.of(context).size.width / 2 -40, 40),
                                         ),
                                         onPressed: () {
-																					controller.setDescGoals("times");
-                                        },
+																					if(habit == null){
+																						controller.setDescGoals("times");
+																					}
+																				},
                                         child: Text(
                                           "of times",
                                           style: Theme.of(context)
@@ -269,10 +370,10 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                               40),
                                         ),
                                         onPressed: () {
-																					controller.setDescGoals("minutes");
-                                          //setState(() {
-                                           // _descGoals = "minutes";
-                                          //});
+																					if(habit == null){
+																						controller.setDescGoals("minutes");
+
+																					}
                                         },
                                         child: Text(
                                           "time",
@@ -303,6 +404,12 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                           vertical: 15.0,
                                           horizontal: 15.0,
                                         ),
+																				suffixIcon: controller.checkGoals
+																					? null
+																						: Icon(
+																						Icons.error,
+																							color: Colors.red,
+																						),
                                       ),
                                     ),
                                     Positioned(
@@ -331,20 +438,10 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                             onTap: (index) {
                               if (index == 0) {
 																controller.setStatusRepeat("daily");
-
-                                //setState(() {
-                                //  statusRepeat = "daily";
-                                //});
                               } else if (index == 1) {
 																controller.setStatusRepeat("weekly");
-                               // setState(() {
-                               //   statusRepeat = "weekly";
-                               // });
                               } else {
 																controller.setStatusRepeat("monthly");
-                               // setState(() {
-                               //   statusRepeat = "monthly";
-                                //});
                               }
                             },
                             indicatorPadding: const EdgeInsets.all(0.0),
@@ -421,13 +518,8 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                                         width: 43,
                                                         height: 43,
                                                         decoration: const BoxDecoration(
-                                                            gradient:
-                                                                primaryGradient,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            14))),
+                                                            gradient: primaryGradient,
+                                                            borderRadius:BorderRadius.all(Radius.circular(14))),
                                                         child: ElevatedButton(
                                                             onPressed: () {
 																															controller.setListDays(key, !value);
@@ -436,8 +528,6 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                                                 } else {
 																																	controller.setStatusSwicthRepeatEveriday(true);
                                                                 }
-
-
 																																// tanpa update 
 
                                                               //setState(() {

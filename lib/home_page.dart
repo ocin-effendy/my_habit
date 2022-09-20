@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_habit/controllers/animationcontroller.dart';
 import 'package:my_habit/controllers/datecontroller.dart';
+import 'package:my_habit/controllers/habitcontroller.dart';
 import 'package:my_habit/data.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/models/habit.dart';
@@ -17,14 +18,14 @@ import 'dart:math' as math;
 
 CarouselController carouselController = CarouselController();
 CarouselController carouselController1 = CarouselController();
-DateTime currentDateTime = DateTime.now();
+//DateTime currentDateTime = DateTime.now();
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
-  int count = 3;
+  int count = 5;
 	final dateController = Get.put(DateController());
+	final habitController = Get.put(HabitController());
 	
-
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +37,24 @@ class HomePage extends StatelessWidget {
 							valueListenable: Boxes.getHabit().listenable(),
 							builder: (context, box, _){
 							final habit = box.values.toList().cast<Habit>();
-							print("======= cok ===========");
-						//	print(habit[0].day);
+							print("======= List Habit cok ===========");
+							print(habit[0].title);
+							print(habit[1].title);
+							print(habit[2].start);
+							//print(habit[3].title);
+							//print(habit[4].title);
+						//	print(habit[2].start);
+							//habit[2].delete();
+							//habit[3].delete();
+						//habit[4].delete();
               return  GetBuilder<DateController>(
 								initState: (_){
 									print("============= complate day =============");
 									print(habit[0].completeDay);
+									print(habit[1].completeDay);
+									print(habit[2].completeDay);
+									//print(habit[3].completeDay);
+									//print(habit[4].completeDay);
 									
 								},
                 builder: (x) => Container(
@@ -65,82 +78,18 @@ class HomePage extends StatelessWidget {
                                     height: 99,
                                     autoPlay: false,
                                   ),
-                                  itemCount: 3,
+                                  itemCount: count,
                                   itemBuilder: (BuildContext context, int itemIndex,int pageViewIndex) {
-																			Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(5));
-                                        return GestureDetector(
-                                          onTap: () {
-																					if(itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex].start.day){
-																						showDialog(
-																						context: context, 
-																						builder: (context){
-																							// push data habit by index and check this habit for today or not
-																							return DialogHabit(habit: habit[itemIndex],today: dateController.dateToday.day == dateController.currentDateTime.day,); 
-																						}
-																					);
+																			Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(3));
+																			// if daily return when daily items is true and current habit >= start habit
+																			// if onetask return when start habit == current habit
+																			if(itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex].start.day || itemIndex < habit.length && habit[itemIndex].start.day == dateController.currentDateTime.day){
 
-																				}
-                                          },
-                                          child: GetBuilder<AnimationControllerHabit>(
-																				init: AnimationControllerHabit(),
-                                            builder: (controller) => FadeTransition(
-                                              opacity: controller.animation,
-                                              child: Container(
-                                                  width: 78,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        const BorderRadius.all(
-                                                            Radius.circular(15)),
-                                                    gradient: LinearGradient(
-                                                        begin: Alignment.topLeft,
-                                                        colors: [
-                                                          Color.fromRGBO(
-                                                              random.nextInt(256),
-                                                              random.nextInt(256),
-                                                              random.nextInt(257),
-                                                              itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex].start.day ? 1: .35
-                                                              //habit.isNotEmpty &&itemIndex < habit.length? 1: .35
-																													),
-                                                          Color.fromRGBO(
-                                                              random.nextInt(256),
-                                                              random.nextInt(256),
-                                                              random.nextInt(256),
-                                                              itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex].start.day ? 1: .35
-                                                              //itemIndex < habit.length && habit[itemIndex].day[dateController.today]! ? 1: .35
-                                                              //habit.isNotEmpty &&itemIndex < habit.length? 1: .35
-                                                              //data.listDataHabits.isNotEmpty &&itemIndex < data.listDataHabits.length? 1: .35
-																													),
-                                                        ]),
-                                                  ),
-																									child: Stack(
-																										children: [
-																								Align(
-                                                  alignment: Alignment.center,
-                                                  child: Icon(itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex].start.day ? IconData(habit[itemIndex].icon, fontFamily: "MaterialIcons")
-                                                      : DataHabits.bankIcon[random.nextInt(DataHabits.bankIcon.length)])),
-																								itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex].start.day
-                                                  ? Align(
-                                                      alignment: Alignment.bottomRight,
-                                                      child: Padding(
-                                                        padding: EdgeInsets.only(bottom: 3, right: 5),
-                                                        child: Text(
-																												// if today return status, if last return done, if future return active
-                                                          dateController.dateToday.day == dateController.currentDateTime.day ? habit[itemIndex].status : dateController.dateToday.day > dateController.currentDateTime.day ? "done" : "active",
-																												//'active',
-                                                          style: TextStyle(color: darkBlueOne,
-                                                              fontSize: 12,
-                                                              fontWeight:FontWeight.w600,
-                                                              letterSpacing: -.5),
-                                                        ),
-                                                      ))
-                                                  : const Text(''),
-                                            ])),
-
-
-                                              ),
-                                          ),
-                                        );
-                                      }),
+																				return getBoxActiveHabit(context, habit, itemIndex, true);
+																			}else{
+																				return getBoxActiveHabit(context, habit, itemIndex, false); 
+																			}
+                                   }),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 3),
@@ -157,74 +106,14 @@ class HomePage extends StatelessWidget {
                                 itemBuilder: (BuildContext context, int itemIndex,int pageViewIndex) =>
                                     Consumer<DataHabitsProvider>(
                                         builder: (context, data, _) {
-																				Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(5));
-                                  return GestureDetector(
-                                    onTap: () {
-																		if (itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex + count].start.day) {
-                                        //Provider.of<PopUpProvider>(context,listen: false).setStatus(true);
-																		showDialog(
-																			context: context, 
-																			builder: (context){
-																				return DialogHabit(habit: habit[itemIndex + count],today: dateController.dateToday.day == dateController.currentDateTime.day,); 
-																			}
-																		);
-                                      }
-                                    },
-                                    child: GetBuilder<AnimationControllerHabit>(
-																	init: AnimationControllerHabit(),
-                                      builder: (controller)=> FadeTransition(
-                                        opacity: controller.animation,
-                                        child: Container(
-                                            width: 78,
-                                            decoration: BoxDecoration(
-                                              borderRadius: const BorderRadius.all(
-                                                  Radius.circular(15)),
-                                              gradient: LinearGradient(
-                                                  begin: Alignment.topLeft,
-                                                  colors: [
-                                                    Color.fromRGBO(
-                                                        random.nextInt(256),
-                                                        random.nextInt(256),
-                                                        random.nextInt(256),
-                                                        itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex + count].start.day ? 1: .35),
-                                                    Color.fromRGBO(
-                                                        random.nextInt(256),
-                                                        random.nextInt(256),
-                                                        random.nextInt(256),
-                                                        itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex + count].start.day ? 1: .35),
-                                                        //itemIndex + count < habit.length	&& habit[itemIndex + count].day[dateController.today]!? 1 : .35),
-                                                  ]),
-                                            ),
-                                            child: Stack(children: [
-                                              Align(
-                                                  alignment: Alignment.center,
-                                                  child: Icon(itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! ? IconData(habit[itemIndex + count].icon, fontFamily: "MaterialIcons")
-                                                      : DataHabits.bankIcon[random.nextInt(DataHabits .bankIcon.length)])),
-                                              itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex + count].start.day
-                                                  ? Align(
-                                                      alignment:
-                                                          Alignment.bottomRight,
-                                                      child: Padding(
-                                                        padding: EdgeInsets.only(
-                                                            bottom: 3, right: 5),
-                                                        child: Text(
-																												// if today return status, if last return done, if future return active
-                                                          dateController.dateToday.day == dateController.currentDateTime.day ? habit[itemIndex + count].status : dateController.dateToday.day > dateController.currentDateTime.day ? "done" : "active",
-                                                         // habit[itemIndex + count].status,
-																												//'active',
-                                                          style: TextStyle(
-																												color: darkBlueOne,
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                                  FontWeight.w600,
-                                                              letterSpacing: -.5),
-                                                        ),
-                                                      ))
-                                                  : const Text(''),
-                                            ])),
-                                      ),
-                                    ),
-                                  );
+																				Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(3));
+																				if(itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex + count].start.day || itemIndex + count < habit.length && habit[itemIndex + count].start.day == dateController.currentDateTime.day
+){
+																					return getBoxActiveHabit(context, habit, itemIndex + count, true);
+																				}else{
+																					return getBoxActiveHabit(context, habit, itemIndex + count, false);
+																				}
+                                  
                                 }),
                               ),
                             ),
@@ -244,7 +133,7 @@ class HomePage extends StatelessWidget {
                 alignment: Alignment.bottomCenter,
                     child: Container(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 35, horizontal: 20),
+                      const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height * .42,
                   decoration: const BoxDecoration(
@@ -298,9 +187,8 @@ class HomePage extends StatelessWidget {
                           )
                         ],
                       ),
-                      const SizedBox(
-                        height: 15,
-                      ),
+											const SizedBox(height: 5,),
+                      
                       //sgetDatePicker(),
 									  SizedBox(
                           height: 60,
@@ -361,7 +249,7 @@ class HomePage extends StatelessWidget {
                                 );
                               }),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 6),
                       const Divider(
                         color: Colors.white54,
                       ),
@@ -427,6 +315,69 @@ class HomePage extends StatelessWidget {
         ),
     );
   }
+
+	Widget getBoxActiveHabit(context, List habit, int itemIndex ,bool active){
+		return GestureDetector(
+      onTap: () {
+				if(active){
+					showDialog(
+						context: context, 
+						builder: (context){
+						// push data habit by index and check this habit for today or not
+							return DialogHabit(habit: habit[itemIndex],today: dateController.dateToday.day == dateController.currentDateTime.day,); 
+						}
+					);
+				}
+			},
+      child: GetBuilder<AnimationControllerHabit>(
+				init: AnimationControllerHabit(),
+				builder: (controller) => FadeTransition(
+					opacity: controller.animation,
+          child: Container(
+            width: 78,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  colors: [
+                    Color.fromRGBO(
+                      random.nextInt(256),
+                      random.nextInt(256),
+                      random.nextInt(257),
+                      active ?  1: .35),
+										Color.fromRGBO(
+                      random.nextInt(256),
+                      random.nextInt(256),
+                      random.nextInt(256),
+                     active ? 1: .35),
+                  ]),
+								),
+						child: Stack(
+							children: [
+								Align(
+                  alignment: Alignment.center,
+                   child:  Icon(active ? IconData(habit[itemIndex].icon, fontFamily: "MaterialIcons") : DataHabits.bankIcon[random.nextInt(DataHabits.bankIcon.length)]) ),
+								active	
+                 ? Align(
+										alignment: Alignment.bottomRight,
+											child: Padding(
+                        padding: EdgeInsets.only(bottom: 3, right: 5),
+                          child: Text(
+														// if today return status, if last return done, if future return active
+                            dateController.dateToday.day == dateController.currentDateTime.day ? habit[itemIndex].status : dateController.dateToday.day > dateController.currentDateTime.day ? "done" : "active",
+														style: TextStyle(color: darkBlueOne,
+                            fontSize: 12,
+                            fontWeight:FontWeight.w600,
+                            letterSpacing: -.5),
+                          ),
+                        ))
+                      : const Text(''),
+                    ])),
+								 ),
+                ),
+          );
+
+	}
 
   Widget getCarousel() {
     return Padding(

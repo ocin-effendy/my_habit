@@ -7,6 +7,7 @@ import 'package:my_habit/provider/data_habits_provider.dart';
 import 'package:my_habit/root.dart';
 import 'package:provider/provider.dart';
 
+
 void main() async {
 	WidgetsFlutterBinding.ensureInitialized();
 
@@ -14,8 +15,10 @@ void main() async {
 	await Hive.initFlutter();
 	Hive.registerAdapter(HabitAdapter());
 	await Hive.openBox<Habit>('habit');
-	
+
+
   runApp(const MyApp());
+	
 }
 
 class MyApp extends StatelessWidget {

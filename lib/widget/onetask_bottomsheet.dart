@@ -1,18 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:my_habit/controllers/habitcontroller.dart';
 import 'package:my_habit/models/color.dart';
+import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/provider/data_habits_provider.dart';
 import 'package:my_habit/widget/dialogicons.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 
 class OneTaskBottomSheet extends StatelessWidget {
-	OneTaskBottomSheet({Key? key}) : super(key: key);
+	final controller = Get.put(HabitController());
+	OneTaskBottomSheet({Key? key, this.habit}) : super(key: key);
+	Habit? habit;
+
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DataHabitsProvider>(
-			builder: (context, data, _) => GetBuilder<HabitController>(
+    return GetBuilder<HabitController>(
+			initState: (_){
+			if(habit != null){
+						controller.setToUpdate(habit!, "oneTask");
+					}else{
+						controller.clearDatahabit();
+					}
+			},
 				init: HabitController(),
 			  builder: (controller) => Container(
         height: MediaQuery.of(context).size.height * 0.97,
@@ -38,7 +48,17 @@ class OneTaskBottomSheet extends StatelessWidget {
                   ),
                   IconButton(
                       onPressed: () {
-			  								Navigator.pop(context);
+												if(controller.nameHabitController.text.isNotEmpty){
+													if(habit != null){
+														controller.updateHabit(habit!);
+													}else{
+														controller.addHabit("oneTask");
+													}
+													Navigator.pop(context);
+												}else{
+													controller.setStatusInput(false);
+												}
+
 			  							},
                       icon: ShaderMask(
                           shaderCallback: (rect) =>
@@ -223,7 +243,6 @@ class OneTaskBottomSheet extends StatelessWidget {
           ),
         ),
       ),
-			),
     );
   }
 }
