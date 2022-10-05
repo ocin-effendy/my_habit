@@ -12,19 +12,17 @@ class DetailHabit extends StatelessWidget {
 	Habit? habit;
 
 
-	bool checkDate(int day){
-		print("melbuo cokkkkk jancom,kkkkkkkkkkkk dfhndsjkfnasfjkdnfasdjkfnfjkn");
+	bool checkDate(int day, int month, int year){
 		for(int i = 0; i < habit!.completeDay.length; i++){
-			if(habit!.completeDay[i]["day"] == day){
+			if(habit!.completeDay[i]["day"] == day && habit!.completeDay[i]["month"] == month && habit!.completeDay[i]["year"] == year){
 				return true;
 			}
 		}
 		return false;
 	}	
-	int getIndexCompleteDay(int day){
-		print("melbuo cokkkkk jancom,kkkkkkkkkkkk dfhndsjkfnasfjkdnfasdjkfnfjkn");
+	int getIndexCompleteDay(int day, int month, int year){
 		for(int i = 0; i < habit!.completeDay.length; i++){
-			if(habit!.completeDay[i]["day"] == day){
+			if(habit!.completeDay[i]["day"] == day && habit!.completeDay[i]["month"] == month && habit!.completeDay[i]["year"] == year){
 				return i;
 			}
 		}
@@ -301,11 +299,36 @@ class DetailHabit extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          date_util.DateUtils.months[controller.currentDateTime.month - 1] +
-                              " " +
-                              controller.currentDateTime.year.toString(),
-                          style: Theme.of(context).textTheme.headline1,
+                        Row(
+													mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+														IconButton(
+															onPressed: (){
+
+																controller.updateCurrentMonthList(DateTime(controller.currentDateTime.year,controller.currentDateTime.month - 1, controller.currentDateTime.day));
+															Navigator.pop(context);
+															Get.to(DetailHabit(habit: habit,));
+
+															}, 
+															icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white,)),
+                            Text(
+                              date_util.DateUtils.months[controller.currentDateTime.month - 1] +
+                                  " " +
+                                  controller.currentDateTime.year.toString(),
+                              style: Theme.of(context).textTheme.headline1,
+                            ),
+														IconButton(
+															onPressed: (){
+																if(controller.currentDateTime.month < controller.dateToday.month){
+																	controller.updateCurrentMonthList(DateTime(controller.currentDateTime.year,controller.currentDateTime.month + 1, controller.currentDateTime.day));
+															Navigator.pop(context);
+															Get.to(DetailHabit(habit: habit,));
+
+
+																}
+															}, 
+															icon: Icon(Icons.arrow_forward_ios_rounded, color: controller.currentDateTime.month < controller.dateToday.month ? Colors.white: Colors.white10,)),
+                          ],
                         ),
                         SizedBox(
                           width: 329,
@@ -332,7 +355,7 @@ class DetailHabit extends StatelessWidget {
                           child: Wrap(
                             children: [
                               // Use current (custom date)
-                              for (int i = 0;i < controller.positionWeekDays + controller.currentMonthList.length; i++)
+                              for (int i = 0; i < controller.positionWeekDays + controller.currentMonthList.length; i++)
                                 Container(
                                   margin: EdgeInsets.symmetric(
                                       horizontal: 6, vertical: 12),
@@ -355,7 +378,7 @@ class DetailHabit extends StatelessWidget {
                                             backColor: Colors.white.withOpacity(.05),
                                             fullProgressColor: Colors.greenAccent,
                                             valueNotifier: ValueNotifier(
-																						checkDate(controller.currentMonthList[i - controller.positionWeekDays].day) ?	(( habit!.completeDay[getIndexCompleteDay(controller.currentMonthList[i - controller.positionWeekDays].day)]["finishGoals"] / habit!.completeDay[getIndexCompleteDay(controller.currentMonthList[i - controller.positionWeekDays].day)]["goals"]) * 100 ) : 0.0 
+																						checkDate(controller.currentMonthList[i - controller.positionWeekDays].day, controller.currentMonthList[i - controller.positionWeekDays].month, controller.currentMonthList[i - controller.positionWeekDays].year) ?	(( habit!.completeDay[getIndexCompleteDay(controller.currentMonthList[i - controller.positionWeekDays].day, controller.currentMonthList[i - controller.positionWeekDays].month, controller.currentMonthList[i - controller.positionWeekDays].year)]["finishGoals"] / habit!.completeDay[getIndexCompleteDay(controller.currentMonthList[i - controller.positionWeekDays].day, controller.currentMonthList[i - controller.positionWeekDays].month, controller.currentMonthList[i - controller.positionWeekDays].year)]["goals"]) * 100 ) : 0.0 
 																							),
                                             mergeMode: true,
                                             animationDuration: 2,

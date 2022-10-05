@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
+import 'package:hive/hive.dart';
 import 'package:my_habit/models/color.dart';
+import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/pages/detail_habit_page.dart';
 import 'package:get/get.dart';
+import 'package:my_habit/widget/boxes.dart';
 
 class Habits extends StatelessWidget {
   Habits({Key? key}) : super(key: key);
+	final box = Boxes.getHabit();
+
 
   @override
   Widget build(BuildContext context) {
@@ -300,232 +305,63 @@ class Habits extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    Container(
-                      child: Column(
-                        children: [
-                          GestureDetector(
-														onTap:() => Get.to(DetailHabit()),
-															//Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=> const DetailHabit()));
-                            child: Container(
-                              margin: EdgeInsets.only(top: 10),
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height * .08,
-                              padding: EdgeInsets.symmetric(horizontal: 15),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(15)),
-                                border: GradientBoxBorder(
-                                  gradient: LinearGradient(
-																begin: Alignment.bottomLeft,
-																end: Alignment.topRight,
-																colors: iconsGradientColors,
-															),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
+                    Column(
+                      children: [
+														ListView.builder(
+												  physics: NeverScrollableScrollPhysics(),
+												  shrinkWrap: true,
+												  itemCount: box.toMap().values.toList().length,
+                            itemBuilder: (context, index){ 
+														final habit = box.values.toList().cast<Habit>();
+												  	return GestureDetector(
+														  onTap:() => Get.to(DetailHabit(habit: habit[index],)),
+                                  child: Container(
+                                    margin: EdgeInsets.only(top: 10),
+                                    width: MediaQuery.of(context).size.width,
+                                    height: MediaQuery.of(context).size.height * .08,
+                                    padding: EdgeInsets.symmetric(horizontal: 15),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                                      border: GradientBoxBorder(
+                                        gradient: LinearGradient(
+																			  begin: Alignment.bottomLeft,
+																			  end: Alignment.topRight,
+																			  colors: iconsGradientColors,
+																		  ),
+																	  ),
+																  ),
+                                  child: Row(
+                                    children: [
                                       ShaderMask(
                                         shaderCallback: (rect) => LinearGradient(
                                           colors: iconsGradientColors,
                                           begin: Alignment.topLeft
 																		).createShader(rect),
-                                        child: const Icon(
-                                          Icons.local_drink_rounded,
+                                        child: Icon(
+																			IconData(habit[index].icon, fontFamily: "MaterialIcons"),
                                           color: Colors.white,
-																		)
-																	),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
+																		  )
+																	  ),
+                                      SizedBox(width: 10,),
                                       Text(
-                                        "Drink Water",
+                                        habit[index].title,
+																			//	"niko",
                                         style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 20),
-                                      )
-                                  ],
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 10),
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * .08,
-                            padding: EdgeInsets.symmetric(horizontal: 15),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
-														border: GradientBoxBorder(
-															gradient: LinearGradient(
-																colors: [
-																  Color.fromRGBO(16, 141, 199, 1),
-																  Color.fromRGBO(203, 150, 212, 1),
-																]
-															),
-														),
-                            ),
-                            child: Row(
-                              children: [
-																	ShaderMask(
-                                      shaderCallback: (rect) => LinearGradient(
-                                        colors: const [
-																		  	Color.fromRGBO(16, 141, 199, 1),
-																		  	Color.fromRGBO(203, 150, 212, 1),
-																			],
-                                        begin: Alignment.topLeft
-																		).createShader(rect),
-                                      child: const Icon(
-                                        Icons.laptop_mac_rounded,
-                                        color: Colors.white,
-																		)
-																	),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      "Coding",
-                                      style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           fontSize: 20),
-                                    )
-                              ],
-                            ),
+                                        )
+                                      ],
+                                  ),
+                                ),
+                              );
+												}
                           ),
-                          Container(
-                            margin: EdgeInsets.only(top: 10),
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * .08,
-                            padding: EdgeInsets.symmetric(horizontal: 15),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
-														border: GradientBoxBorder(
-															gradient: LinearGradient(
-																colors: [
-																	Color.fromRGBO(48, 232, 191, 1),
-																	Color.fromRGBO(255, 252, 220, 1),
-																]
-															),
-														),
-                            ),
-                            child: Row(
-                              children: [
-																	ShaderMask(
-                                      shaderCallback: (rect) => LinearGradient(
-                                        colors: const [
-																				Color.fromRGBO(48, 232, 191, 1),
-																				Color.fromRGBO(255, 252, 220, 1),
-																			],
-                                        begin: Alignment.topLeft
-																		).createShader(rect),
-                                      child: const Icon(
-                                        Icons.menu_book_rounded,
-                                        color: Colors.white,
-																		)
-																	),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      "Read Books",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20),
-                                    )
-                              ],
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 10),
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * .08,
-                            padding: EdgeInsets.symmetric(horizontal: 15),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
-														border: GradientBoxBorder(
-															gradient: LinearGradient(
-																colors: [
-																	Color.fromRGBO(255, 216, 155, 1),
-																	Color.fromRGBO(25, 84, 123, 1)
-
-																]
-															),
-														),
-                            ),
-                            child: Row(
-                              children: [
-																	ShaderMask(
-                                      shaderCallback: (rect) => LinearGradient(
-                                        colors: const [
-																				Color.fromRGBO(255, 216, 155, 1),
-																			  Color.fromRGBO(25, 84, 123, 1)
-																		  ],
-                                        begin: Alignment.topLeft
-																		).createShader(rect),
-                                      child: const Icon(
-                                        Icons.sports_esports_rounded,
-                                        color: Colors.white,
-																		)
-																	),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      "Game",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20),
-                                    )
-                              ],
-                            ),
-                          ),
-													Container(
-                            margin: EdgeInsets.only(top: 10),
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * .08,
-                            padding: EdgeInsets.symmetric(horizontal: 15),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
-														border: GradientBoxBorder(
-															gradient: LinearGradient(
-																colors: [
-																	Color.fromRGBO(67, 206, 162, 1),
-																	Colors.white,
-																]
-															),
-														),
-                            ),
-                            child: Row(
-                              children: [
-																	ShaderMask(
-                                      shaderCallback: (rect) => LinearGradient(
-                                        colors: const [
-																					Color.fromRGBO(67, 206, 162, 1),
-																					Colors.white
-																		  ],
-                                        begin: Alignment.topLeft
-																		).createShader(rect),
-                                      child: const Icon(
-                                        Icons.pool_rounded,
-                                        color: Colors.white,
-																		)
-																	),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      "Swimming",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20),
-                                    )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                      ],
                     ),
                   ],
               ),
             ),
-                ))),
+          ))),
         Align(
           alignment: Alignment.bottomCenter,
           child: Container(

@@ -283,10 +283,9 @@ class HabitController extends GetxController {
 		..icon = iconHabit.codePoint
 		..goals = type == "oneTask" ? 1 : int.parse(goalsHabitController.text) 
 		..currentGoals = currentGoals
-		//..descGoals = descGoals == "minutes" && goalsHabitController.text == "" ? "times" : descGoals
 		..descGoals = descGoals
 		..statusRepeat = statusRepeat
-		..day = type == "reguler" ? listDays : noDay
+		..day = type == "reguler" && statusRepeat == "daily" ? listDays : noDay
 		..week = week
 		..month = month
 		..status = status
@@ -303,13 +302,15 @@ class HabitController extends GetxController {
 
 	// FUnction to 
 	void updateHabit(Habit habit){
+		print("== JANOCK IKI NDE UPDATE");
+		print(statusRepeat);
 		if(habit.type == "reguler"){
 			habit.title = nameHabitController.text;
 			habit.icon = iconHabit.codePoint;
 			habit.descGoals = descGoals;
 			habit.goals = int.parse(goalsHabitController.text);
 			habit.statusRepeat = statusRepeat;
-			habit.day= listDays;
+			habit.day = statusRepeat == "daily" ? listDays : noDay;
 			habit.week = week;
 			habit.month = month;
 			habit.status = status;
@@ -320,9 +321,9 @@ class HabitController extends GetxController {
 			habit.icon = iconHabit.codePoint;
 			habit.status = status;
 			habit.timeReminders = timeReminders;
+			habit.currentGoals = 0;
 		}
 		habit.save();
-
 	}
 
 

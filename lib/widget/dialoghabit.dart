@@ -20,11 +20,15 @@ class DialogHabit extends StatelessWidget{
 	final dateController = Get.find<DateController>();
 
 	int getIndexCompleteDay(){
+		print("current di dialog ${dateController.currentDateTime}");
 		for(int i = 0; i < habit.completeDay.length; i++){
+				print("masuk di dalam loop getIndex");
 			if(habit.completeDay[i]["day"] == dateController.currentDateTime.day && habit.completeDay[i]["month"] == dateController.currentDateTime.month && habit.completeDay[i]["year"] == dateController.currentDateTime.year){
+				print("masuk di dalam IF getIndex");
 				return i;
 			}
 		}
+		print("SUDAH MASUKK");
 		return 0;
 	}
 
@@ -88,7 +92,10 @@ class DialogHabit extends StatelessWidget{
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             IconButton(
-                              onPressed: () => Get.to(DetailHabit(habit: habit,)),
+                              onPressed: () {
+																dateController.updateCurrentMonthList(DateTime(dateController.dateToday.year,dateController.dateToday.month, dateController.dateToday.day));
+																Get.to(DetailHabit(habit: habit,));
+															},
                               icon: const Icon(
                                 Icons.info_outline_rounded,
                                 color: Colors.white,
@@ -207,7 +214,7 @@ class DialogHabit extends StatelessWidget{
                                 children: [
                                   Text(
 																		// if today return currentGoals, if last return finishGoals, if future return 0
-                                    habit.descGoals == "times" ? "${today ? habit.currentGoals : dateController.currentDateTime.day < dateController.dateToday.day ? habit.completeDay.isEmpty ? 0 : habit.completeDay[getIndexCompleteDay()]["day"] == dateController.currentDateTime.day ? habit.completeDay[getIndexCompleteDay()]["finishGoals"].toString() : 0  : 0 } / ${today ? habit.goals : dateController.currentDateTime.day < dateController.dateToday.day ? habit.completeDay.isEmpty ? habit.goals : habit.completeDay[getIndexCompleteDay()]["day"] == dateController.currentDateTime.day ? habit.completeDay[getIndexCompleteDay()]["goals"].toString() : habit.goals : habit.goals}" : "${habit.goals}",
+                                    habit.descGoals == "times" ? "${today ? habit.type != "oneTask" ?  habit.currentGoals : habit.completeDay[getIndexCompleteDay()]["finishGoals"].toString() : dateController.currentDateTime.day < dateController.dateToday.day ? habit.completeDay.isEmpty ? 0 : habit.completeDay[getIndexCompleteDay()]["day"] == dateController.currentDateTime.day ? habit.completeDay[getIndexCompleteDay()]["finishGoals"].toString() : 0  : 0 } / ${today ? habit.goals : dateController.currentDateTime.day < dateController.dateToday.day ? habit.completeDay.isEmpty ? habit.goals : habit.completeDay[getIndexCompleteDay()]["day"] == dateController.currentDateTime.day ? habit.completeDay[getIndexCompleteDay()]["goals"].toString() : habit.goals : habit.goals}" : "${habit.goals}",
 																		//"0/3",
                                     style: TextStyle(
                                         fontSize: 28,

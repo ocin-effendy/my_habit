@@ -134,18 +134,6 @@ class RegulerHabitBottomSheet extends StatelessWidget {
 																					habit!.status = "done";
 																				}
 																				
-																				//if(habit!.descGoals == "minutes"){
-																				//	print("JUANCOKKKKKKKKKKKKKKKKKKKKKKKK");
-																			//		habit!.completeDay[indexCompleteDay!]["finishGoals"] = 0;
-																			//		habit!.completeDay[indexCompleteDay!]["goals"] = habit!.goals;
-																			//		habit!.status = "active";
-																			//	}else if(habit!.descGoals == "times"){
-																			//		habit!.completeDay[indexCompleteDay!]["finishGoals"] = 0;
-																			//		habit!.currentGoals = 0;
-																			//		habit!.status = "active";
-																			//	}
-
-
 																			// if future change goals so completeDay today changes too
 																			}else if(indexCompleteDay == 0 && Get.find<DateController>().currentDateTime.day > Get.find<DateController>().dateToday.day){
 																				print("MASUK KE BESOKOK coklllllll");
@@ -439,6 +427,7 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                               if (index == 0) {
 																controller.setStatusRepeat("daily");
                               } else if (index == 1) {
+																print("============ masuk ke change statusrepeat =============");
 																controller.setStatusRepeat("weekly");
                               } else {
 																controller.setStatusRepeat("monthly");
@@ -523,6 +512,7 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                                         child: ElevatedButton(
                                                             onPressed: () {
 																															controller.setListDays(key, !value);
+																															controller.setStatusRepeat("daily");
 																															if (controller.listDays.containsValue(false)) {
 																																	controller.setStatusSwicthRepeatEveriday(false);
                                                                 } else {
@@ -581,6 +571,7 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                                 value: controller.statusSwitchRepeatEveryday,
                                                 onChanged: (value) {
 																									controller.setStatusSwicthRepeatEveriday(value);
+																									controller.setStatusRepeat("daily");
                                                   //setState(() {
                                                     //statusSwitchRepeatEveryday = value;
                                                   if (controller.statusSwitchRepeatEveryday) {
@@ -626,6 +617,8 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                                     child: ElevatedButton(
                                                         onPressed: () {
                                                           //setState(() {
+																													print("ini pencet weekly cokok");
+																														controller.setStatusRepeat("weekly");
                                                             controller.setValueStatusSwitchRepeatEveriday(false, 'week', i);
 																														controller.setStatusSwicthRepeatEveriday(false);
                                                             
@@ -688,6 +681,7 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                                   onPressed: () {
 																											controller.setValueStatusSwitchRepeatEveriday(false, 'month', i);
 																											controller.setStatusSwicthRepeatEveriday(false);
+																										controller.setStatusRepeat("monthly");
                                                   },
                                                   style: ElevatedButton.styleFrom(
                                                       shape:RoundedRectangleBorder(

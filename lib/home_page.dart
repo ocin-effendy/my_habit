@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_habit/controllers/animationcontroller.dart';
 import 'package:my_habit/controllers/datecontroller.dart';
-import 'package:my_habit/controllers/habitcontroller.dart';
 import 'package:my_habit/data.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/models/habit.dart';
@@ -18,15 +17,36 @@ import 'dart:math' as math;
 
 CarouselController carouselController = CarouselController();
 CarouselController carouselController1 = CarouselController();
-//DateTime currentDateTime = DateTime.now();
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
   int count = 5;
-	final dateController = Get.put(DateController());
-	final habitController = Get.put(HabitController());
-	
+	final dateController = Get.find<DateController>();
 
+	bool cek(Habit habit){
+		print("masuk ke cek");
+		int count = 0;
+		for(int i = 0; i < habit.completeDay.length; i++){
+			if(dateController.currentDateTime.day > dateController.dateToday.day && dateController.checkDayInWeek(dateController.dateToday.day) == dateController.checkDayInWeek(habit.completeDay.isNotEmpty && habit.completeDay[i]["finishGoals"] != 0 ? habit.completeDay[i]["day"] : 0)){
+				count++;
+				if(count != habit.week){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+
+	bool checkCompleteDayOneTask(Habit habit){
+		for(int i = 0; i < habit.completeDay.length; i++){
+			if(dateController.currentDateTime.day == habit.completeDay[i]["day"] && dateController.currentDateTime.month == habit.completeDay[i]["month"] && dateController.currentDateTime.year == habit.completeDay[i]["year"]){
+				return true;
+			}
+		}
+		return false;
+	}
+	
   @override
   Widget build(BuildContext context) {
       return Scaffold(
@@ -40,8 +60,11 @@ class HomePage extends StatelessWidget {
 							print("======= List Habit cok ===========");
 							print(habit[0].title);
 							print(habit[1].title);
-							print(habit[2].start);
-							//print(habit[3].title);
+							print(habit[2].title);
+							print(habit[3].title);
+							//print(habit[3].statusRepeat);
+						//	print(habit[3].day);
+						//	print(habit[3].week);
 							//print(habit[4].title);
 						//	print(habit[2].start);
 							//habit[2].delete();
@@ -49,13 +72,23 @@ class HomePage extends StatelessWidget {
 						//habit[4].delete();
               return  GetBuilder<DateController>(
 								initState: (_){
+									dateController.setWeekInMonth();
 									print("============= complate day =============");
 									print(habit[0].completeDay);
+									print("======================================================================");
 									print(habit[1].completeDay);
+									print("======================================================================");
 									print(habit[2].completeDay);
-									//print(habit[3].completeDay);
+									print("======================================================================");
+									print(habit[3].completeDay);
+									print("======================================================================");
 									//print(habit[4].completeDay);
 									
+									print("============= cek data habit try week 2 =============");
+									//print(habit[3].title);
+									//print(habit[3].start);
+									
+
 								},
                 builder: (x) => Container(
                   color: const Color.fromRGBO(21, 21, 71, 1),
@@ -83,8 +116,15 @@ class HomePage extends StatelessWidget {
 																			Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(3));
 																			// if daily return when daily items is true and current habit >= start habit
 																			// if onetask return when start habit == current habit
-																			if(itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex].start.day || itemIndex < habit.length && habit[itemIndex].start.day == dateController.currentDateTime.day){
+																			bool check1 = itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex].start.day;
+																			bool check2 = itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.month > habit[itemIndex].start.month; 
+																			bool check3 = itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.year > habit[itemIndex].start.year; 
 
+																			bool check4 = itemIndex < habit.length && habit[itemIndex].start.day == dateController.currentDateTime.day; 
+																			bool check5 = itemIndex < habit.length && habit[itemIndex].type == "oneTask" && checkCompleteDayOneTask(habit[itemIndex]); 
+																			bool check6 = itemIndex < habit.length && habit[itemIndex].statusRepeat != "daily" && cek(habit[itemIndex]);
+																		
+																			if(check1 || check2 || check3 || check4 || check5 || check6){
 																				return getBoxActiveHabit(context, habit, itemIndex, true);
 																			}else{
 																				return getBoxActiveHabit(context, habit, itemIndex, false); 
@@ -107,8 +147,14 @@ class HomePage extends StatelessWidget {
                                     Consumer<DataHabitsProvider>(
                                         builder: (context, data, _) {
 																				Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(3));
-																				if(itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex + count].start.day || itemIndex + count < habit.length && habit[itemIndex + count].start.day == dateController.currentDateTime.day
-){
+																			bool check1 = itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex + count].start.day;
+																			bool check2 = itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.month > habit[itemIndex + count].start.month; 
+																			bool check3 = itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.year > habit[itemIndex + count].start.year; 
+
+																			bool check4 = itemIndex + count < habit.length && habit[itemIndex + count].start.day == dateController.currentDateTime.day; 
+																			bool check5 = itemIndex + count < habit.length && habit[itemIndex + count].type == "oneTask" && checkCompleteDayOneTask(habit[itemIndex + count]); 
+																			bool check6 = itemIndex + count < habit.length && habit[itemIndex + count].statusRepeat != "daily" && cek(habit[itemIndex + count]);
+																				if(check1 || check2 || check3 || check4 || check5 || check6){
 																					return getBoxActiveHabit(context, habit, itemIndex + count, true);
 																				}else{
 																					return getBoxActiveHabit(context, habit, itemIndex + count, false);
@@ -201,11 +247,8 @@ class HomePage extends StatelessWidget {
                               itemBuilder: (BuildContext context, int index) {
                                 return GestureDetector(
                                   onTap: () {
-																	dateController.setCurrentDateTime(dateController.currentMonthList[index]);
+																		dateController.setCurrentDateTime(dateController.currentMonthList[index]);
 
-                                    //setState(() {
-                                     // currentDateTime = currentMonthList[index];
-                                   // });
                                   },
                                   child: Container(
                                     width: 50,
@@ -215,8 +258,7 @@ class HomePage extends StatelessWidget {
                                                 dateController.currentDateTime.day
                                             ? Colors.transparent
                                             : Colors.lightBlueAccent,
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(10))),
+                                        borderRadius: const BorderRadius.all(Radius.circular(10))),
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
@@ -262,7 +304,7 @@ class HomePage extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "two task",
+                            "${Boxes.getHabit().toMap().length} task",
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                             ),
