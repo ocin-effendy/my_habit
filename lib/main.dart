@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_habit/controllers/datecontroller.dart';
+import 'package:my_habit/controllers/habitcontroller.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/provider/data_habits_provider.dart';
@@ -25,10 +26,10 @@ void main() async {
 	final box = Boxes.getHabit();
 	final pref = await SharedPreferences.getInstance();
 	final int? day = pref.getInt("day");
-	final int? month = pref.getInt("month");
-	final int? year = pref.getInt("year");
-	if(day != null && month != null && year != null) {
-		if(day != dateController.dateToday.day  && month >= dateController.dateToday.month && year >= dateController.dateToday.year){
+//	final int? month = pref.getInt("month");
+//	final int? year = pref.getInt("year");
+	if(day != null) {
+		if(day != dateController.dateToday.day ){
 			box.toMap().forEach((key, value) {
 				print("masuk ke map");
 				value.currentGoals = 0;
@@ -38,8 +39,8 @@ void main() async {
 		}
 	}
 	pref.setInt("day", dateController.dateToday.day);
-	pref.setInt("month", dateController.dateToday.month);
-	pref.setInt("year", dateController.dateToday.year);
+//	pref.setInt("month", dateController.dateToday.month);
+//	pref.setInt("year", dateController.dateToday.year);
   runApp(const MyApp());
 }
 

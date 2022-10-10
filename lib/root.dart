@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:hive/hive.dart';
 import 'package:my_habit/controllers/animationcontroller.dart';
+import 'package:my_habit/controllers/habitcontroller.dart';
 import 'package:my_habit/controllers/screencontroller.dart';
 import 'package:my_habit/home_page.dart';
 import 'package:my_habit/models/color.dart';
@@ -29,6 +30,7 @@ List<String> listDays = [
 class RootPage extends StatelessWidget{
   RootPage({Key? key}) : super(key: key);
 	final animationControllerHabit = Get.put(AnimationControllerHabit());
+	final habitController = Get.put(HabitController());
 
   @override
   Widget build(BuildContext context) {

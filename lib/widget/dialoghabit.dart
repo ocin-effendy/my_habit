@@ -44,6 +44,7 @@ class DialogHabit extends StatelessWidget{
 	}
 
 	void addCompleteDayItems(){
+		print("MASUK ke TAMBAH COMPLETE COKKKKKK");
 		habit.completeDay.add({
 			"day": dateController.dateToday.day,
 			"month": dateController.dateToday.month,
@@ -72,6 +73,7 @@ class DialogHabit extends StatelessWidget{
 			 valueListenable: Boxes.getHabit().listenable(),
 		   builder: (context, habitList, _){
 				 //Habit habit = habitList.getAt(0);
+				 print("INI HABIT = ${habit.title}");
 				 return AlertDialog(
 			insetPadding: EdgeInsets.symmetric(vertical: height * .1, horizontal: width * .05),
 			alignment: Alignment.topCenter,
@@ -93,7 +95,7 @@ class DialogHabit extends StatelessWidget{
                           children: [
                             IconButton(
                               onPressed: () {
-																dateController.updateCurrentMonthList(DateTime(dateController.dateToday.year,dateController.dateToday.month, dateController.dateToday.day));
+																dateController.updateCurrentMonthList(DateTime.now());
 																Get.to(DetailHabit(habit: habit,));
 															},
                               icon: const Icon(
@@ -143,10 +145,7 @@ class DialogHabit extends StatelessWidget{
                                     const EdgeInsets.symmetric(horizontal: 2),
                                 constraints: const BoxConstraints(),
                                 onPressed: () {
-                                  //Provider.of<PopUpProvider>(context,
-                                   //       listen: false)
-                                    //  .setStatus(false);
-																//	habit.completeDay.removeLast();
+																	//habit.completeDay.removeAt(2);
 																	Navigator.pop(context);
                                 },
                                 icon: const Icon(
@@ -214,7 +213,7 @@ class DialogHabit extends StatelessWidget{
                                 children: [
                                   Text(
 																		// if today return currentGoals, if last return finishGoals, if future return 0
-                                    habit.descGoals == "times" ? "${today ? habit.type != "oneTask" ?  habit.currentGoals : habit.completeDay[getIndexCompleteDay()]["finishGoals"].toString() : dateController.currentDateTime.day < dateController.dateToday.day ? habit.completeDay.isEmpty ? 0 : habit.completeDay[getIndexCompleteDay()]["day"] == dateController.currentDateTime.day ? habit.completeDay[getIndexCompleteDay()]["finishGoals"].toString() : 0  : 0 } / ${today ? habit.goals : dateController.currentDateTime.day < dateController.dateToday.day ? habit.completeDay.isEmpty ? habit.goals : habit.completeDay[getIndexCompleteDay()]["day"] == dateController.currentDateTime.day ? habit.completeDay[getIndexCompleteDay()]["goals"].toString() : habit.goals : habit.goals}" : "${habit.goals}",
+                                    habit.descGoals == "times" ? "${today ? habit.type != "oneTask" ?  habit.currentGoals : habit.completeDay.isEmpty ? 0 : habit.completeDay[getIndexCompleteDay()]["finishGoals"].toString() : dateController.currentDateTime.day < dateController.dateToday.day ? habit.completeDay.isEmpty ? 0 : habit.completeDay[getIndexCompleteDay()]["day"] == dateController.currentDateTime.day ? habit.completeDay[getIndexCompleteDay()]["finishGoals"].toString() : 0  : 0 } / ${today ? habit.goals : dateController.currentDateTime.day < dateController.dateToday.day ? habit.completeDay.isEmpty ? habit.goals : habit.completeDay[getIndexCompleteDay()]["day"] == dateController.currentDateTime.day ? habit.completeDay[getIndexCompleteDay()]["goals"].toString() : habit.goals : habit.goals}" : "${habit.goals}",
 																		//"0/3",
                                     style: TextStyle(
                                         fontSize: 28,
@@ -325,7 +324,7 @@ class DialogHabit extends StatelessWidget{
 																				habit.status = "active";
 																			}
 
-
+																			// to add item in list completeDay
 																			if(checkLoopingCompleteDay()){
 																				addCompleteDayItems();
 																			}

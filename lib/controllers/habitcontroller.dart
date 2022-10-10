@@ -229,6 +229,9 @@ class HabitController extends GetxController {
 		month = 1;
 		status = "active";
 		timeReminders = [];
+		completeDay = []; 
+		currentStreaks = 0; 
+		longestStreaks = 0;
 	}
 
 	// Function to put data in temp variabel data habit

@@ -17,37 +17,6 @@ class RegulerHabitBottomSheet extends StatelessWidget {
 	Habit? habit;
 	int? indexCompleteDay;
 
-  List<Map<String, dynamic>> dataHabits = [
-    {
-			"type": "reguler",
-			"start": DateTime,
-      "title": "Coding",
-      "icon": Icons.laptop_mac_rounded,
-      "goals": "10",
-			"currentGoals": "0",
-      "descGoals": "minutes",
-      "statusRepeat": "daily",
-      "day": {
-        "Monday": true,
-        "Sunday": false,
-        "Tuesday": false,
-        "Wednesday": false,
-        "Thursday": false,
-        "Friday": false,
-        "Saturday": false,
-      },
-      "week": "",
-      "month": "",
-      "status": "active",
-      "timeReminders": [TimeOfDay], 
-			"completeDay": {
-				DateTime: "currentGoals / goals"
-			},
-			"currentStreaks": 5,
-			"longestStreaks": 10,
-    }
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Consumer<DataHabitsProvider>(
@@ -56,6 +25,7 @@ class RegulerHabitBottomSheet extends StatelessWidget {
 					if(habit != null){
 						controller.setToUpdate(habit!, "reguler");
 					}else{
+						print("masuk ke clear data di reguler");
 						controller.clearDatahabit();
 						
 					}
@@ -96,27 +66,27 @@ class RegulerHabitBottomSheet extends StatelessWidget {
 																	}else{
 																		controller.setCheckGoals(true);
 
-                                  if (data.listDataHabits.length < 3) {
-                                    print("masukkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                                    carouselController.nextPage(
+																		if (data.listDataHabits.length < 3) {
+																			print("masukkkkkkkkkkkkkkkkkkkkkkkkkkk");
+																			carouselController.nextPage(
                                         duration: const Duration(seconds: 2),
                                         curve: Curves.ease);
-                                  } else {
-                                    carouselController1.nextPage(
+																		} else {
+																			carouselController1.nextPage(
                                         duration: const Duration(seconds: 2),
                                         curve: Curves.ease);
-                                  }
+																		}
 
-																	if(habit != null){
-																		controller.updateHabit(habit!);
-																		if(habit!.completeDay.isNotEmpty){
-																			// if today or habit.completeDay[0] 0 change goals so completeDay today changes too
-																			if(habit!.completeDay[indexCompleteDay!]["day"] == Get.find<DateController>().dateToday.day){
-																				if(int.parse(controller.goalsHabitController.text) != 0){
-																					habit!.completeDay[indexCompleteDay!]["goals"] = int.parse(controller.goalsHabitController.text);
-																				}else{
-																					habit!.completeDay[indexCompleteDay!]["goals"] = habit!.goals;
-																				}
+																		if(habit != null){
+																			controller.updateHabit(habit!);
+																			if(habit!.completeDay.isNotEmpty){
+																				// if today or habit.completeDay[0] 0 change goals so completeDay today changes too
+																				if(habit!.completeDay[indexCompleteDay!]["day"] == Get.find<DateController>().dateToday.day){
+																					if(int.parse(controller.goalsHabitController.text) != 0){
+																						habit!.completeDay[indexCompleteDay!]["goals"] = int.parse(controller.goalsHabitController.text);
+																					}else{
+																						habit!.completeDay[indexCompleteDay!]["goals"] = habit!.goals;
+																					}
 
 																				if(habit!.completeDay[indexCompleteDay!]["finishGoals"] > int.parse(controller.goalsHabitController.text)){
 																					habit!.completeDay[indexCompleteDay!]["finishGoals"] = 0;
@@ -134,7 +104,7 @@ class RegulerHabitBottomSheet extends StatelessWidget {
 																					habit!.status = "done";
 																				}
 																				
-																			// if future change goals so completeDay today changes too
+																				// if future change goals so completeDay today changes too
 																			}else if(indexCompleteDay == 0 && Get.find<DateController>().currentDateTime.day > Get.find<DateController>().dateToday.day){
 																				print("MASUK KE BESOKOK coklllllll");
 																				for(int i = 0; i < habit!.completeDay.length; i++){

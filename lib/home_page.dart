@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
 		for(int i = 0; i < habit.completeDay.length; i++){
 			if(dateController.currentDateTime.day > dateController.dateToday.day && dateController.checkDayInWeek(dateController.dateToday.day) == dateController.checkDayInWeek(habit.completeDay.isNotEmpty && habit.completeDay[i]["finishGoals"] != 0 ? habit.completeDay[i]["day"] : 0)){
 				count++;
-				if(count != habit.week){
+				if(count == habit.week){
 					return false;
 				}
 			}
@@ -38,7 +38,52 @@ class HomePage extends StatelessWidget {
 	}
 
 
+	bool check(Habit habit){
+
+		if(habit.completeDay.isNotEmpty){
+			if(dateController.currentDateTime.day < dateController.dateToday.day){
+				for(int i = 0; i < habit.completeDay.length; i++){
+					if(habit.completeDay[i]["day"] == dateController.currentDateTime.day && habit.completeDay[i]["finishGoals"] != 0){
+						return true;
+					}
+				}
+				return false;
+			}else if(dateController.currentDateTime.day >= dateController.dateToday.day){
+				if(dateController.checkDayInWeek(dateController.dateToday.day) != dateController.checkDayInWeek(dateController.currentDateTime.day)){
+					return true;
+				}else{
+					print("MASUK KE ELSE");
+					int count = 0;
+					for(int i = 0; i < habit.completeDay.length; i++){
+						if(dateController.checkDayInWeek(dateController.dateToday.day) == dateController.checkDayInWeek(habit.completeDay[i]["day"]) && habit.completeDay[i]["finishGoals"] != 0){
+							print("MASUK KE COUNT++");
+							count++;
+						}
+					}
+					print("ini habit week : ${habit.week}");
+					print("ini count : ${count}");
+					if(count < habit.week ){
+						print("MASUK KE PERSAMAAAN HABIT WEEK");
+						return true;
+					}else if(count == habit.week && dateController.currentDateTime.day == habit.completeDay[habit.completeDay.length -1 ]["day"]){
+						print("MASUK EK ELSE IF PERSAMAAN WEEK");
+						return true;
+					}
+					return false;
+				}
+			}
+		}else{
+			if(dateController.currentDateTime.day < dateController.dateToday.day){
+				return false;
+			}
+		}
+		return true;
+
+	}
+
+
 	bool checkCompleteDayOneTask(Habit habit){
+		print("masuk ke check onetask");
 		for(int i = 0; i < habit.completeDay.length; i++){
 			if(dateController.currentDateTime.day == habit.completeDay[i]["day"] && dateController.currentDateTime.month == habit.completeDay[i]["month"] && dateController.currentDateTime.year == habit.completeDay[i]["year"]){
 				return true;
@@ -57,32 +102,27 @@ class HomePage extends StatelessWidget {
 							valueListenable: Boxes.getHabit().listenable(),
 							builder: (context, box, _){
 							final habit = box.values.toList().cast<Habit>();
-							print("======= List Habit cok ===========");
-							print(habit[0].title);
-							print(habit[1].title);
-							print(habit[2].title);
-							print(habit[3].title);
-							//print(habit[3].statusRepeat);
-						//	print(habit[3].day);
-						//	print(habit[3].week);
+							
+
+							//	print(habit[3].week);
 							//print(habit[4].title);
-						//	print(habit[2].start);
+							//	print(habit[2].start);
 							//habit[2].delete();
 							//habit[3].delete();
-						//habit[4].delete();
+							//habit[4].delete();
               return  GetBuilder<DateController>(
 								initState: (_){
 									dateController.setWeekInMonth();
+									print("======= List Habit cok ===========");
+									print(habit[0].title);
+									print(habit[1].title);
+									print(habit[2].title);
+									//print(habit[2].title);
 									print("============= complate day =============");
 									print(habit[0].completeDay);
-									print("======================================================================");
 									print(habit[1].completeDay);
-									print("======================================================================");
-									print(habit[2].completeDay);
-									print("======================================================================");
-									print(habit[3].completeDay);
-									print("======================================================================");
-									//print(habit[4].completeDay);
+								//	print(habit[2].completeDay);
+								//	print(habit[4].completeDay);
 									
 									print("============= cek data habit try week 2 =============");
 									//print(habit[3].title);
@@ -116,15 +156,27 @@ class HomePage extends StatelessWidget {
 																			Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(3));
 																			// if daily return when daily items is true and current habit >= start habit
 																			// if onetask return when start habit == current habit
+																			// CHECK REGULER DAILY
 																			bool check1 = itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex].start.day;
 																			bool check2 = itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.month > habit[itemIndex].start.month; 
 																			bool check3 = itemIndex < habit.length && habit[itemIndex].day[dateController.today]! && dateController.currentDateTime.year > habit[itemIndex].start.year; 
 
-																			bool check4 = itemIndex < habit.length && habit[itemIndex].start.day == dateController.currentDateTime.day; 
+
+
+																			// CHECK REGULER WEEKLY
+																			bool check6 = itemIndex < habit.length && habit[itemIndex].statusRepeat == "weekly" && dateController.currentDateTime.day >= habit[itemIndex].start.day && check(habit[itemIndex]);
+																			bool check7 = itemIndex < habit.length && habit[itemIndex].statusRepeat == "weekly" && dateController.currentDateTime.month > habit[itemIndex].start.month && check(habit[itemIndex]);
+																			bool check8 = itemIndex < habit.length && habit[itemIndex].statusRepeat == "weekly" && dateController.currentDateTime.year > habit[itemIndex].start.year && check(habit[itemIndex]);
+
+
+
+																			// CHECK ONETASK
+																			// check oneTask when not done yet (future or now)
+																			bool check4 = itemIndex < habit.length && habit[itemIndex].start.day == dateController.currentDateTime.day && habit[itemIndex].completeDay.isEmpty && habit[itemIndex].type == "oneTask"; 
+																			// check oneTask in last or have done (last)
 																			bool check5 = itemIndex < habit.length && habit[itemIndex].type == "oneTask" && checkCompleteDayOneTask(habit[itemIndex]); 
-																			bool check6 = itemIndex < habit.length && habit[itemIndex].statusRepeat != "daily" && cek(habit[itemIndex]);
 																		
-																			if(check1 || check2 || check3 || check4 || check5 || check6){
+																			if(check1 || check2 || check3 || check4 || check5 || check6 || check7 || check8){
 																				return getBoxActiveHabit(context, habit, itemIndex, true);
 																			}else{
 																				return getBoxActiveHabit(context, habit, itemIndex, false); 
@@ -147,19 +199,27 @@ class HomePage extends StatelessWidget {
                                     Consumer<DataHabitsProvider>(
                                         builder: (context, data, _) {
 																				Get.find<AnimationControllerHabit>().getAnimation(math.Random().nextInt(3));
+
 																			bool check1 = itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.day >= habit[itemIndex + count].start.day;
 																			bool check2 = itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.month > habit[itemIndex + count].start.month; 
 																			bool check3 = itemIndex + count < habit.length && habit[itemIndex + count].day[dateController.today]! && dateController.currentDateTime.year > habit[itemIndex + count].start.year; 
 
-																			bool check4 = itemIndex + count < habit.length && habit[itemIndex + count].start.day == dateController.currentDateTime.day; 
+
+
+																			bool check6 = itemIndex + count < habit.length && habit[itemIndex + count].statusRepeat == "weekly" && dateController.currentDateTime.day >= habit[itemIndex + count].start.day && check(habit[itemIndex + count]);
+																			bool check7 = itemIndex + count < habit.length && habit[itemIndex + count].statusRepeat == "weekly" && dateController.currentDateTime.month > habit[itemIndex  + count].start.month && check(habit[itemIndex + count]);
+																			bool check8 = itemIndex + count < habit.length && habit[itemIndex + count].statusRepeat == "weekly" && dateController.currentDateTime.year > habit[itemIndex + count].start.year && check(habit[itemIndex + count]);
+
+
+
+
+																			bool check4 = itemIndex + count < habit.length && habit[itemIndex + count].start.day == dateController.currentDateTime.day && habit[itemIndex + count].completeDay.isEmpty && habit[itemIndex + count].type == "oneTask"; 
 																			bool check5 = itemIndex + count < habit.length && habit[itemIndex + count].type == "oneTask" && checkCompleteDayOneTask(habit[itemIndex + count]); 
-																			bool check6 = itemIndex + count < habit.length && habit[itemIndex + count].statusRepeat != "daily" && cek(habit[itemIndex + count]);
-																				if(check1 || check2 || check3 || check4 || check5 || check6){
+																				if(check1 || check2 || check3 || check4 || check5 || check6 || check7 || check8){
 																					return getBoxActiveHabit(context, habit, itemIndex + count, true);
 																				}else{
 																					return getBoxActiveHabit(context, habit, itemIndex + count, false);
 																				}
-                                  
                                 }),
                               ),
                             ),
@@ -196,7 +256,7 @@ class HomePage extends StatelessWidget {
                         children: [
 												TextButton(
 													onPressed: (){
-														dateController.setCurrentDateTime(DateTime.now());
+														dateController.updateCurrentMonthList(DateTime.now());
 													}, 
 													child: Text(
                             "Today",
@@ -358,7 +418,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-	Widget getBoxActiveHabit(context, List habit, int itemIndex ,bool active){
+	Widget getBoxActiveHabit(BuildContext context, List habit, int itemIndex ,bool active){
 		return GestureDetector(
       onTap: () {
 				if(active){
