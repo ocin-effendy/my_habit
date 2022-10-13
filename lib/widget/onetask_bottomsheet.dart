@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_habit/controllers/habitcontroller.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/models/habit.dart';
-import 'package:my_habit/provider/data_habits_provider.dart';
 import 'package:my_habit/widget/dialogicons.dart';
-import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 
 class OneTaskBottomSheet extends StatelessWidget {

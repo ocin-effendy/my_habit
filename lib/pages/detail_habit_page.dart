@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_habit/controllers/datecontroller.dart';
-import 'package:my_habit/home_page.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/root.dart';
@@ -36,10 +35,8 @@ class DetailHabit extends StatelessWidget {
     return WillPopScope(
 			onWillPop: () async{
 				Get.find<DateController>().updateCurrentMonthList(DateTime.now());
-				print("Masuk banckkkkkkkkkkkkkkkkkkkkkkkkkkk");
 				Get.back();
 				return false;
-				
 			},
       child: Stack(
         children: [
@@ -110,7 +107,7 @@ class DetailHabit extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          "10 Days",
+                          "${habit!.currentStreaks} Days",
                           style: TextStyle(
                             color: darkBlueOne,
                             fontSize: 48,
@@ -137,7 +134,7 @@ class DetailHabit extends StatelessWidget {
                               size: 32,
                             ),
                             Text(
-                              "13 Days",
+                              "${habit!.longestStreaks} Days",
                               style: TextStyle(
                                 color: darkBlueOne,
                                 fontSize: 24,

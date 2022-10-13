@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_habit/controllers/datecontroller.dart';
-import 'package:my_habit/controllers/habitcontroller.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/provider/data_habits_provider.dart';
@@ -31,6 +30,12 @@ void main() async {
 	if(day != null) {
 		if(day != dateController.dateToday.day ){
 			box.toMap().forEach((key, value) {
+				if(value.currentGoals == value.goals){
+					value.currentStreaks += 1;
+					value.longestStreaks += 1;
+				}else if (value.currentGoals < value.goals){
+					value.currentStreaks = 0;
+				}
 				print("masuk ke map");
 				value.currentGoals = 0;
 				value.status = "active";

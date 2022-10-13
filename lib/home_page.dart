@@ -23,23 +23,8 @@ class HomePage extends StatelessWidget {
   int count = 5;
 	final dateController = Get.find<DateController>();
 
-	bool cek(Habit habit){
-		print("masuk ke cek");
-		int count = 0;
-		for(int i = 0; i < habit.completeDay.length; i++){
-			if(dateController.currentDateTime.day > dateController.dateToday.day && dateController.checkDayInWeek(dateController.dateToday.day) == dateController.checkDayInWeek(habit.completeDay.isNotEmpty && habit.completeDay[i]["finishGoals"] != 0 ? habit.completeDay[i]["day"] : 0)){
-				count++;
-				if(count == habit.week){
-					return false;
-				}
-			}
-		}
-		return true;
-	}
 
-
-	bool check(Habit habit){
-
+	bool checkWeekly(Habit habit){
 		if(habit.completeDay.isNotEmpty){
 			if(dateController.currentDateTime.day < dateController.dateToday.day){
 				for(int i = 0; i < habit.completeDay.length; i++){
@@ -78,7 +63,39 @@ class HomePage extends StatelessWidget {
 			}
 		}
 		return true;
+	}
 
+	bool checkMonthly(Habit habit){
+		if(habit.completeDay.isNotEmpty){
+			if(dateController.currentDateTime.day < dateController.dateToday.day){
+				for(int i = 0; i < habit.completeDay.length; i++){
+					if(habit.completeDay[i]["day"] == dateController.currentDateTime.day && habit.completeDay[i]["finishGoals"] != 0){
+						return true;
+					}
+				}
+				return false;
+			}else if(dateController.currentDateTime.day >= dateController.dateToday.day){
+				int count = 0;
+				for(int i = 0; i < habit.completeDay.length; i++){
+					if(habit.completeDay[i]["finishGoals"] != 0){
+						count++;
+					}
+				}
+				if(count < habit.month){
+					print("MASUK KE PERSAMAAAN HABIT WEEK");
+					return true;
+				}else if(count == habit.month && dateController.currentDateTime.day == habit.completeDay[habit.completeDay.length -1 ]["day"]){
+					print("MASUK EK ELSE IF PERSAMAAN WEEK");
+					return true;
+				}
+				return false;
+			}
+		}else{
+			if(dateController.currentDateTime.day < dateController.dateToday.day){
+				return false;
+			}		
+		}
+		return true;
 	}
 
 
@@ -123,6 +140,8 @@ class HomePage extends StatelessWidget {
 									print(habit[1].completeDay);
 								//	print(habit[2].completeDay);
 								//	print(habit[4].completeDay);
+									print("============= start =============");
+									print(habit[2].start);
 									
 									print("============= cek data habit try week 2 =============");
 									//print(habit[3].title);
@@ -164,19 +183,23 @@ class HomePage extends StatelessWidget {
 
 
 																			// CHECK REGULER WEEKLY
-																			bool check6 = itemIndex < habit.length && habit[itemIndex].statusRepeat == "weekly" && dateController.currentDateTime.day >= habit[itemIndex].start.day && check(habit[itemIndex]);
-																			bool check7 = itemIndex < habit.length && habit[itemIndex].statusRepeat == "weekly" && dateController.currentDateTime.month > habit[itemIndex].start.month && check(habit[itemIndex]);
-																			bool check8 = itemIndex < habit.length && habit[itemIndex].statusRepeat == "weekly" && dateController.currentDateTime.year > habit[itemIndex].start.year && check(habit[itemIndex]);
+																			bool check6 = itemIndex < habit.length && habit[itemIndex].statusRepeat == "weekly" && dateController.currentDateTime.day >= habit[itemIndex].start.day && checkWeekly(habit[itemIndex]);
+																			bool check7 = itemIndex < habit.length && habit[itemIndex].statusRepeat == "weekly" && dateController.currentDateTime.month > habit[itemIndex].start.month && checkWeekly(habit[itemIndex]);
+																			bool check8 = itemIndex < habit.length && habit[itemIndex].statusRepeat == "weekly" && dateController.currentDateTime.year > habit[itemIndex].start.year && checkWeekly(habit[itemIndex]);
 
+																			// CHECK REGULER MONTHLY
+																			bool check9 = itemIndex < habit.length && habit[itemIndex].statusRepeat == "monthly" && dateController.currentDateTime.day >= habit[itemIndex].start.day && checkMonthly(habit[itemIndex]);
+																			bool check10 = itemIndex < habit.length && habit[itemIndex].statusRepeat == "monthly" && dateController.currentDateTime.month > habit[itemIndex].start.month && checkMonthly(habit[itemIndex]);
+																			bool check11 = itemIndex < habit.length && habit[itemIndex].statusRepeat == "monthly" && dateController.currentDateTime.year > habit[itemIndex].start.year && checkMonthly(habit[itemIndex]);
 
 
 																			// CHECK ONETASK
 																			// check oneTask when not done yet (future or now)
-																			bool check4 = itemIndex < habit.length && habit[itemIndex].start.day == dateController.currentDateTime.day && habit[itemIndex].completeDay.isEmpty && habit[itemIndex].type == "oneTask"; 
+																			bool check4 = itemIndex < habit.length && habit[itemIndex].start.day == dateController.currentDateTime.day && habit[itemIndex].type == "oneTask"; 
 																			// check oneTask in last or have done (last)
-																			bool check5 = itemIndex < habit.length && habit[itemIndex].type == "oneTask" && checkCompleteDayOneTask(habit[itemIndex]); 
+																			bool check5 = itemIndex < habit.length && habit[itemIndex].type == "oneTask" && dateController.currentDateTime.day < habit[itemIndex].start.day && checkCompleteDayOneTask(habit[itemIndex]); 
 																		
-																			if(check1 || check2 || check3 || check4 || check5 || check6 || check7 || check8){
+																			if(check1 || check2 || check3 || check4 || check5 || check6 || check7 || check8 || check9 || check10 || check11){
 																				return getBoxActiveHabit(context, habit, itemIndex, true);
 																			}else{
 																				return getBoxActiveHabit(context, habit, itemIndex, false); 
@@ -206,16 +229,20 @@ class HomePage extends StatelessWidget {
 
 
 
-																			bool check6 = itemIndex + count < habit.length && habit[itemIndex + count].statusRepeat == "weekly" && dateController.currentDateTime.day >= habit[itemIndex + count].start.day && check(habit[itemIndex + count]);
-																			bool check7 = itemIndex + count < habit.length && habit[itemIndex + count].statusRepeat == "weekly" && dateController.currentDateTime.month > habit[itemIndex  + count].start.month && check(habit[itemIndex + count]);
-																			bool check8 = itemIndex + count < habit.length && habit[itemIndex + count].statusRepeat == "weekly" && dateController.currentDateTime.year > habit[itemIndex + count].start.year && check(habit[itemIndex + count]);
+																			bool check6 = itemIndex + count < habit.length && habit[itemIndex + count].statusRepeat == "weekly" && dateController.currentDateTime.day >= habit[itemIndex + count].start.day && checkWeekly(habit[itemIndex + count]);
+																			bool check7 = itemIndex + count < habit.length && habit[itemIndex + count].statusRepeat == "weekly" && dateController.currentDateTime.month > habit[itemIndex  + count].start.month && checkWeekly(habit[itemIndex + count]);
+																			bool check8 = itemIndex + count < habit.length && habit[itemIndex + count].statusRepeat == "weekly" && dateController.currentDateTime.year > habit[itemIndex + count].start.year && checkWeekly(habit[itemIndex + count]);
+
+																			bool check9 = itemIndex + count < habit.length && habit[itemIndex + count].statusRepeat == "monthly" && dateController.currentDateTime.day >= habit[itemIndex + count].start.day && checkMonthly(habit[itemIndex + count]);
+																			bool check10 = itemIndex + count < habit.length && habit[itemIndex + count].statusRepeat == "monthly" && dateController.currentDateTime.month > habit[itemIndex + count].start.month && checkMonthly(habit[itemIndex + count]);
+																			bool check11 = itemIndex + count < habit.length && habit[itemIndex + count].statusRepeat == "monthly" && dateController.currentDateTime.year > habit[itemIndex + count].start.year && checkMonthly(habit[itemIndex + count]);
 
 
 
 
 																			bool check4 = itemIndex + count < habit.length && habit[itemIndex + count].start.day == dateController.currentDateTime.day && habit[itemIndex + count].completeDay.isEmpty && habit[itemIndex + count].type == "oneTask"; 
 																			bool check5 = itemIndex + count < habit.length && habit[itemIndex + count].type == "oneTask" && checkCompleteDayOneTask(habit[itemIndex + count]); 
-																				if(check1 || check2 || check3 || check4 || check5 || check6 || check7 || check8){
+																				if(check1 || check2 || check3 || check4 || check5 || check6 || check7 || check8 || check9 || check10 || check11){
 																					return getBoxActiveHabit(context, habit, itemIndex + count, true);
 																				}else{
 																					return getBoxActiveHabit(context, habit, itemIndex + count, false);
