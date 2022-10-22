@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_habit/controllers/datecontroller.dart';
+import 'package:my_habit/controllers/habitcontroller.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/pages/detail_habit_page.dart';
@@ -12,12 +13,11 @@ import 'package:get/get.dart';
 
 class DialogHabit extends StatelessWidget{
   DialogHabit({Key? key, required this.habit, required this.today}) : super(key: key);
-
 	Habit habit;	
 	bool today;
 
-
 	final dateController = Get.find<DateController>();
+	final habitController = Get.find<HabitController>();
 
 	int getIndexCompleteDay(){
 		print("current di dialog ${dateController.currentDateTime}");
@@ -116,7 +116,7 @@ class DialogHabit extends StatelessWidget{
                                         borderRadius: BorderRadius.vertical(
                                             top: Radius.circular(35))),
                                     builder: (context) {
-                                      return habit.type == "reguler" ? RegulerHabitBottomSheet(habit: habit, indexCompleteDay: getIndexCompleteDay()) : OneTaskBottomSheet(habit: habit,);
+                                      return habit.type == "reguler" ? RegulerHabitBottomSheet(habit: habit, indexCompleteDay: habitController.getIndexCompleteDay(habit)) : OneTaskBottomSheet(habit: habit,);
                                     });
                               },
                               icon: const Icon(
@@ -213,7 +213,7 @@ class DialogHabit extends StatelessWidget{
                                 children: [
                                   Text(
 																		// if today return currentGoals, if last return finishGoals, if future return 0
-                                    habit.descGoals == "times" ? "${today ? habit.type != "oneTask" ?  habit.currentGoals : habit.completeDay.isEmpty ? 0 : habit.completeDay[getIndexCompleteDay()]["finishGoals"].toString() : dateController.currentDateTime.day < dateController.dateToday.day ? habit.completeDay.isEmpty ? 0 : habit.completeDay[getIndexCompleteDay()]["day"] == dateController.currentDateTime.day ? habit.completeDay[getIndexCompleteDay()]["finishGoals"].toString() : 0  : 0 } / ${today ? habit.goals : dateController.currentDateTime.day < dateController.dateToday.day ? habit.completeDay.isEmpty ? habit.goals : habit.completeDay[getIndexCompleteDay()]["day"] == dateController.currentDateTime.day ? habit.completeDay[getIndexCompleteDay()]["goals"].toString() : habit.goals : habit.goals}" : "${habit.goals}",
+                                    habit.descGoals == "times" ? "${today ? habit.type != "oneTask" ?  habit.currentGoals : habit.completeDay.isEmpty ? 0 : habit.completeDay[habitController.getIndexCompleteDay(habit)]["finishGoals"].toString() : dateController.currentDateTime.day < dateController.dateToday.day ? habit.completeDay.isEmpty ? 0 : habit.completeDay[habitController.getIndexCompleteDay(habit)]["day"] == dateController.currentDateTime.day ? habit.completeDay[habitController.getIndexCompleteDay(habit)]["finishGoals"].toString() : 0  : 0 } / ${today ? habit.goals : dateController.currentDateTime.day < dateController.dateToday.day ? habit.completeDay.isEmpty ? habit.goals : habit.completeDay[habitController.getIndexCompleteDay(habit)]["day"] == dateController.currentDateTime.day ? habit.completeDay[habitController.getIndexCompleteDay(habit)]["goals"].toString() : habit.goals : habit.goals}" : "${habit.goals}",
 																		//"0/3",
                                     style: TextStyle(
                                         fontSize: 28,
@@ -242,7 +242,7 @@ class DialogHabit extends StatelessWidget{
 																		}else{
 																			habit.status = "active";
 																		}
-																		checkLoopingCompleteDay();
+																		habitController.checkLoopingCompleteDay(habit);
 																		habit.save();
 																	},
                                   icon: Icon(
@@ -262,7 +262,7 @@ class DialogHabit extends StatelessWidget{
 																			if(habit.currentGoals == habit.goals || habit.status == "minutes"){
 																				habit.currentGoals = 0;
 																				habit.status = "active";
-																				checkLoopingCompleteDay();
+																				habitController.checkLoopingCompleteDay(habit);
 																				habit.save();
 																			}
 																		},
@@ -276,8 +276,8 @@ class DialogHabit extends StatelessWidget{
 																		if(habit.currentGoals < habit.goals || habit.descGoals == "minutes" && habit.status != "done"){
 																			habit.currentGoals = habit.goals;
 																			habit.status = "done";
-																			if(checkLoopingCompleteDay()){
-																				addCompleteDayItems();
+																			if(habitController.checkLoopingCompleteDay(habit)){
+																				habitController.addCompleteDayItems(habit);
 																			}
 																			habit.save();
 																		}
@@ -300,7 +300,7 @@ class DialogHabit extends StatelessWidget{
 																		if(habit.currentGoals != 0 && habit.currentGoals <= habit.goals && habit.descGoals == "times"){
 																			habit.currentGoals--;
 																			habit.status = "active";
-																			checkLoopingCompleteDay();
+																			habitController.checkLoopingCompleteDay(habit);
 																			habit.save();
 																		}
 																	},
@@ -325,8 +325,8 @@ class DialogHabit extends StatelessWidget{
 																			}
 
 																			// to add item in list completeDay
-																			if(checkLoopingCompleteDay()){
-																				addCompleteDayItems();
+																			if(habitController.checkLoopingCompleteDay(habit)){
+																				habitController.addCompleteDayItems(habit);
 																			}
 
 																			habit.save();

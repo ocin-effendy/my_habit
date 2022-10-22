@@ -329,6 +329,142 @@ class HabitController extends GetxController {
 		habit.save();
 	}
 
+// LOGIC HABIT CONTROLLER
+	// Home Page
+	bool checkWeekly(Habit habit){
+		if(habit.completeDay.isNotEmpty){
+			if(dateController.currentDateTime.day < dateController.dateToday.day){
+				for(int i = 0; i < habit.completeDay.length; i++){
+					if(habit.completeDay[i]["day"] == dateController.currentDateTime.day && habit.completeDay[i]["finishGoals"] != 0){
+						return true;
+					}
+				}
+				return false;
+			}else if(dateController.currentDateTime.day >= dateController.dateToday.day){
+				if(dateController.checkDayInWeek(dateController.dateToday.day) != dateController.checkDayInWeek(dateController.currentDateTime.day)){
+					return true;
+				}else{
+					print("MASUK KE ELSE");
+					int count = 0;
+					for(int i = 0; i < habit.completeDay.length; i++){
+						if(dateController.checkDayInWeek(dateController.dateToday.day) == dateController.checkDayInWeek(habit.completeDay[i]["day"]) && habit.completeDay[i]["finishGoals"] != 0){
+							print("MASUK KE COUNT++");
+							count++;
+						}
+					}
+					print("ini habit week : ${habit.week}");
+					print("ini count : ${count}");
+					if(count < habit.week ){
+						print("MASUK KE PERSAMAAAN HABIT WEEK");
+						return true;
+					}else if(count == habit.week && dateController.currentDateTime.day == habit.completeDay[habit.completeDay.length -1 ]["day"]){
+						print("MASUK EK ELSE IF PERSAMAAN WEEK");
+						return true;
+					}
+					return false;
+				}
+			}
+		}else{
+			if(dateController.currentDateTime.day < dateController.dateToday.day){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	bool checkMonthly(Habit habit){
+		if(habit.completeDay.isNotEmpty){
+			if(dateController.currentDateTime.day < dateController.dateToday.day){
+				for(int i = 0; i < habit.completeDay.length; i++){
+					if(habit.completeDay[i]["day"] == dateController.currentDateTime.day && habit.completeDay[i]["finishGoals"] != 0){
+						return true;
+					}
+				}
+				return false;
+			}else if(dateController.currentDateTime.day >= dateController.dateToday.day){
+				int count = 0;
+				for(int i = 0; i < habit.completeDay.length; i++){
+					if(habit.completeDay[i]["finishGoals"] != 0){
+						count++;
+					}
+				}
+				if(count < habit.month){
+					print("MASUK KE PERSAMAAAN HABIT WEEK");
+					return true;
+				}else if(count == habit.month && dateController.currentDateTime.day == habit.completeDay[habit.completeDay.length -1 ]["day"]){
+					print("MASUK EK ELSE IF PERSAMAAN WEEK");
+					return true;
+				}
+
+				print("masuk ke else return false");
+				return false;
+			}
+		}else{
+			if(dateController.currentDateTime.day < dateController.dateToday.day){
+				return false;
+			}		
+		}
+
+		print("masuk ke terakhir");
+		return true;
+	}
+
+
+	bool checkCompleteDayOneTask(Habit habit){
+		print("masuk ke check onetask");
+		for(int i = 0; i < habit.completeDay.length; i++){
+			if(dateController.currentDateTime.day == habit.completeDay[i]["day"] && dateController.currentDateTime.month == habit.completeDay[i]["month"] && dateController.currentDateTime.year == habit.completeDay[i]["year"]){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	// Dialog Habit
+	int getIndexCompleteDay(Habit habit){
+		print("current di dialog ${dateController.currentDateTime}");
+		for(int i = 0; i < habit.completeDay.length; i++){
+				print("masuk di dalam loop getIndex");
+			if(habit.completeDay[i]["day"] == dateController.currentDateTime.day && habit.completeDay[i]["month"] == dateController.currentDateTime.month && habit.completeDay[i]["year"] == dateController.currentDateTime.year){
+				print("masuk di dalam IF getIndex");
+				return i;
+			}
+		}
+		print("SUDAH MASUKK");
+		return 0;
+	}
+
+
+	bool checkLoopingCompleteDay(Habit habit) {
+		for(int i = 0; i < habit.completeDay.length; i++){
+			if(habit.completeDay[i]["day"] == dateController.dateToday.day && habit.completeDay[i]["month"] == dateController.dateToday.month && habit.completeDay[i]["year"] == dateController.dateToday.year){
+				updateCompleteDayItems(i, habit);
+				return false;
+			}
+		}
+		return true;
+	}
+
+	void addCompleteDayItems(Habit habit){
+		print("MASUK ke TAMBAH COMPLETE COKKKKKK");
+		habit.completeDay.add({
+			"day": dateController.dateToday.day,
+			"month": dateController.dateToday.month,
+			"year": dateController.dateToday.year,
+			"finishGoals": habit.currentGoals,
+			"goals": habit.goals,
+		});
+	}
+	void updateCompleteDayItems(int index, Habit habit){
+		print("=============== JUANCOKKKKKKK =================");
+		print(habit.completeDay[index]["day"]);
+		habit.completeDay[index]["day"] = dateController.dateToday.day;
+		habit.completeDay[index]["month"] = dateController.dateToday.month;
+		habit.completeDay[index]["year"] = dateController.dateToday.year;
+		habit.completeDay[index]["finishGoals"] = habit.currentGoals;
+		habit.completeDay[index]["goals"] = habit.goals;
+	}
+
 
 
 	@override

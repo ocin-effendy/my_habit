@@ -649,9 +649,9 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                                       Radius.circular(14))),
                                               child: ElevatedButton(
                                                   onPressed: () {
+																											controller.setStatusRepeat("monthly");
 																											controller.setValueStatusSwitchRepeatEveriday(false, 'month', i);
 																											controller.setStatusSwicthRepeatEveriday(false);
-																										controller.setStatusRepeat("monthly");
                                                   },
                                                   style: ElevatedButton.styleFrom(
                                                       shape:RoundedRectangleBorder(
