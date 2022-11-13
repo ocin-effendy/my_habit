@@ -1,41 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
+import 'package:my_habit/controllers/data_sharedpreferences.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/pages/detail_habit_page.dart';
 import 'package:get/get.dart';
 import 'package:my_habit/widget/boxes.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class Habits extends StatefulWidget {
+class Habits extends StatelessWidget {
   Habits({Key? key}) : super(key: key);
 
-  @override
-  State<Habits> createState() => _HabitsState();
-}
-
-class _HabitsState extends State<Habits> {
+	final dataSP = Get.put(DataSharedPreferences());
 	final box = Boxes.getHabit();
-	int currentStreakshabits = 0;
-	int longestStreaksHabits = 0;
 
-	void getCshAndLsh() async{
-		final pref = await SharedPreferences.getInstance();
-		final int? csh = pref.getInt("currentStreakshabits");
-		final int? lsh = pref.getInt("longestStreaksHabits");
-		if (csh != null && lsh != null){
-			setState(() {
-				currentStreakshabits = csh;
-				longestStreaksHabits = lsh;
-			});
-		}
-	}
-
-	@override
-	  void initState() {
-	    super.initState();
-			getCshAndLsh();
-	  }
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -87,7 +64,7 @@ class _HabitsState extends State<Habits> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            "${currentStreakshabits} Days",
+                            "${dataSP.currentStreaksHabits} Days",
                             style: TextStyle(
                               color: darkBlueOne,
                               fontSize: 48,
@@ -114,7 +91,7 @@ class _HabitsState extends State<Habits> {
                                 size: 32,
                               ),
                               Text(
-                                "${longestStreaksHabits} Days",
+                                "${dataSP.longestStreaksHabits} Days",
                                 style: TextStyle(
                                   color: darkBlueOne,
                                   fontSize: 24,
@@ -172,7 +149,7 @@ class _HabitsState extends State<Habits> {
                                       width: 5,
                                     ),
                                     Text(
-                                      "15 Days",
+                                      "${dataSP.totalPerfectDay} Days",
 																			style: Theme.of(context).textTheme.headline3,
                                     )
                                   ],
@@ -216,7 +193,7 @@ class _HabitsState extends State<Habits> {
                                       width: 5,
                                     ),
                                     Text(
-                                      "25",
+                                      dataSP.totalPerfectDay.toString(),
 																			style: Theme.of(context).textTheme.headline3,
                                     )
                                   ],

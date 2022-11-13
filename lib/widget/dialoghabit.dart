@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_habit/controllers/datecontroller.dart';
 import 'package:my_habit/controllers/habitcontroller.dart';
+import 'package:my_habit/controllers/habits_logic_controller.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/pages/detail_habit_page.dart';
@@ -15,6 +16,7 @@ class DialogHabit extends StatelessWidget{
   DialogHabit({Key? key, required this.habit, required this.today}) : super(key: key);
 	Habit habit;	
 	bool today;
+	final hlc = Get.find<HabitsLogicController>();
 
 	final dateController = Get.find<DateController>();
 	final habitController = Get.find<HabitController>();
@@ -130,6 +132,7 @@ class DialogHabit extends StatelessWidget{
                             IconButton(
                               onPressed: () {
 																habit.delete();
+																hlc.deleteItem();
 																Navigator.pop(context);
 															},
                               icon: const Icon(

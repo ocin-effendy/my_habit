@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_habit/controllers/datecontroller.dart';
+import 'package:my_habit/controllers/habits_logic_controller.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/root.dart';
@@ -10,67 +11,9 @@ import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 class DetailHabit extends StatelessWidget {
   DetailHabit({Key? key, this.habit}) : super(key: key);
   Habit? habit;
+	final hlc = Get.find<HabitsLogicController>();
 
-  bool checkDate(int day, int month, int year) {
-    for (int i = 0; i < habit!.completeDay.length; i++) {
-      if (habit!.completeDay[i]["day"] == day &&
-          habit!.completeDay[i]["month"] == month &&
-          habit!.completeDay[i]["year"] == year) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  int getIndexCompleteDay(int day, int month, int year) {
-    for (int i = 0; i < habit!.completeDay.length; i++) {
-      if (habit!.completeDay[i]["day"] == day &&
-          habit!.completeDay[i]["month"] == month &&
-          habit!.completeDay[i]["year"] == year) {
-        return i;
-      }
-    }
-    return 0;
-  }
-
-	double getAverageDaily(){
-		double result = 0.0;
-		int dayOff = 0;
-		int lengthDay = 1;
-		for(int i = 0; i < habit!.completeDay.length; i++){
-				if(habit!.completeDay[i]['finishGoals'] == 0){
-					dayOff += 1;
-				}else{
-					double average = habit!.completeDay[i]['finishGoals'] / habit!.completeDay[i]['goals'];
-					result += average;
-			}
-		}
-		lengthDay = habit!.completeDay.length - dayOff;
-		
-		return double.parse((result / lengthDay).toStringAsFixed(2));
-	}
-
-	int getTotalPerfectDay(){
-		int total = 0;
-		for(int i = 0; i < habit!.completeDay.length; i++){
-			if (habit!.completeDay[i]['finishGoals'] == habit!.completeDay[i]['goals']){
-				total += 1;
-			}
-		}
-		return total;
-	}
-
-	double getAveragePerfectDay(){
-		int totalPerfect = 0;
-		for(int i = 0; i < habit!.completeDay.length; i++){
-			if (habit!.completeDay[i]['finishGoals'] == habit!.completeDay[i]['goals']){
-				totalPerfect += 1;
-			}
-		}
-		return double.parse((totalPerfect / habit!.completeDay.length).toStringAsFixed(2));
-	}
-
-
+  
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -113,6 +56,7 @@ class DetailHabit extends StatelessWidget {
                       IconButton(
                           onPressed: () {
                             habit!.delete();
+														hlc.deleteItem();
                             Get.back();
                           },
                           icon: Icon(
@@ -236,7 +180,7 @@ class DetailHabit extends StatelessWidget {
                                     width: 5,
                                   ),
                                   Text(
-                                    getTotalPerfectDay().toString(),
+                                    hlc.getTotalPerfectDay(habit!).toString(),
                                     style:
                                         Theme.of(context).textTheme.headline3,
                                   )
@@ -281,7 +225,9 @@ class DetailHabit extends StatelessWidget {
                                     width: 5,
                                   ),
                                   Text(
-																		habit!.completeDay.isEmpty ? "0%":"${(getAverageDaily()*100).round()}%",
+                                    habit!.completeDay.isEmpty
+                                        ? "0%"
+                                        : "${(hlc.getAverageDaily(habit!) * 100).round()}%",
                                     style:
                                         Theme.of(context).textTheme.headline3,
                                   )
@@ -326,7 +272,9 @@ class DetailHabit extends StatelessWidget {
                                     width: 5,
                                   ),
                                   Text(
-																		habit!.completeDay.isEmpty ? "0": "${(getAveragePerfectDay()*100).round()}%",
+                                    habit!.completeDay.isEmpty
+                                        ? "0"
+                                        : "${(hlc.getAveragePerfectDay(habit!) * 100).round()}%",
                                     style:
                                         Theme.of(context).textTheme.headline3,
                                   )
@@ -476,14 +424,25 @@ class DetailHabit extends StatelessWidget {
                                                   Colors.white.withOpacity(.05),
                                               fullProgressColor:
                                                   Colors.greenAccent,
-                                              valueNotifier: ValueNotifier(checkDate(
-                                                      controller.currentMonthList[i -
-                                                              controller.positionWeekDays].day,
-                                                      controller.currentMonthList[i -
-                                                              controller .positionWeekDays].month,
-                                                      controller.currentMonthList[i -
-                                                              controller.positionWeekDays].year)
-                                                  ? ((habit!.completeDay[getIndexCompleteDay(controller.currentMonthList[i - controller.positionWeekDays].day, controller.currentMonthList[i - controller.positionWeekDays].month, controller.currentMonthList[i - controller.positionWeekDays].year)]["finishGoals"] / habit!.completeDay[getIndexCompleteDay(controller.currentMonthList[i - controller.positionWeekDays].day, controller.currentMonthList[i - controller.positionWeekDays].month, controller.currentMonthList[i - controller.positionWeekDays].year)]["goals"]) * 100): 0.0),
+                                              valueNotifier: ValueNotifier(hlc.checkDate(habit!,
+                                                      controller
+                                                          .currentMonthList[i -
+                                                              controller
+                                                                  .positionWeekDays]
+                                                          .day,
+                                                      controller
+                                                          .currentMonthList[i -
+                                                              controller
+                                                                  .positionWeekDays]
+                                                          .month,
+                                                      controller
+                                                          .currentMonthList[i -
+                                                              controller
+                                                                  .positionWeekDays]
+                                                          .year)
+                                                  ? ((habit!.completeDay[hlc.getIndexCompleteDay(habit!,controller.currentMonthList[i - controller.positionWeekDays].day, controller.currentMonthList[i - controller.positionWeekDays].month, controller.currentMonthList[i - controller.positionWeekDays].year)]["finishGoals"] / habit!.completeDay[hlc.getIndexCompleteDay(habit!,controller.currentMonthList[i - controller.positionWeekDays].day, controller.currentMonthList[i - controller.positionWeekDays].month, controller.currentMonthList[i - controller.positionWeekDays].year)]["goals"]) *
+                                                      100)
+                                                  : 0.0),
                                               mergeMode: true,
                                               animationDuration: 2,
                                             ),

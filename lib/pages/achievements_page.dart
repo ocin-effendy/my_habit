@@ -68,7 +68,7 @@ class Achievements extends StatelessWidget {
 													crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              hlc.box.isEmpty ? "0%" : "${(hlc.getAverageAllHabit() * 100).round()}%",
+                             "${(hlc.getAverageAllHabit() * 100).round()}%",
                               style: TextStyle(
 																color: darkBlueOne,
                                 fontSize: 44,
@@ -136,7 +136,7 @@ class Achievements extends StatelessWidget {
 							  										progressColors: const [Colors.deepOrangeAccent, Colors.greenAccent, Colors.lightBlueAccent, Colors.purpleAccent],
 							  										backColor: Colors.transparent,
 							  										fullProgressColor: Colors.greenAccent,
-																		valueNotifier: ValueNotifier(hlc.box.isEmpty ? 0.0 : ((hlc.getAverageHabitDay(controller.currentMonthList[i - controller.positionWeekDays].day, controller.currentMonthList[i - controller.positionWeekDays].month, controller.currentMonthList[i - controller.positionWeekDays].year) /  hlc.getHabitOnTheDay(controller.currentMonthList[i - controller.positionWeekDays].day, controller.currentMonthList[i - controller.positionWeekDays].month, controller.currentMonthList[i - controller.positionWeekDays].year)) * 100)),
+																		valueNotifier: ValueNotifier(hlc.getFinalAverageHabitDay(controller.currentMonthList[i - controller.positionWeekDays].day, controller.currentMonthList[i - controller.positionWeekDays].month, controller.currentMonthList[i - controller.positionWeekDays].year)),
 							  										mergeMode: true,
 							  										animationDuration: 2,
 							  							  ),
