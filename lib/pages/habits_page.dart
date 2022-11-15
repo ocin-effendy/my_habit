@@ -237,7 +237,7 @@ class Habits extends StatelessWidget {
                                       width: 5,
                                     ),
                                     Text(
-                                      "82%",
+                                      "${(dataSP.totalPerfectDay / (dataSP.dayOff + dataSP.totalPerfectDay) * 100).round()} %",
 																			style: Theme.of(context).textTheme.headline3,
                                     )
                                   ],

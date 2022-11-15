@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:my_habit/controllers/data_sharedpreferences.dart';
 import 'package:my_habit/controllers/datecontroller.dart';
 import 'package:my_habit/controllers/habitcontroller.dart';
 import 'package:my_habit/controllers/habits_logic_controller.dart';
@@ -22,7 +23,6 @@ class DialogHabit extends StatelessWidget{
 	final habitController = Get.find<HabitController>();
 
 	int getIndexCompleteDay(){
-		print("current di dialog ${dateController.currentDateTime}");
 		for(int i = 0; i < habit.completeDay.length; i++){
 				print("masuk di dalam loop getIndex");
 			if(habit.completeDay[i]["day"] == dateController.currentDateTime.day && habit.completeDay[i]["month"] == dateController.currentDateTime.month && habit.completeDay[i]["year"] == dateController.currentDateTime.year){
@@ -30,7 +30,6 @@ class DialogHabit extends StatelessWidget{
 				return i;
 			}
 		}
-		print("SUDAH MASUKK");
 		return 0;
 	}
 
@@ -46,7 +45,6 @@ class DialogHabit extends StatelessWidget{
 	}
 
 	void addCompleteDayItems(){
-		print("MASUK ke TAMBAH COMPLETE COKKKKKK");
 		habit.completeDay.add({
 			"day": dateController.dateToday.day,
 			"month": dateController.dateToday.month,
@@ -56,8 +54,6 @@ class DialogHabit extends StatelessWidget{
 		});
 	}
 	void updateCompleteDayItems(int index){
-		print("=============== JUANCOKKKKKKK =================");
-		print(habit.completeDay[index]["day"]);
 		habit.completeDay[index]["day"] = dateController.dateToday.day;
 		habit.completeDay[index]["month"] = dateController.dateToday.month;
 		habit.completeDay[index]["year"] = dateController.dateToday.year;
@@ -305,6 +301,7 @@ class DialogHabit extends StatelessWidget{
 																			habit.status = "active";
 																			habitController.checkLoopingCompleteDay(habit);
 																			habit.save();
+
 																		}
 																	},
                                   icon: const Icon(

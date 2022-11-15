@@ -73,11 +73,11 @@ class HabitsLogicController extends GetxController {
 	double getFinalAverageHabitDay(int date, int month, int year){
 		double averageHabitDay = getAverageHabitDay(date, month, year);
 		int habitOnTheDay = getHabitOnTheDay(date, month, year);
-		print("==================================");
-		print("average Habit Day = ${averageHabitDay}");
-		print("habit on the day = ${habitOnTheDay}");
+		//print("==================================");
+		//print("average Habit Day = ${averageHabitDay}");
+		//print("habit on the day = ${habitOnTheDay}");
 		double result = (averageHabitDay / habitOnTheDay) * 100;
-		print("ini result final = ${result}");
+		//print("ini result final = ${result}");
 		return result.isNaN ? 0.0 : result;
 	}
 
@@ -86,11 +86,14 @@ class HabitsLogicController extends GetxController {
     int result = 0;
     box.toMap().forEach((key, value) {
       if (value.type == 'reguler') {
-        if (value.start.day <= date ||value.start.month < month ||value.start.year < year) {
+        if (value.start.day <= date && checkDate(value, date, month, year)) {
+					print("tanggal = ${date}");
+					print("judul = ${value.title}");
           result += 1;
         } 
 			}
     });
+		print("mau keluar function");
     return result;
   }
 
@@ -178,6 +181,7 @@ class HabitsLogicController extends GetxController {
     }
     return double.parse((totalPerfect / (habit.completeDay.length - dayOff)).toStringAsFixed(2));
   }
+
 
 	
 	//==================== Habits Page ==================

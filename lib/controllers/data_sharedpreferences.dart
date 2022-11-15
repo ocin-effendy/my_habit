@@ -14,6 +14,7 @@ class DataSharedPreferences extends GetxController{
 	int currentStreaksHabits = 0;
 	int longestStreaksHabits = 0;
 	int totalPerfectDay = 0;
+	int dayOff = 0;
 
 	void setData() async {
 		final pref = await SharedPreferences.getInstance();
@@ -21,18 +22,19 @@ class DataSharedPreferences extends GetxController{
 		final int? csh = pref.getInt("currentStreaksHabits");
 		final int? lsh = pref.getInt("longestStreaksHabits");
 		final int? tpd = pref.getInt("totalPerfectDay");
+		final int? dayNotComplete = pref.getInt("dayOff");
+
 		if (day != null) {
-			if(csh != null){
-				currentStreaksHabits = csh;
-			}
+			if(csh != null) currentStreaksHabits = csh;
+			
 
-			if(lsh != null){
-				longestStreaksHabits = lsh;
-			}
+			if(lsh != null) longestStreaksHabits = lsh;
+			
 
-			if(tpd != null){
-				totalPerfectDay = tpd;
-			}
+			if(tpd != null) totalPerfectDay = tpd;
+			
+			if(dayNotComplete != null) dayOff = dayNotComplete;
+			
 
 			if (day != dateController.dateToday.day) {
 				box.toMap().forEach((key, value) {
@@ -54,6 +56,7 @@ class DataSharedPreferences extends GetxController{
 				double checkValue = hlc.getFinalAverageHabitDay(time.day, time.month, time.year);
 				if (checkValue != 100.0){
 					currentStreaksHabits = 0;
+					dayOff += 1;
 				}else{
 					currentStreaksHabits += 1;
 					totalPerfectDay += 1;
@@ -72,6 +75,7 @@ class DataSharedPreferences extends GetxController{
 		pref.setInt("currentStreaksHabits", currentStreaksHabits);
 		pref.setInt("longestStreaksHabits", longestStreaksHabits);
 		pref.setInt("totalPerfectDay", totalPerfectDay);
+		pref.setInt("dayOff", dayOff);
 		pref.setInt("day", dateController.dateToday.day);
 	}
 
