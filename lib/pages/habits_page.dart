@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:my_habit/controllers/data_sharedpreferences.dart';
+import 'package:my_habit/controllers/habits_logic_controller.dart';
 import 'package:my_habit/models/color.dart';
 import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/pages/detail_habit_page.dart';
@@ -11,6 +12,7 @@ class Habits extends StatelessWidget {
   Habits({Key? key}) : super(key: key);
 
 	final dataSP = Get.put(DataSharedPreferences());
+	final hlc = Get.find<HabitsLogicController>();
 	final box = Boxes.getHabit();
 
   @override
@@ -187,7 +189,7 @@ class Habits extends StatelessWidget {
                                   children: [
                                     Icon(
                                       Icons.done_rounded,
-                                      size: 18,
+ size: 18,
                                     ),
                                     const SizedBox(
                                       width: 5,
@@ -237,7 +239,7 @@ class Habits extends StatelessWidget {
                                       width: 5,
                                     ),
                                     Text(
-                                      "${(dataSP.totalPerfectDay / (dataSP.dayOff + dataSP.totalPerfectDay) * 100).round()} %",
+                                      box.isEmpty ? "0%" : "${hlc.getTAPD(dataSP.totalPerfectDay, dataSP.dayOff) .round()}%",
 																			style: Theme.of(context).textTheme.headline3,
                                     )
                                   ],
@@ -281,7 +283,7 @@ class Habits extends StatelessWidget {
                                       width: 5,
                                     ),
                                     Text(
-                                      "1,8",
+                                      box.isEmpty ? "0%" : "${hlc.getAverageDailyHabits().round()}%",
 																			style: Theme.of(context).textTheme.headline3,
                                     )
                                   ],

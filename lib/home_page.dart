@@ -40,7 +40,7 @@ class HomePage extends StatelessWidget {
                   initState: (_) {
                     dateController.setWeekInMonth();
                     print("======= List Habit cok ===========");
-										//print(habit[0].title);
+										//print(habit[0].day);
 										//print(habit[1].title);
 										//print(habit[2].title);
                     print("============= complate day =============");

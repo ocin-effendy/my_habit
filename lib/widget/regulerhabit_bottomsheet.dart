@@ -490,28 +490,11 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                                                 }
 																																// tanpa update 
 
-                                                              //setState(() {
-                                                                //listDays[key] =!value;
-
-                                                               // if (listDays.containsValue(false)) {
-                                                               //   statusSwitchRepeatEveryday =false;
-                                                               // } else {
-                                                               //   statusSwitchRepeatEveryday =
-                                                               //       true;
-                                                               // }
-                                                               // week = month = 1;
-                                                              //});
                                                             },
-                                                            style: ElevatedButton
-                                                                .styleFrom(
-                                                                    shape:
-                                                                        RoundedRectangleBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              14.0),
-                                                                    ),
-                                                                    padding:
-                                                                        EdgeInsets
+                                                            style: ElevatedButton.styleFrom(
+                                                                    shape: RoundedRectangleBorder(
+                                                                      borderRadius:BorderRadius.circular(14.0),),
+                                                                    padding:EdgeInsets
                                                                             .zero,
                                                                     primary: value
                                                                         ? Colors

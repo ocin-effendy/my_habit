@@ -16,6 +16,14 @@ class DataSharedPreferences extends GetxController{
 	int totalPerfectDay = 0;
 	int dayOff = 0;
 
+	void clearData(){
+		currentStreaksHabits = 0;
+		longestStreaksHabits = 0;
+		totalPerfectDay = 0;
+		update();
+
+	}
+
 	void setData() async {
 		final pref = await SharedPreferences.getInstance();
 		final int? day = pref.getInt("day");

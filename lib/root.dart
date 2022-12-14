@@ -122,10 +122,6 @@ class RootPage extends StatelessWidget{
                               IconButton(
                                   onPressed: () {
 																controller.setCurrentScreen(HomePage(), 0);
-                                 //   setState(() {
-                                 //     currentScreen = const HomePage();
-                                 //     currentTab = 0;
-                                 //   });
                                   },
                                   icon: controller.currentTab == 0
                                       ? ShaderMask(

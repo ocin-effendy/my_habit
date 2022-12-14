@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:my_habit/controllers/data_sharedpreferences.dart';
 import 'package:my_habit/models/habit.dart';
 import 'package:my_habit/widget/boxes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -73,40 +75,56 @@ class HabitsLogicController extends GetxController {
 	double getFinalAverageHabitDay(int date, int month, int year){
 		double averageHabitDay = getAverageHabitDay(date, month, year);
 		int habitOnTheDay = getHabitOnTheDay(date, month, year);
-		//print("==================================");
-		//print("average Habit Day = ${averageHabitDay}");
-		//print("habit on the day = ${habitOnTheDay}");
+	
 		double result = (averageHabitDay / habitOnTheDay) * 100;
-		//print("ini result final = ${result}");
 		return result.isNaN ? 0.0 : result;
 	}
 
 	// return count of habit
   int getHabitOnTheDay(int date, int month, int year) {
+		String nameDay = DateFormat('EEEE').format(DateTime.now());
     int result = 0;
     box.toMap().forEach((key, value) {
       if (value.type == 'reguler') {
-        if (value.start.day <= date && checkDate(value, date, month, year)) {
-					print("tanggal = ${date}");
-					print("judul = ${value.title}");
+        if (value.start.day <= date && checkDate(value, date, month, year) ||
+					value.start.month < month && checkDate(value, date, month, year) ||
+					value.start.year < year && checkDate(value, date, month, year) ||
+					getDay(value,nameDay) && value.start.day <= date
+					) {
           result += 1;
         } 
 			}
     });
-		print("mau keluar function");
     return result;
   }
+
+	bool getDay(Habit habit, String day){
+		bool result = false;
+		String nameDay = '';
+		if(day == 'Sunday') nameDay = 'Su';
+		else if (day == 'Monday') nameDay = 'Mo';
+		else if (day == 'Tuesday') nameDay = 'Tu';
+		else if (day == 'Wednesday') nameDay = 'We';
+		else if (day == 'Thursday') nameDay = 'Th';
+		else if (day == 'Friday') nameDay = 'Fr';
+		else if (day == 'Saturday') nameDay = 'Sa';
+
+		result = habit.day[nameDay]!;
+		return result;
+	}
 
 
 
 	// delete item in shared preferences
 	void deleteItem() async{
+		final dataSP = Get.find<DataSharedPreferences>();
 		final pref = await SharedPreferences.getInstance();
 		final box = Boxes.getHabit();
 		if(box.length == 0){
 			pref.remove("currentStreaksHabits");
 		  pref.remove("longestStreaksHabits");
 			pref.remove("totalPerfectDay");
+			dataSP.clearData();
 		}
 	}
 
@@ -140,7 +158,7 @@ class HabitsLogicController extends GetxController {
 
 	// average daily habit
   double getAverageDaily(Habit habit) {
-    double result = 0.0;
+    double count = 0.0;
     int dayOff = 0;
     int lengthDay = 1;
     for (int i = 0; i < habit.completeDay.length; i++) {
@@ -148,12 +166,12 @@ class HabitsLogicController extends GetxController {
         dayOff += 1;
       } else {
         double average = habit.completeDay[i]['finishGoals'] / habit.completeDay[i]['goals'];
-        result += average;
+        count += average;
       }
     }
     lengthDay = habit.completeDay.length - dayOff;
-
-    return double.parse((result / lengthDay).toStringAsFixed(2));
+		double result = double.parse((count / lengthDay).toStringAsFixed(2));
+    return result.isNaN ? 0.0 : result;
   }
 
 	// return total perfect day
@@ -185,6 +203,36 @@ class HabitsLogicController extends GetxController {
 
 	
 	//==================== Habits Page ==================
+	// return value total average perfect day
+	double getTAPD(int totalPerfectDay, int dayOff){
+		double result = (totalPerfectDay / (totalPerfectDay + dayOff)) * 100;
+		return result.isNaN ? 0.0 : result;
+	}
+
+	// return value average daily habits
+	double getAverageDailyHabits(){
+		double count = 0.0;
+		int oneTaskHabit = 0;
+		int dayOff = 0;
+		if(box.isNotEmpty){
+			box.toMap().forEach((key, value) {
+				if(value.type == "reguler"){
+					if (value.completeDay.isEmpty) dayOff += 1;
+					count += getAverageDaily(value);
+					print("count = ${count}");
+				}else{
+					oneTaskHabit += 1;
+				}
+			});
+		}
+
+		double result = count.isNaN ? 0.0 : ((count / (box.length - oneTaskHabit - dayOff)) * 100);
+		return result;
+
+	}
+
+
+
 	double getAverageTotalDays(){
 		double totalAverage = 0.0;
 		int oneTaskHabit = 0;
