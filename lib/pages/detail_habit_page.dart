@@ -39,8 +39,7 @@ class DetailHabit extends StatelessWidget {
                     children: [
                       IconButton(
                         onPressed: () {
-                          Get.find<DateController>()
-                              .updateCurrentMonthList(DateTime.now());
+                          Get.find<DateController>().updateCurrentMonthList(DateTime.now());
                           Get.back();
                         },
                         icon: Icon(

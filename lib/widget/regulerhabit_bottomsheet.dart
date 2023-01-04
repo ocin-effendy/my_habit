@@ -12,24 +12,23 @@ import 'package:my_habit/widget/dialogicons.dart';
 import 'package:provider/provider.dart';
 
 class RegulerHabitBottomSheet extends StatelessWidget {
-  RegulerHabitBottomSheet({Key? key, this.habit, this.indexCompleteDay}) : super(key: key);
-	final controller = Get.put(HabitController());
-	Habit? habit;
-	int? indexCompleteDay;
+  RegulerHabitBottomSheet({Key? key, this.habit, this.indexCompleteDay})
+      : super(key: key);
+  final controller = Get.put(HabitController());
+  Habit? habit;
+  int? indexCompleteDay;
 
   @override
   Widget build(BuildContext context) {
     return Consumer<DataHabitsProvider>(
       builder: (cotext, data, _) => GetBuilder<HabitController>(
-				initState: (_){
-					if(habit != null){
-						controller.setToUpdate(habit!, "reguler");
-					}else{
-						print("masuk ke clear data di reguler");
-						controller.clearDatahabit();
-						
-					}
-				},
+        initState: (_) {
+          if (habit != null) {
+            controller.setToUpdate(habit!, "reguler");
+          } else {
+            controller.clearDatahabit();
+          }
+        },
         builder: (controller) => GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Container(
@@ -59,126 +58,201 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                           ),
                           IconButton(
                               onPressed: () {
-                                if (controller.nameHabitController.text.isNotEmpty) {
-																	if(controller.goalsHabitController.text.isEmpty || int.parse(controller.goalsHabitController.text) == 0){
-																			controller.setCheckGoals(false);
-																			controller.setStatusSwitchGoalHabits(true);
-																	}else{
-																		controller.setCheckGoals(true);
+                                if (controller
+                                    .nameHabitController.text.isNotEmpty) {
+                                  if (controller
+                                          .goalsHabitController.text.isEmpty ||
+                                      int.parse(controller
+                                              .goalsHabitController.text) ==
+                                          0) {
+                                    controller.setCheckGoals(false);
+                                    controller.setStatusSwitchGoalHabits(true);
+                                  } else {
+                                    controller.setCheckGoals(true);
 
-																		if (data.listDataHabits.length < 3) {
-																			print("masukkkkkkkkkkkkkkkkkkkkkkkkkkk");
-																			carouselController.nextPage(
-                                        duration: const Duration(seconds: 2),
-                                        curve: Curves.ease);
-																		} else {
-																			carouselController1.nextPage(
-                                        duration: const Duration(seconds: 2),
-                                        curve: Curves.ease);
-																		}
+                                    if (data.listDataHabits.length < 3) {
+                                      carouselController.nextPage(
+                                          duration: const Duration(seconds: 2),
+                                          curve: Curves.ease);
+                                    } else {
+                                      carouselController1.nextPage(
+                                          duration: const Duration(seconds: 2),
+                                          curve: Curves.ease);
+                                    }
 
-																		if(habit != null){
-																			controller.updateHabit(habit!);
-																			if(habit!.completeDay.isNotEmpty){
-																				// if today or habit.completeDay[0] 0 change goals so completeDay today changes too
-																				if(habit!.completeDay[indexCompleteDay!]["day"] == Get.find<DateController>().dateToday.day){
-																					if(int.parse(controller.goalsHabitController.text) != 0){
-																						habit!.completeDay[indexCompleteDay!]["goals"] = int.parse(controller.goalsHabitController.text);
-																					}else{
-																						habit!.completeDay[indexCompleteDay!]["goals"] = habit!.goals;
-																					}
+                                    if (habit != null) {
+                                      controller.updateHabit(habit!);
+                                      if (habit!.completeDay.isNotEmpty) {
+                                        // if today or habit.completeDay[0] 0 change goals so completeDay today changes too
+                                        if (habit!.completeDay[
+                                                indexCompleteDay!]["day"] ==
+                                            Get.find<DateController>()
+                                                .dateToday
+                                                .day) {
+                                          if (int.parse(controller
+                                                  .goalsHabitController.text) !=
+                                              0) {
+                                            habit!.completeDay[
+                                                        indexCompleteDay!]
+                                                    ["goals"] =
+                                                int.parse(controller
+                                                    .goalsHabitController.text);
+                                          } else {
+                                            habit!.completeDay[
+                                                    indexCompleteDay!]
+                                                ["goals"] = habit!.goals;
+                                          }
 
-																				if(habit!.completeDay[indexCompleteDay!]["finishGoals"] > int.parse(controller.goalsHabitController.text)){
-																					habit!.completeDay[indexCompleteDay!]["finishGoals"] = 0;
-																					habit!.currentGoals = 0;
-																					habit!.status = "active";
-																				}else if(habit!.descGoals == "minutes"){
-																					habit!.completeDay[indexCompleteDay!]["finishGoals"] = 0;
-																					habit!.currentGoals = 0;
-																					habit!.status = "active";
-																				}
+                                          if (habit!.completeDay[
+                                                      indexCompleteDay!]
+                                                  ["finishGoals"] >
+                                              int.parse(controller
+                                                  .goalsHabitController.text)) {
+                                            habit!.completeDay[
+                                                    indexCompleteDay!]
+                                                ["finishGoals"] = 0;
+                                            habit!.currentGoals = 0;
+                                            habit!.status = "active";
+                                          } else if (habit!.descGoals ==
+                                              "minutes") {
+                                            habit!.completeDay[
+                                                    indexCompleteDay!]
+                                                ["finishGoals"] = 0;
+                                            habit!.currentGoals = 0;
+                                            habit!.status = "active";
+                                          }
 
-																				if(habit!.completeDay[indexCompleteDay!]["finishGoals"] != habit!.goals){
-																					habit!.status = "active";
-																				}else{
-																					habit!.status = "done";
-																				}
-																				
-																				// if future change goals so completeDay today changes too
-																			}else if(indexCompleteDay == 0 && Get.find<DateController>().currentDateTime.day > Get.find<DateController>().dateToday.day){
-																				print("MASUK KE BESOKOK coklllllll");
-																				for(int i = 0; i < habit!.completeDay.length; i++){
-																					if(habit!.completeDay[i]["day"] == Get.find<DateController>().dateToday.day){
-																						if(int.parse(controller.goalsHabitController.text) != 0){
-																							habit!.completeDay[i]["goals"] = int.parse(controller.goalsHabitController.text);
-																						}else{
-																							habit!.completeDay[i]["goals"] = habit!.goals;
-																						}
-																						if(habit!.completeDay[i]["finishGoals"] > int.parse(controller.goalsHabitController.text)){
-																							habit!.completeDay[i]["finishGoals"] = 0;
-																							habit!.currentGoals = 0;
-																							habit!.status = "active";
-																						}else if(habit!.descGoals == "minutes"){
-																							habit!.completeDay[i]["finishGoals"] = 0;
-																							habit!.currentGoals = 0;
-																							habit!.status = "active";
-																						}
-																						if(habit!.completeDay[i]["finishGoals"] != habit!.goals){
-																							habit!.status = "active";
-																						}else{
-																							habit!.status = "done";
-																						}
+                                          if (habit!.completeDay[
+                                                      indexCompleteDay!]
+                                                  ["finishGoals"] !=
+                                              habit!.goals) {
+                                            habit!.status = "active";
+                                          } else {
+                                            habit!.status = "done";
+                                          }
 
-																					}
-																				}
-																			// if last change goals so completeDay today changes too
-																			}else if(habit!.completeDay[indexCompleteDay!]["day"] < Get.find<DateController>().dateToday.day){
-																				print("MASUK KE WINGINSNE JUANNNN coklllllll");
-																				for(int i = 0; i < habit!.completeDay.length; i++){
-																					if(habit!.completeDay[i]["day"] == Get.find<DateController>().dateToday.day){
-																						if(int.parse(controller.goalsHabitController.text) != 0){
-																							habit!.completeDay[i]["goals"] = int.parse(controller.goalsHabitController.text);
-																						}else{
-																							habit!.completeDay[i]["goals"] = habit!.goals;
-																						}
-																						if(habit!.completeDay[i]["finishGoals"] > int.parse(controller.goalsHabitController.text)){
-																							habit!.completeDay[i]["finishGoals"] = 0;
-																							habit!.currentGoals = 0;
-																							habit!.status = "active";
-																						}else if(habit!.descGoals == "minutes"){
-																							habit!.completeDay[i]["finishGoals"] = 0;
-																							habit!.currentGoals = 0;
-																							habit!.status = "active";
-																						}
+                                          // if future change goals so completeDay today changes too
+                                        } else if (indexCompleteDay == 0 &&
+                                            Get.find<DateController>()
+                                                    .currentDateTime
+                                                    .day >
+                                                Get.find<DateController>()
+                                                    .dateToday
+                                                    .day) {
+                                          for (int i = 0;
+                                              i < habit!.completeDay.length;
+                                              i++) {
+                                            if (habit!.completeDay[i]["day"] ==
+                                                Get.find<DateController>()
+                                                    .dateToday
+                                                    .day) {
+                                              if (int.parse(controller
+                                                      .goalsHabitController
+                                                      .text) !=
+                                                  0) {
+                                                habit!.completeDay[i]["goals"] =
+                                                    int.parse(controller
+                                                        .goalsHabitController
+                                                        .text);
+                                              } else {
+                                                habit!.completeDay[i]["goals"] =
+                                                    habit!.goals;
+                                              }
+                                              if (habit!.completeDay[i]
+                                                      ["finishGoals"] >
+                                                  int.parse(controller
+                                                      .goalsHabitController
+                                                      .text)) {
+                                                habit!.completeDay[i]
+                                                    ["finishGoals"] = 0;
+                                                habit!.currentGoals = 0;
+                                                habit!.status = "active";
+                                              } else if (habit!.descGoals ==
+                                                  "minutes") {
+                                                habit!.completeDay[i]
+                                                    ["finishGoals"] = 0;
+                                                habit!.currentGoals = 0;
+                                                habit!.status = "active";
+                                              }
+                                              if (habit!.completeDay[i]
+                                                      ["finishGoals"] !=
+                                                  habit!.goals) {
+                                                habit!.status = "active";
+                                              } else {
+                                                habit!.status = "done";
+                                              }
+                                            }
+                                          }
+                                          // if last change goals so completeDay today changes too
+                                        } else if (habit!.completeDay[
+                                                indexCompleteDay!]["day"] <
+                                            Get.find<DateController>()
+                                                .dateToday
+                                                .day) {
+                                          for (int i = 0;
+                                              i < habit!.completeDay.length;
+                                              i++) {
+                                            if (habit!.completeDay[i]["day"] ==
+                                                Get.find<DateController>()
+                                                    .dateToday
+                                                    .day) {
+                                              if (int.parse(controller
+                                                      .goalsHabitController
+                                                      .text) !=
+                                                  0) {
+                                                habit!.completeDay[i]["goals"] =
+                                                    int.parse(controller
+                                                        .goalsHabitController
+                                                        .text);
+                                              } else {
+                                                habit!.completeDay[i]["goals"] =
+                                                    habit!.goals;
+                                              }
+                                              if (habit!.completeDay[i]
+                                                      ["finishGoals"] >
+                                                  int.parse(controller
+                                                      .goalsHabitController
+                                                      .text)) {
+                                                habit!.completeDay[i]
+                                                    ["finishGoals"] = 0;
+                                                habit!.currentGoals = 0;
+                                                habit!.status = "active";
+                                              } else if (habit!.descGoals ==
+                                                  "minutes") {
+                                                habit!.completeDay[i]
+                                                    ["finishGoals"] = 0;
+                                                habit!.currentGoals = 0;
+                                                habit!.status = "active";
+                                              }
 
-																						if(habit!.completeDay[i]["finishGoals"] != habit!.goals){
-																							habit!.status = "active";
-																						}else{
-																							habit!.status = "done";
-																						}
-																					}
-																				}
-																			}
-																			habit!.save();
-																		}
-																		print("Data DI UPDATE");
+                                              if (habit!.completeDay[i]
+                                                      ["finishGoals"] !=
+                                                  habit!.goals) {
+                                                habit!.status = "active";
+                                              } else {
+                                                habit!.status = "done";
+                                              }
+                                            }
+                                          }
+                                        }
+                                        habit!.save();
+                                      }
+                                      print("Data DI UPDATE");
+                                    } else {
+                                      controller.addHabit("reguler");
+                                    }
 
-																	}else{
-																		controller.addHabit("reguler");
-
-																	}
-
-
-                                  Provider.of<DataHabitsProvider>(context,
-                                          listen: false)
-                                      .addDatahabits(DataHabits.bankIcon[random
-                                          .nextInt(DataHabits.bankIcon.length)]);
-																	//controller.addDatahabits(DataHabits.bankIcon[random.nextInt(DataHabits.bankIcon.length)]);
-                                  Navigator.pop(context);
-                                  controller.statusSwitchGoalhabits = false;
-																	}
+                                    Provider.of<DataHabitsProvider>(context,
+                                            listen: false)
+                                        .addDatahabits(DataHabits.bankIcon[
+                                            random.nextInt(
+                                                DataHabits.bankIcon.length)]);
+                                    //controller.addDatahabits(DataHabits.bankIcon[random.nextInt(DataHabits.bankIcon.length)]);
+                                    Navigator.pop(context);
+                                    controller.statusSwitchGoalhabits = false;
+                                  }
                                 } else {
-																	controller.setStatusInput(false);
+                                  controller.setStatusInput(false);
                                 }
                               },
                               icon: ShaderMask(
@@ -199,7 +273,8 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                             controller: controller.nameHabitController,
                             cursorColor: Colors.lightBlueAccent,
                             style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
                             decoration: InputDecoration(
                               hintText: "Name your habit",
                               hintStyle: TextStyle(
@@ -222,7 +297,8 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                             child: Container(
                               height: 1.5,
                               width: MediaQuery.of(context).size.width,
-                              decoration: const BoxDecoration(gradient: primaryGradient),
+                              decoration: const BoxDecoration(
+                                  gradient: primaryGradient),
                             ),
                           ),
                         ],
@@ -236,8 +312,7 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                               context: context,
                               builder: (context) {
                                 return DialogIcons();
-															});
-
+                              });
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
@@ -278,8 +353,8 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                             Switch(
                                 value: controller.statusSwitchGoalhabits,
                                 onChanged: (value) {
-																	controller.setStatusSwitchGoalHabits(value);
-                                 // setState(() {
+                                  controller.setStatusSwitchGoalHabits(value);
+                                  // setState(() {
                                   //  statusSwitchGoalhabits = value;
                                   //});
                                 })
@@ -297,18 +372,24 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                   children: [
                                     ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          primary: controller.descGoals == "times"
-                                              ? Colors.lightBlueAccent
-                                              : Colors.grey,
+                                          primary:
+                                              controller.descGoals == "times"
+                                                  ? Colors.lightBlueAccent
+                                                  : Colors.grey,
                                           shape: const StadiumBorder(),
                                           fixedSize: Size(
-                                              MediaQuery.of(context).size.width / 2 -40, 40),
+                                              MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      2 -
+                                                  40,
+                                              40),
                                         ),
                                         onPressed: () {
-																					if(habit == null){
-																						controller.setDescGoals("times");
-																					}
-																				},
+                                          if (habit == null) {
+                                            controller.setDescGoals("times");
+                                          }
+                                        },
                                         child: Text(
                                           "of times",
                                           style: Theme.of(context)
@@ -317,21 +398,23 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                         )),
                                     ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          primary: controller.descGoals == "minutes"
-                                              ? Colors.lightBlueAccent
-                                              : Colors.grey,
+                                          primary:
+                                              controller.descGoals == "minutes"
+                                                  ? Colors.lightBlueAccent
+                                                  : Colors.grey,
                                           shape: const StadiumBorder(),
                                           fixedSize: Size(
-                                              MediaQuery.of(context).size.width /
+                                              MediaQuery.of(context)
+                                                          .size
+                                                          .width /
                                                       2 -
                                                   40,
                                               40),
                                         ),
                                         onPressed: () {
-																					if(habit == null){
-																						controller.setDescGoals("minutes");
-
-																					}
+                                          if (habit == null) {
+                                            controller.setDescGoals("minutes");
+                                          }
                                         },
                                         child: Text(
                                           "time",
@@ -347,14 +430,18 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                 Stack(
                                   children: [
                                     TextField(
-                                      controller: controller.goalsHabitController,
+                                      controller:
+                                          controller.goalsHabitController,
                                       keyboardType: TextInputType.number,
                                       cursorColor: Colors.lightBlueAccent,
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w500),
                                       decoration: InputDecoration(
-                                        hintText: controller.descGoals == "times" ? "Ex. 3 times" : "Ex. 10 minutes",
+                                        hintText:
+                                            controller.descGoals == "times"
+                                                ? "Ex. 3 times"
+                                                : "Ex. 10 minutes",
                                         hintStyle: TextStyle(
                                             color: Colors.grey,
                                             fontWeight: FontWeight.w500),
@@ -362,19 +449,20 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                           vertical: 15.0,
                                           horizontal: 15.0,
                                         ),
-																				suffixIcon: controller.checkGoals
-																					? null
-																						: Icon(
-																						Icons.error,
-																							color: Colors.red,
-																						),
+                                        suffixIcon: controller.checkGoals
+                                            ? null
+                                            : Icon(
+                                                Icons.error,
+                                                color: Colors.red,
+                                              ),
                                       ),
                                     ),
                                     Positioned(
                                       bottom: 1,
                                       child: Container(
                                         height: 1.5,
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                         decoration: const BoxDecoration(
                                             gradient: primaryGradient),
                                       ),
@@ -395,12 +483,13 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                             // ============= for get statusRepeat
                             onTap: (index) {
                               if (index == 0) {
-																controller.setStatusRepeat("daily");
+                                controller.setStatusRepeat("daily");
                               } else if (index == 1) {
-																print("============ masuk ke change statusrepeat =============");
-																controller.setStatusRepeat("weekly");
+                                print(
+                                    "============ masuk ke change statusrepeat =============");
+                                controller.setStatusRepeat("weekly");
                               } else {
-																controller.setStatusRepeat("monthly");
+                                controller.setStatusRepeat("monthly");
                               }
                             },
                             indicatorPadding: const EdgeInsets.all(0.0),
@@ -454,7 +543,8 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 30),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "During these day",
@@ -477,24 +567,46 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                                         width: 43,
                                                         height: 43,
                                                         decoration: const BoxDecoration(
-                                                            gradient: primaryGradient,
-                                                            borderRadius:BorderRadius.all(Radius.circular(14))),
+                                                            gradient:
+                                                                primaryGradient,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            14))),
                                                         child: ElevatedButton(
                                                             onPressed: () {
-																															controller.setListDays(key, !value);
-																															controller.setStatusRepeat("daily");
-																															if (controller.listDays.containsValue(false)) {
-																																	controller.setStatusSwicthRepeatEveriday(false);
-                                                                } else {
-																																	controller.setStatusSwicthRepeatEveriday(true);
-                                                                }
-																																// tanpa update 
-
+                                                              controller
+                                                                  .setListDays(
+                                                                      key,
+                                                                      !value);
+                                                              controller
+                                                                  .setStatusRepeat(
+                                                                      "daily");
+                                                              if (controller
+                                                                  .listDays
+                                                                  .containsValue(
+                                                                      false)) {
+                                                                controller
+                                                                    .setStatusSwicthRepeatEveriday(
+                                                                        false);
+                                                              } else {
+                                                                controller
+                                                                    .setStatusSwicthRepeatEveriday(
+                                                                        true);
+                                                              }
+                                                              // tanpa update
                                                             },
-                                                            style: ElevatedButton.styleFrom(
-                                                                    shape: RoundedRectangleBorder(
-                                                                      borderRadius:BorderRadius.circular(14.0),),
-                                                                    padding:EdgeInsets
+                                                            style: ElevatedButton
+                                                                .styleFrom(
+                                                                    shape:
+                                                                        RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              14.0),
+                                                                    ),
+                                                                    padding:
+                                                                        EdgeInsets
                                                                             .zero,
                                                                     primary: value
                                                                         ? Colors
@@ -518,20 +630,31 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                           children: [
                                             Text(
                                               "Every Days",
-                                              style: Theme.of(context).textTheme .headline1,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline1,
                                             ),
                                             Switch(
-                                                value: controller.statusSwitchRepeatEveryday,
+                                                value: controller
+                                                    .statusSwitchRepeatEveryday,
                                                 onChanged: (value) {
-																									controller.setStatusSwicthRepeatEveriday(value);
-																									controller.setStatusRepeat("daily");
+                                                  controller
+                                                      .setStatusSwicthRepeatEveriday(
+                                                          value);
+                                                  controller
+                                                      .setStatusRepeat("daily");
                                                   //setState(() {
-                                                    //statusSwitchRepeatEveryday = value;
-                                                  if (controller.statusSwitchRepeatEveryday) {
-																										controller.setValueStatusSwitchRepeatEveriday(true, 'day', 1);
+                                                  //statusSwitchRepeatEveryday = value;
+                                                  if (controller
+                                                      .statusSwitchRepeatEveryday) {
+                                                    controller
+                                                        .setValueStatusSwitchRepeatEveriday(
+                                                            true, 'day', 1);
                                                   } else {
-																										controller.setValueStatusSwitchRepeatEveriday(false, 'day', 1);
-																									}
+                                                    controller
+                                                        .setValueStatusSwitchRepeatEveriday(
+                                                            false, 'day', 1);
+                                                  }
                                                   //});
                                                 })
                                           ]),
@@ -556,25 +679,38 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                           height: 15,
                                         ),
                                         Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
                                             children: [
                                               for (int i = 1; i < 7; i++)
                                                 Container(
                                                     width: 43,
                                                     height: 43,
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                            gradient: primaryGradient,
-                                                            borderRadius:
-                                                                BorderRadius.all(Radius.circular( 14))),
+                                                    decoration: const BoxDecoration(
+                                                        gradient:
+                                                            primaryGradient,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius
+                                                                    .circular(
+                                                                        14))),
                                                     child: ElevatedButton(
                                                         onPressed: () {
                                                           //setState(() {
-																													print("ini pencet weekly cokok");
-																														controller.setStatusRepeat("weekly");
-                                                            controller.setValueStatusSwitchRepeatEveriday(false, 'week', i);
-																														controller.setStatusSwicthRepeatEveriday(false);
-                                                            
+                                                          print(
+                                                              "ini pencet weekly cokok");
+                                                          controller
+                                                              .setStatusRepeat(
+                                                                  "weekly");
+                                                          controller
+                                                              .setValueStatusSwitchRepeatEveriday(
+                                                                  false,
+                                                                  'week',
+                                                                  i);
+                                                          controller
+                                                              .setStatusSwicthRepeatEveriday(
+                                                                  false);
+
                                                           //});
                                                         },
                                                         style: ElevatedButton
@@ -589,10 +725,13 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                                                 padding:
                                                                     EdgeInsets
                                                                         .zero,
-                                                                primary: controller.week == i
+                                                                primary: controller
+                                                                            .week ==
+                                                                        i
                                                                     ? Colors
                                                                         .transparent
-                                                                    : Colors.grey,
+                                                                    : Colors
+                                                                        .grey,
                                                                 shadowColor: Colors
                                                                     .transparent),
                                                         child: Text(
@@ -606,7 +745,8 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 30),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "${controller.month} times a month",
@@ -628,28 +768,43 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                               height: 43,
                                               decoration: const BoxDecoration(
                                                   gradient: primaryGradient,
-                                                  borderRadius: BorderRadius.all(
-                                                      Radius.circular(14))),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(14))),
                                               child: ElevatedButton(
                                                   onPressed: () {
-																											controller.setStatusRepeat("monthly");
-																											controller.setValueStatusSwitchRepeatEveriday(false, 'month', i);
-																											controller.setStatusSwicthRepeatEveriday(false);
+                                                    controller.setStatusRepeat(
+                                                        "monthly");
+                                                    controller
+                                                        .setValueStatusSwitchRepeatEveriday(
+                                                            false, 'month', i);
+                                                    controller
+                                                        .setStatusSwicthRepeatEveriday(
+                                                            false);
                                                   },
-                                                  style: ElevatedButton.styleFrom(
-                                                      shape:RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(14.0),
-                                                      ),
-                                                      padding: EdgeInsets.zero,
-                                                      primary: controller.month == i
-                                                          ? Colors.transparent
-                                                          : Colors.grey,
-                                                      shadowColor:
-                                                          Colors.transparent),
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        14.0),
+                                                          ),
+                                                          padding:
+                                                              EdgeInsets.zero,
+                                                          primary: controller
+                                                                      .month ==
+                                                                  i
+                                                              ? Colors
+                                                                  .transparent
+                                                              : Colors.grey,
+                                                          shadowColor: Colors
+                                                              .transparent),
                                                   child: Text(
                                                     i.toString(),
-                                                    style: TextStyle(fontSize: 14),
+                                                    style:
+                                                        TextStyle(fontSize: 14),
                                                   ))),
                                       ]),
                                     ],
@@ -675,10 +830,10 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                               onChanged: (value) {
                                 //setState(() {
                                 controller.setStatusSwicthReminder(value);
-																if(!controller.statusSwitchReminders){
-																	controller.timeReminders.clear();
-																}
-                               // });
+                                if (!controller.statusSwitchReminders) {
+                                  controller.timeReminders.clear();
+                                }
+                                // });
                               })
                         ],
                       ),
@@ -686,7 +841,9 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                         visible: controller.statusSwitchReminders,
                         child: Column(
                           children: [
-                            for (int i = 0; i < controller.timeReminders.length; i++)
+                            for (int i = 0;
+                                i < controller.timeReminders.length;
+                                i++)
                               ListTile(
                                 leading: SizedBox(
                                   height: double.infinity,
@@ -699,13 +856,14 @@ class RegulerHabitBottomSheet extends StatelessWidget {
                                   //controller.timeReminders[i].toString().split("(")[1].split(")")[0],
                                   controller.timeReminders[i],
                                   style: TextStyle(
-                                      fontSize: 16, fontWeight: FontWeight.w500),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500),
                                 ),
                                 trailing: SizedBox(
                                     height: double.infinity,
                                     child: IconButton(
                                       onPressed: () {
-																				controller.deleteListTime(i);
+                                        controller.deleteListTime(i);
                                       },
                                       icon: Icon(
                                         Icons.close_rounded,

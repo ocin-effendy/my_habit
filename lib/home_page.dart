@@ -39,18 +39,7 @@ class HomePage extends StatelessWidget {
                 return GetBuilder<DateController>(
                   initState: (_) {
                     dateController.setWeekInMonth();
-                    print("======= List Habit cok ===========");
-										//print(habit[0].day);
-										//print(habit[1].title);
-										//print(habit[2].title);
-                    print("============= complate day =============");
-										//print(habit[0].completeDay);
-									//	print(habit[1].completeDay);
-										//print(habit[2].completeDay);
-                    print("============= start =============");
-                    print("============= cek data habit monthly =============");
-										//print(habit[1]);
-                 },
+                  },
                   builder: (x) => Container(
                     color: const Color.fromRGBO(21, 21, 71, 1),
                     child: Transform.translate(

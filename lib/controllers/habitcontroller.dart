@@ -9,26 +9,26 @@ import 'package:my_habit/widget/boxes.dart';
 class HabitController extends GetxController {
   TimeOfDay _time = TimeOfDay.now();
   DateTime _date = DateTime.now();
-	final dateController = Get.find<DateController>();
+  final dateController = Get.find<DateController>();
 
-	// UI interactive
+  // UI interactive
   bool statusInput = true;
   bool statusSwitchGoalhabits = false;
   bool statusSwitchRepeatEveryday = false;
   bool statusSwitchReminders = false;
-	bool checkGoals = true;
+  bool checkGoals = true;
 
-
-	// Data Create Habit
-	//String type = ""; // type
-	DateTime start = DateTime.now(); // start
+  // Data Create Habit
+  //String type = ""; // type
+  DateTime start = DateTime.now(); // start
   final nameHabitController = TextEditingController(); //title
-	IconData iconHabit = Icons.star_rate_rounded; //IconHabit
+  IconData iconHabit = Icons.star_rate_rounded; //IconHabit
   final goalsHabitController = TextEditingController(); // goals
-	int currentGoals = 0; // currentGoals
+  int currentGoals = 0; // currentGoals
   String descGoals = 'times'; //descGoals
   String statusRepeat = 'daily'; // statusRepeat
-	Map<String, bool> listDays = { // day
+  Map<String, bool> listDays = {
+    // day
     "Su": true,
     "Mo": false,
     "Tu": false,
@@ -37,136 +37,130 @@ class HabitController extends GetxController {
     "Fr": false,
     "Sa": false,
   };
-	Map<String, bool> noDay = {
-		"Su": false,
+  Map<String, bool> noDay = {
+    "Su": false,
     "Mo": false,
     "Tu": false,
     "We": false,
     "Th": false,
     "Fr": false,
     "Sa": false,
-	};
+  };
   int week = 1; // week
   int month = 1; // month
   String status = "active"; // status
   List<String> timeReminders = []; // timeReminders
-	List completeDay = []; // completeDay
-	int currentStreaks = 0; // currentStreaks
-	int longestStreaks = 0; // longestStreaks
-  
-
+  List completeDay = []; // completeDay
+  int currentStreaks = 0; // currentStreaks
+  int longestStreaks = 0; // longestStreaks
 
   late String dateTime;
   late String time;
   List<String> listTime = [];
 
+  List<IconData> dataHabits = [];
+  void addDatahabits(IconData data) {
+    dataHabits.add(data);
+    update();
+  }
 
-	List<IconData> dataHabits = [];
-	void addDatahabits(IconData data){
-		dataHabits.add(data);
-		update();
-	}
+  void setStatusInput(bool value) {
+    statusInput = value;
+    update();
+  }
 
+  void setCheckGoals(bool value) {
+    checkGoals = value;
+    update();
+  }
 
-	void setStatusInput(bool value){
-		statusInput = value;
-		update();
-	}
+  void setIconHabit(IconData icon) {
+    iconHabit = icon;
+    update();
+  }
 
-	void setCheckGoals(bool value){
-		checkGoals = value;
-		update();
-	}
+  void setStatusSwitchGoalHabits(bool value) {
+    statusSwitchGoalhabits = value;
+    update();
+  }
 
-	void setIconHabit(IconData icon){
-		iconHabit = icon;
-		update();
-	}
+  void setDescGoals(String name) {
+    descGoals = name;
+    update();
+  }
 
-	void setStatusSwitchGoalHabits(bool value){
-		statusSwitchGoalhabits = value;
-		update();
-	}
+  void setStatusRepeat(String name) {
+    statusRepeat = name;
+    update();
+  }
 
-	void setDescGoals(String name){
-		descGoals = name;
-		update();
-	}
+  void setListDays(String key, bool value) {
+    listDays[key] = value;
+    week = month = 1;
+    update();
+  }
 
-	void setStatusRepeat(String name){
-		statusRepeat = name;
-		update();
-	}
+  void setStatusSwicthRepeatEveriday(bool value) {
+    statusSwitchRepeatEveryday = value;
+    update();
+  }
 
-	void setListDays(String key, bool value){
-		listDays[key] = value;
-		week = month = 1;
-		update();
-	}
+  void setValueStatusSwitchRepeatEveriday(
+      bool value, String name, int position) {
+    if (value) {
+      listDays['Su'] = listDays['Mo'] = listDays['Tu'] = listDays['We'] =
+          listDays['Th'] = listDays['Fr'] = listDays['Sa'] = true;
+    } else {
+      listDays['Su'] = true;
+      listDays['Mo'] = listDays['Tu'] = listDays['We'] =
+          listDays['Th'] = listDays['Fr'] = listDays['Sa'] = false;
+    }
 
-	void setStatusSwicthRepeatEveriday(bool value){
-		statusSwitchRepeatEveryday = value;
-		update();
-	}
-
-
-	void setValueStatusSwitchRepeatEveriday(bool value, String name, int position){
-		if(value){
-			listDays['Su'] = listDays['Mo'] = listDays['Tu'] =listDays['We'] =
-			listDays['Th'] = listDays['Fr'] = listDays['Sa'] =  true;
-		}else{
-			listDays['Su'] = true;
-			listDays['Mo'] = listDays['Tu'] =listDays['We'] =
-			listDays['Th'] = listDays['Fr'] = listDays['Sa'] =  false;
-		}
-
-		if(name == 'day'){
-			week = month = position;
-		}else if(name == 'week'){
-			week = position;
+    if (name == 'day') {
+      week = month = position;
+    } else if (name == 'week') {
+      week = position;
       month = 1;
-		}else{
-			month = position;
-			week = 1;
-		}
-		update();
-	}
+    } else {
+      month = position;
+      week = 1;
+    }
+    update();
+  }
 
+  void setStatusSwicthReminder(bool value) {
+    statusSwitchReminders = value;
+    update();
+  }
 
-	void setStatusSwicthReminder(bool value){
-		statusSwitchReminders = value;
-		update();
-	}
+  // Funtion to delete item in list time reminders
+  void deleteListTime(int i) {
+    timeReminders.removeAt(i);
+    update();
+  }
 
-	// Funtion to delete item in list time reminders
-	void deleteListTime(int i){
-		timeReminders.removeAt(i);
-		update();
-	}
-	
-	// Function to select time for time reminders
-	void selectTime(BuildContext context) async {
-		final newTime = await showTimePicker(
+  // Function to select time for time reminders
+  void selectTime(BuildContext context) async {
+    final newTime = await showTimePicker(
       context: context,
       initialTime: _time,
     );
     if (newTime != null) {
       _time = newTime;
       time = _time.toString().split("(")[1].split(")")[0];
-			timeReminders.add(time);
+      timeReminders.add(time);
       //listTime.add(time);
-			update();
+      update();
     }
   }
 
-
-
-	// Function for oneTask input date
+  // Function for oneTask input date
   void getDatePicker(context) async {
     final selectedDate = await showDatePicker(
         context: context,
         initialDate: dateController.dateToday,
-        firstDate: DateTime(dateController.dateToday.year, dateController.dateToday.month, dateController.dateToday.day),
+        firstDate: DateTime(dateController.dateToday.year,
+            dateController.dateToday.month, dateController.dateToday.day),
         lastDate: DateTime(_date.year + 2),
         builder: (context, child) {
           return Theme(
@@ -197,292 +191,293 @@ class HabitController extends GetxController {
           );
         });
     if (selectedDate != null) {
-        _date = selectedDate;
-				start = _date;
-        dateTime ="${_date.day} ${date_util.DateUtils.months[_date.month - 1]} ${_date.year}";
-				update();
+      _date = selectedDate;
+      start = _date;
+      dateTime =
+          "${_date.day} ${date_util.DateUtils.months[_date.month - 1]} ${_date.year}";
+      update();
     }
   }
 
-	// Function to clear data habit for new data Habit
-	void clearDatahabit(){
-		statusInput = true;
-		statusSwitchGoalhabits = false;
-		statusSwitchRepeatEveryday = false;
-		statusSwitchReminders = false;
+  // Function to clear data habit for new data Habit
+  void clearDatahabit() {
+    statusInput = true;
+    statusSwitchGoalhabits = false;
+    statusSwitchRepeatEveryday = false;
+    statusSwitchReminders = false;
 
-		nameHabitController.clear();
-		iconHabit = Icons.star_rate_rounded;
-		descGoals = "times";
-		goalsHabitController.clear();
-		statusRepeat = "daily";
-		listDays = { // day
-			"Su": true,
-			"Mo": false,
-			"Tu": false,
-			"We": false,
-			"Th": false,
-			"Fr": false,
-			"Sa": false,
-		};
-		week = 1;
-		month = 1;
-		status = "active";
-		timeReminders = [];
-		completeDay = []; 
-		currentStreaks = 0; 
-		longestStreaks = 0;
-	}
+    nameHabitController.clear();
+    iconHabit = Icons.star_rate_rounded;
+    descGoals = "times";
+    goalsHabitController.clear();
+    statusRepeat = "daily";
+    listDays = {
+      // day
+      "Su": true,
+      "Mo": false,
+      "Tu": false,
+      "We": false,
+      "Th": false,
+      "Fr": false,
+      "Sa": false,
+    };
+    week = 1;
+    month = 1;
+    status = "active";
+    timeReminders = [];
+    completeDay = [];
+    currentStreaks = 0;
+    longestStreaks = 0;
+  }
 
-	// Function to put data in temp variabel data habit
-	void setToUpdate(Habit habit, String type){
-		if(habit.type == "reguler"){
-			if(habit.goals != 0){
-				statusSwitchGoalhabits = true;
-			}
+  // Function to put data in temp variabel data habit
+  void setToUpdate(Habit habit, String type) {
+    if (habit.type == "reguler") {
+      if (habit.goals != 0) {
+        statusSwitchGoalhabits = true;
+      }
 
-			if(habit.timeReminders.isNotEmpty){
-				statusSwitchReminders = true;
-			}
+      if (habit.timeReminders.isNotEmpty) {
+        statusSwitchReminders = true;
+      }
 
-			if(!habit.day.containsValue(false)){
-				statusSwitchRepeatEveryday = true;
-			}
+      if (!habit.day.containsValue(false)) {
+        statusSwitchRepeatEveryday = true;
+      }
 
-			nameHabitController.text = habit.title;
-			iconHabit = IconData(habit.icon, fontFamily: "MaterialIcons");
-			descGoals = habit.descGoals;
-			goalsHabitController.text = habit.goals.toString();
-			statusRepeat = habit.statusRepeat;
-			listDays = habit.day;
-			week = habit.week;
-			month = habit.month;
-			status = habit.status;
-			timeReminders = habit.timeReminders;
-		}
-		// for Onetask
-		else {
-			if(habit.timeReminders.isNotEmpty){
-				statusSwitchReminders = true;
-			}
-			start = dateController.dateToday;
-			nameHabitController.text = habit.title;
-			iconHabit = IconData(habit.icon, fontFamily: "MaterialIcons");
-			status = habit.status;
-			timeReminders = habit.timeReminders;
-      dateTime ="${dateController.dateToday.day} ${date_util.DateUtils.months[dateController.dateToday.month - 1]} ${dateController.dateToday.year}";
+      nameHabitController.text = habit.title;
+      iconHabit = IconData(habit.icon, fontFamily: "MaterialIcons");
+      descGoals = habit.descGoals;
+      goalsHabitController.text = habit.goals.toString();
+      statusRepeat = habit.statusRepeat;
+      listDays = habit.day;
+      week = habit.week;
+      month = habit.month;
+      status = habit.status;
+      timeReminders = habit.timeReminders;
+    }
+    // for Onetask
+    else {
+      if (habit.timeReminders.isNotEmpty) {
+        statusSwitchReminders = true;
+      }
+      start = dateController.dateToday;
+      nameHabitController.text = habit.title;
+      iconHabit = IconData(habit.icon, fontFamily: "MaterialIcons");
+      status = habit.status;
+      timeReminders = habit.timeReminders;
+      dateTime =
+          "${dateController.dateToday.day} ${date_util.DateUtils.months[dateController.dateToday.month - 1]} ${dateController.dateToday.year}";
+    }
+    update();
+  }
 
-		}
-		update();
-	}
+  // Function add data to local with hive
+  void addHabit(String type) {
+    final habit = Habit()
+      ..type = type
+      ..start = start
+      ..title = nameHabitController.text
+      ..icon = iconHabit.codePoint
+      ..goals = type == "oneTask" ? 1 : int.parse(goalsHabitController.text)
+      ..currentGoals = currentGoals
+      ..descGoals = descGoals
+      ..statusRepeat = statusRepeat
+      ..day = type == "reguler" && statusRepeat == "daily" ? listDays : noDay
+      ..week = week
+      ..month = month
+      ..status = status
+      ..timeReminders = timeReminders
+      ..completeDay = completeDay
+      ..currentStreaks = currentStreaks
+      ..longestStreaks = longestStreaks;
 
+    final box = Boxes.getHabit();
+    box.add(habit);
+    print("data ditambahkan");
+  }
 
-	// Function add data to local with hive
-	void addHabit(String type){
-		final habit = Habit()
-		..type = type
-		..start = start
-		..title = nameHabitController.text
-		..icon = iconHabit.codePoint
-		..goals = type == "oneTask" ? 1 : int.parse(goalsHabitController.text) 
-		..currentGoals = currentGoals
-		..descGoals = descGoals
-		..statusRepeat = statusRepeat
-		..day = type == "reguler" && statusRepeat == "daily" ? listDays : noDay
-		..week = week
-		..month = month
-		..status = status
-		..timeReminders = timeReminders
-		..completeDay = completeDay
-		..currentStreaks = currentStreaks
-		..longestStreaks = longestStreaks;
-
-		final box = Boxes.getHabit();
-		box.add(habit);
-		print("data ditambahkan");
-	}
-
-
-	// FUnction to 
-	void updateHabit(Habit habit){
-		print(statusRepeat);
-		if(habit.type == "reguler"){
-			habit.title = nameHabitController.text;
-			habit.icon = iconHabit.codePoint;
-			habit.descGoals = descGoals;
-			habit.goals = int.parse(goalsHabitController.text);
-			habit.statusRepeat = statusRepeat;
-			habit.day = statusRepeat == "daily" ? listDays : noDay;
-			habit.week = week;
-			habit.month = month;
-			habit.status = status;
-			habit.timeReminders = timeReminders;
-		}else{
-			habit.start = start;
-			habit.title = nameHabitController.text;
-			habit.icon = iconHabit.codePoint;
-			habit.status = status;
-			habit.timeReminders = timeReminders;
-			habit.currentGoals = 0;
-		}
-		habit.save();
-	}
+  // FUnction to
+  void updateHabit(Habit habit) {
+    print(statusRepeat);
+    if (habit.type == "reguler") {
+      habit.title = nameHabitController.text;
+      habit.icon = iconHabit.codePoint;
+      habit.descGoals = descGoals;
+      habit.goals = int.parse(goalsHabitController.text);
+      habit.statusRepeat = statusRepeat;
+      habit.day = statusRepeat == "daily" ? listDays : noDay;
+      habit.week = week;
+      habit.month = month;
+      habit.status = status;
+      habit.timeReminders = timeReminders;
+    } else {
+      habit.start = start;
+      habit.title = nameHabitController.text;
+      habit.icon = iconHabit.codePoint;
+      habit.status = status;
+      habit.timeReminders = timeReminders;
+      habit.currentGoals = 0;
+    }
+    habit.save();
+  }
 
 // LOGIC HABIT CONTROLLER
-	// Home Page
-	bool checkWeekly(Habit habit){
-		if(habit.completeDay.isNotEmpty){
-			if(dateController.currentDateTime.day < dateController.dateToday.day){
-				for(int i = 0; i < habit.completeDay.length; i++){
-					if(habit.completeDay[i]["day"] == dateController.currentDateTime.day && habit.completeDay[i]["finishGoals"] != 0){
-						return true;
-					}
-				}
-				return false;
-			}else if(dateController.currentDateTime.day >= dateController.dateToday.day){
-				if(dateController.checkDayInWeek(dateController.dateToday.day) != dateController.checkDayInWeek(dateController.currentDateTime.day)){
-					return true;
-				}else{
-					print("MASUK KE ELSE");
-					int count = 0;
-					for(int i = 0; i < habit.completeDay.length; i++){
-						if(dateController.checkDayInWeek(dateController.dateToday.day) == dateController.checkDayInWeek(habit.completeDay[i]["day"]) && habit.completeDay[i]["finishGoals"] != 0){
-							print("MASUK KE COUNT++");
-							count++;
-						}
-					}
-					print("ini habit week : ${habit.week}");
-					print("ini count : ${count}");
-					if(count < habit.week ){
-						print("MASUK KE PERSAMAAAN HABIT WEEK");
-						return true;
-					}else if(count == habit.week && dateController.currentDateTime.day == habit.completeDay[habit.completeDay.length -1 ]["day"]){
-						print("MASUK EK ELSE IF PERSAMAAN WEEK");
-						return true;
-					}
-					return false;
-				}
-			}
-		}else{
-			if(dateController.currentDateTime.day < dateController.dateToday.day){
-				return false;
-			}
-		}
-		return true;
-	}
+  // Home Page
+  bool checkWeekly(Habit habit) {
+    if (habit.completeDay.isNotEmpty) {
+      if (dateController.currentDateTime.day < dateController.dateToday.day) {
+        for (int i = 0; i < habit.completeDay.length; i++) {
+          if (habit.completeDay[i]["day"] ==
+                  dateController.currentDateTime.day &&
+              habit.completeDay[i]["finishGoals"] != 0) {
+            return true;
+          }
+        }
+        return false;
+      } else if (dateController.currentDateTime.day >=
+          dateController.dateToday.day) {
+        if (dateController.checkDayInWeek(dateController.dateToday.day) !=
+            dateController.checkDayInWeek(dateController.currentDateTime.day)) {
+          return true;
+        } else {
+          int count = 0;
+          for (int i = 0; i < habit.completeDay.length; i++) {
+            if (dateController.checkDayInWeek(dateController.dateToday.day) ==
+                    dateController
+                        .checkDayInWeek(habit.completeDay[i]["day"]) &&
+                habit.completeDay[i]["finishGoals"] != 0) {
+              count++;
+            }
+          }
+          if (count < habit.week) {
+            return true;
+          } else if (count == habit.week &&
+              dateController.currentDateTime.day ==
+                  habit.completeDay[habit.completeDay.length - 1]["day"]) {
+            return true;
+          }
+          return false;
+        }
+      }
+    } else {
+      if (dateController.currentDateTime.day < dateController.dateToday.day) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-	bool checkMonthly(Habit habit){
-		if(habit.completeDay.isNotEmpty){
-			if(dateController.currentDateTime.day < dateController.dateToday.day){
-				for(int i = 0; i < habit.completeDay.length; i++){
-					if(habit.completeDay[i]["day"] == dateController.currentDateTime.day && habit.completeDay[i]["finishGoals"] != 0){
-						return true;
-					}
-				}
-				return false;
-			}else if(dateController.currentDateTime.day >= dateController.dateToday.day){
-				int count = 0;
-				for(int i = 0; i < habit.completeDay.length; i++){
-					if(habit.completeDay[i]["finishGoals"] != 0){
-						count++;
-					}
-				}
-				if(count < habit.month){
-					print("MASUK KE PERSAMAAAN HABIT WEEK");
-					return true;
-				}else if(count == habit.month && dateController.currentDateTime.day == habit.completeDay[habit.completeDay.length -1 ]["day"]){
-					print("MASUK EK ELSE IF PERSAMAAN WEEK");
-					return true;
-				}
+  bool checkMonthly(Habit habit) {
+    if (habit.completeDay.isNotEmpty) {
+      if (dateController.currentDateTime.day < dateController.dateToday.day) {
+        for (int i = 0; i < habit.completeDay.length; i++) {
+          if (habit.completeDay[i]["day"] ==
+                  dateController.currentDateTime.day &&
+              habit.completeDay[i]["finishGoals"] != 0) {
+            return true;
+          }
+        }
+        return false;
+      } else if (dateController.currentDateTime.day >=
+          dateController.dateToday.day) {
+        int count = 0;
+        for (int i = 0; i < habit.completeDay.length; i++) {
+          if (habit.completeDay[i]["finishGoals"] != 0) {
+            count++;
+          }
+        }
+        if (count < habit.month) {
+          return true;
+        } else if (count == habit.month &&
+            dateController.currentDateTime.day ==
+                habit.completeDay[habit.completeDay.length - 1]["day"]) {
+          return true;
+        }
 
-				print("masuk ke else return false");
-				return false;
-			}
-		}else{
-			if(dateController.currentDateTime.day < dateController.dateToday.day){
-				return false;
-			}
-		}
+        return false;
+      }
+    } else {
+      if (dateController.currentDateTime.day < dateController.dateToday.day) {
+        return false;
+      }
+    }
 
-		print("masuk ke terakhir");
-		return true;
-	}
+    return true;
+  }
 
+  bool checkCompleteDayOneTask(Habit habit) {
+    for (int i = 0; i < habit.completeDay.length; i++) {
+      if (dateController.currentDateTime.day == habit.completeDay[i]["day"] &&
+          dateController.currentDateTime.month ==
+              habit.completeDay[i]["month"] &&
+          dateController.currentDateTime.year == habit.completeDay[i]["year"]) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-	bool checkCompleteDayOneTask(Habit habit){
-		print("masuk ke check onetask");
-		for(int i = 0; i < habit.completeDay.length; i++){
-			if(dateController.currentDateTime.day == habit.completeDay[i]["day"] && dateController.currentDateTime.month == habit.completeDay[i]["month"] && dateController.currentDateTime.year == habit.completeDay[i]["year"]){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	// Dialog Habit
-	int getIndexCompleteDay(Habit habit){
-		print("current di dialog ${dateController.currentDateTime}");
-		for(int i = 0; i < habit.completeDay.length; i++){
-				print("masuk di dalam loop getIndex");
-			if(habit.completeDay[i]["day"] == dateController.currentDateTime.day && habit.completeDay[i]["month"] == dateController.currentDateTime.month && habit.completeDay[i]["year"] == dateController.currentDateTime.year){
-				print("masuk di dalam IF getIndex");
-				return i;
-			}
-		}
-		print("SUDAH MASUKK");
-		return 0;
-	}
+  // Dialog Habit
+  int getIndexCompleteDay(Habit habit) {
+    print("current di dialog ${dateController.currentDateTime}");
+    for (int i = 0; i < habit.completeDay.length; i++) {
+      if (habit.completeDay[i]["day"] == dateController.currentDateTime.day &&
+          habit.completeDay[i]["month"] ==
+              dateController.currentDateTime.month &&
+          habit.completeDay[i]["year"] == dateController.currentDateTime.year) {
+        return i;
+      }
+    }
+    return 0;
+  }
 
+  bool checkLoopingCompleteDay(Habit habit) {
+    for (int i = 0; i < habit.completeDay.length; i++) {
+      if (habit.completeDay[i]["day"] == dateController.dateToday.day &&
+          habit.completeDay[i]["month"] == dateController.dateToday.month &&
+          habit.completeDay[i]["year"] == dateController.dateToday.year) {
+        updateCompleteDayItems(i, habit);
+        return false;
+      }
+    }
+    return true;
+  }
 
-	bool checkLoopingCompleteDay(Habit habit) {
-		for(int i = 0; i < habit.completeDay.length; i++){
-			if(habit.completeDay[i]["day"] == dateController.dateToday.day && habit.completeDay[i]["month"] == dateController.dateToday.month && habit.completeDay[i]["year"] == dateController.dateToday.year){
-				updateCompleteDayItems(i, habit);
-				return false;
-			}
-		}
-		return true;
-	}
+  void addCompleteDayItems(Habit habit) {
+    habit.completeDay.add({
+      "day": dateController.dateToday.day,
+      "month": dateController.dateToday.month,
+      "year": dateController.dateToday.year,
+      "finishGoals": habit.currentGoals,
+      "goals": habit.goals,
+    });
+  }
 
-	void addCompleteDayItems(Habit habit){
-		print("MASUK ke TAMBAH COMPLETE COKKKKKK");
-		habit.completeDay.add({
-			"day": dateController.dateToday.day,
-			"month": dateController.dateToday.month,
-			"year": dateController.dateToday.year,
-			"finishGoals": habit.currentGoals,
-			"goals": habit.goals,
-		});
-	}
-	void updateCompleteDayItems(int index, Habit habit){
-		print("=============== JUANCOKKKKKKK =================");
-		print(habit.completeDay[index]["day"]);
-		habit.completeDay[index]["day"] = dateController.dateToday.day;
-		habit.completeDay[index]["month"] = dateController.dateToday.month;
-		habit.completeDay[index]["year"] = dateController.dateToday.year;
-		habit.completeDay[index]["finishGoals"] = habit.currentGoals;
-		habit.completeDay[index]["goals"] = habit.goals;
-	}
+  void updateCompleteDayItems(int index, Habit habit) {
+    print(habit.completeDay[index]["day"]);
+    habit.completeDay[index]["day"] = dateController.dateToday.day;
+    habit.completeDay[index]["month"] = dateController.dateToday.month;
+    habit.completeDay[index]["year"] = dateController.dateToday.year;
+    habit.completeDay[index]["finishGoals"] = habit.currentGoals;
+    habit.completeDay[index]["goals"] = habit.goals;
+  }
 
+  @override
+  void onInit() {
+    dateTime =
+        "${_date.day} ${date_util.DateUtils.months[_date.month - 1]} ${_date.year}";
+    if (listTime.isNotEmpty) {
+      statusSwitchReminders = true;
+    }
+    super.onInit();
+  }
 
-
-	@override
-	  void onInit() {
-    dateTime ="${_date.day} ${date_util.DateUtils.months[_date.month - 1]} ${_date.year}";
-			if (listTime.isNotEmpty) {
-        statusSwitchReminders = true;
-			}
-			print("HABIT CONTROLLER CREATEE reguler");
-	    super.onInit();
-	  }
-
-
-	@override
-	void dispose() {
-		nameHabitController.dispose();
-		goalsHabitController.dispose();
-		print("HABIT CONTROLLER DISPOSE");
-	  super.dispose();
-	}
-
+  @override
+  void dispose() {
+    nameHabitController.dispose();
+    goalsHabitController.dispose();
+    print("HABIT CONTROLLER DISPOSE");
+    super.dispose();
+  }
 }
